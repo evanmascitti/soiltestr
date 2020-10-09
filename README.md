@@ -25,6 +25,14 @@ specifically for this project. Examples include morphometric analyses of
 3D soil surfaces and numerical integration of stress-strain curves
 derived from unconfined compression tests.
 
+<!-- The best way to learn about this package is through the vignettes  -->
+
+<!-- un-comment this line once the vignettes are added  -->
+
+The function `sandClay.mixCalcs` is supplied for generating the air-dry
+masses of soil which should be used when batch-blending sand-clay
+mixtures.
+
 The soil which may be deployed using this package include:
 
 #### Particle size analysis
