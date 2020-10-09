@@ -28,3 +28,5 @@ Imports:
     measurements, 
     mosaic, 
     splines
+Depends: 
+    R (>= 2.10)

@@ -1,9 +1,9 @@
 #' Calculate gravimetric water content & add to the data frame
 #'
-#' The input data should contain columns named "tin_w_wet_sample",
-#' "tin_w_OD_sample", and "tin_tare". Note that the tin tare should
-#' be looked up from the appropriate set of pre-weighed tins. The
-#' formula for computing water content is \eqn{\\frac{m_{water}{m_{oven-dry soil}}} .
+#'\preformatted{The input data should contain columns named "tin_w_wet_sample",
+#'"tin_w_OD_sample", and "tin_tare". Note that the tin tare should be looked up
+#'from the appropriate set of pre-weighed tins. The formula for computing water
+#'content is \eqn{\frac{m_{water}{m_{oven-dry soil}}} } }.
 #'
 #'
 #' @param df A data frame
