@@ -2,7 +2,7 @@
 % Please edit documentation in R/add_w.R
 \name{add_w}
 \alias{add_w}
-\title{add_w}
+\title{Calculate gravimetric water content & add to the data frame}
 \usage{
 add_w(df)
 }
@@ -10,8 +10,11 @@ add_w(df)
 \item{df}{A data frame}
 }
 \value{
-A new data frame with an added column, "water_content"
+A new data frame containing the original data with an added column, "water_content".
 }
 \description{
-add_w
+
+}
+\references{
+\href{https://www.pearson.com/us/higher-education/product/Brady-Nature-and-Properties-of-Soils-The-13th-Edition/9780130167637.html}{Brady and Weil, 2002. The Nature and Properties of Soil.}
 }

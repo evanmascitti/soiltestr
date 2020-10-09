@@ -1,14 +1,22 @@
-#' add_w
+#' Calculate gravimetric water content & add to the data frame
 #'
-#' @param df A data frame containing columns "tin_w_wet_sample", "tin_w_OD_sample", and "tin_tare".
+#' The input data should contain columns named "tin_w_wet_sample",
+#' "tin_w_OD_sample", and "tin_tare". Note that the tin tare should
+#' be looked up from the appropriate set of pre-weighed tins. The
+#' formula for computing water content is \eqn{\\frac{m_{water}{m_{oven-dry soil}}} .
+#'
+#'
+#' @param df A data frame
 #'
 #' @return A new data frame containing the original data with an added column, "water_content".
 #'
 #' @export
 #'
 #' @examples
+#' @references \href{https://www.pearson.com/us/higher-education/product/Brady-Nature-and-Properties-of-Soils-The-13th-Edition/9780130167637.html}{Brady and Weil, 2002. The Nature and Properties of Soil.}
 add_w <- function(df) {
   df$water_content <- (df$tin_w_wet_sample - df$tin_w_OD_sample) / (df$tin_w_OD_sample - df$tin_tare)
   return(df)
 }
+
 
