@@ -8,11 +8,12 @@
 #'
 #' @param df A data frame
 #'
-#' @return A new data frame containing the original data with an added column, "water_content".
+#' @return A new data frame containing the original data with an added column,
+#'   "water_content" in decimal form.
 #'
 #' @export
 #'
-#' @examples
+#' @examples add_w(example_wcont)
 #' @references \href{https://www.pearson.com/us/higher-education/product/Brady-Nature-and-Properties-of-Soils-The-13th-Edition/9780130167637.html}{Brady and Weil, 2002. The Nature and Properties of Soil.}
 add_w <- function(df) {
   df$water_content <- (df$tin_w_wet_sample - df$tin_w_OD_sample) / (df$tin_w_OD_sample - df$tin_tare)
