@@ -1,8 +1,9 @@
 #' add_w
 #'
-#' @param df A data frame
+#' @param df A data frame containing columns "tin_w_wet_sample", "tin_w_OD_sample", and "tin_tare".
 #'
-#' @return A new data frame with an added column, "water_content"
+#' @return A new data frame containing the original data with an added column, "water_content".
+#'
 #' @export
 #'
 #' @examples
