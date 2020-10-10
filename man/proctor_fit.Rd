@@ -35,6 +35,7 @@ measured pycnometer value is used.)}
 }
 }
 \description{
+\lifecycle{maturing}
 The compaction curve is fit using a natural cubic spline. The function
 returns a 5-item list.  Porosity is calculated using a default specific
 gravity value of 2.7, but this must be over-ridden with a measured \eqn{G_s} value

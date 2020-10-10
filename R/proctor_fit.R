@@ -1,5 +1,6 @@
 #' Fit a compaction curve
 #'
+#'\lifecycle{maturing}
 #' The compaction curve is fit using a natural cubic spline. The function
 #' returns a 5-item list.  Porosity is calculated using a default specific
 #' gravity value of 2.7, but this must be over-ridden with a measured \eqn{G_s} value
@@ -8,6 +9,7 @@
 #' the present compaction effort, and the maximum dry density for the present
 #' compaction effort. The values of \eqn{w_{opt}} and \eqn{d_{max}} are computed by an
 #' optimization of the the spline function.
+#'
 #'
 #'
 #' @param df A data frame of raw compaction data containing (at a
