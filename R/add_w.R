@@ -1,4 +1,5 @@
 #' Calculate gravimetric water content & add to the data frame
+#'
 #'\lifecycle{stable}
 #'The input data should contain columns named "tin_w_wet_sample",
 #'"tin_w_OD_sample", and "tin_tare". Note that the tin tare should be looked up
