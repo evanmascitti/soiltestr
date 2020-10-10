@@ -25,15 +25,15 @@
 #'    measured pycnometer value is used.)
 #'
 #' @return \describe{
-#'    \strong{physical_props }{A data frame containing the cylinder number, water content, moist density, dry density, total porosity, and void ratio for each compaction cylinder}
+#'    {physical_props }{A data frame containing the cylinder number, water content, moist density, dry density, total porosity, and void ratio for each compaction cylinder}
 #'
-#'    \strong{proctor_model }{Model object of class "lm"}
+#'    {proctor_model }{Model object of class "lm"}
 #'
-#'    \strong{proctor_function }{A function derived from proctor_model}
+#'    {proctor_function }{A function derived from proctor_model}
 #'
-#'    \strong{w_opt }{The optimum water content for the present compaction effort}
+#'    {w_opt }{The optimum water content for the present compaction effort}
 #'
-#'    \strong{d_max }{The maximum dry density for the present compaction effort}
+#'    {d_max }{The maximum dry density for the present compaction effort}
 #'    }
 #'
 #' @export
@@ -44,37 +44,47 @@
 #'
 #'@references Modified effort: \href{https://www.astm.org/Standards/D1557}{ASTM D1557-12e1}
 #'
+#'@examples
+#'library(diRtscience)
+#'#'std_eff <- dplyr::filter(example_proctor_data, compaction_effort == 'standard')
+#'#'proctor_fit(std_eff)
 #'
+#'
+
 proctor_fit <- function(df, spline.degree=3, Gs= 2.70) {
   # first compute water content, oven-dry soil mass, moist density, and dry density
-  physical_props <- df %>%
-    mutate(OD_soil_g = (filled_cylinder_mass_g - empty_cylinder_mass_g) / (1+ water_content ),
-           moist_density= (filled_cylinder_mass_g - empty_cylinder_mass_g) / cylinder_vol_cm3,
-           dry_density= OD_soil_g / cylinder_vol_cm3) %>%
-    select(cylinder_num, water_content, moist_density, dry_density) %>%
-    mutate(total_porosity= 1-(dry_density / Gs),
-           void_ratio= 1/ (1+total_porosity)
-    ) %>%
+
+ #  add .data and . as global variables to suppress note during R CMD CHECK
+
+
+
+  df_expanded <- df %>%
+    dplyr::mutate(OD_soil_g = (.data$filled_cylinder_mass_g - .data$empty_cylinder_mass_g) / (1+ .data$water_content ),
+           moist_density= (.data$filled_cylinder_mass_g - .data$empty_cylinder_mass_g) / .data$cylinder_vol_cm3,
+           dry_density= .data$OD_soil_g / .data$cylinder_vol_cm3,
+           total_porosity = 1 - (.data$dry_density / Gs) ,
+           void_ratio= 1/ (1 + .data$total_porosity) ) %>%
+    dplyr::select(c("cylinder_num", "water_content", "moist_density", "dry_density", "total_porosity", "void_ratio") )%>%
     as.data.frame()
 
-  proctor_model <- na.omit(lm(data=physical_props, formula = dry_density ~ splines::ns(water_content, spline.degree ) ) )
+  proctor_model <- stats::na.omit(stats::lm(data=df_expanded, formula = dry_density ~ splines::ns(water_content, spline.degree ) ) )
 
   proctor_function <- mosaic::makeFun(object= proctor_model)
 
-  w_opt <- optimize(f= proctor_function,
-                    interval = c(min(df$water_content, na.rm = TRUE),
-                                 max(df$water_content, na.rm = TRUE) ),
+  w_opt <- stats::optimize(f= proctor_function,
+                    interval = c(min(df_expanded$water_content, na.rm = TRUE),
+                                 max(df_expanded$water_content, na.rm = TRUE) ),
                     maximum = TRUE) %>%
     .$maximum %>%
     .[1]
-  d_max <- optimize(f= proctor_function,
-                    interval = c(min(df$water_content, na.rm = TRUE),
-                                 max(df$water_content, na.rm = TRUE) ),
+  d_max <- stats::optimize(f= proctor_function,
+                    interval = c(min(df_expanded$water_content, na.rm = TRUE),
+                                 max(df_expanded$water_content, na.rm = TRUE) ),
                     maximum = TRUE) %>%
     .$objective %>%
     .[[1]]
 
-  return(list(physical_props= physical_props,
+  return(list(physical_props= df_expanded,
               proctor_model= proctor_model,
               proctor_function = proctor_function,
               w_opt = w_opt,

@@ -23,15 +23,15 @@ measured pycnometer value is used.)}
 }
 \value{
 \describe{
-\strong{physical_props }{A data frame containing the cylinder number, water content, moist density, dry density, total porosity, and void ratio for each compaction cylinder}
+{physical_props }{A data frame containing the cylinder number, water content, moist density, dry density, total porosity, and void ratio for each compaction cylinder}
 
-\strong{proctor_model }{Model object of class "lm"}
+{proctor_model }{Model object of class "lm"}
 
-\strong{proctor_function }{A function derived from proctor_model}
+{proctor_function }{A function derived from proctor_model}
 
-\strong{w_opt }{The optimum water content for the present compaction effort}
+{w_opt }{The optimum water content for the present compaction effort}
 
-\strong{d_max }{The maximum dry density for the present compaction effort}
+{d_max }{The maximum dry density for the present compaction effort}
 }
 }
 \description{
@@ -43,6 +43,13 @@ object, the object converted to a  function, the optimum water content for
 the present compaction effort, and the maximum dry density for the present
 compaction effort. The values of \eqn{w_{opt}} and \eqn{d_{max}} are computed by an
 optimization of the the spline function.
+}
+\examples{
+library(diRtscience)
+#'std_eff <- dplyr::filter(example_proctor_data, compaction_effort == 'standard')
+#'proctor_fit(std_eff)
+
+
 }
 \references{
 Proctor, 1932. Description of field and laboratory methods. \emph{Eng. News Record}, 110:10, p. 286-289.
