@@ -2,9 +2,10 @@
 #'
 #'@description \lifecycle{stable}
 #' The input data should contain
-#' columns named `tin_w_wet_sample`, `tin_w_OD_sample`, and `tin_tare`"`. Note
+#' columns named `tin_w_wet_sample`, `tin_w_OD_sample`, and `tin_tare`. Note
 #' that the tin tare should be looked up from the appropriate set of
 #' pre-weighed tins. The formula for computing water content is
+#'
 #'\loadmathjax
 #' \mjdeqn{ \frac{m_{water}}{m_{OD~soil}}}{}
 #'
