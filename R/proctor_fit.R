@@ -45,9 +45,8 @@
 #'@references Modified effort: \href{https://www.astm.org/Standards/D1557}{ASTM D1557-12e1}
 #'
 #'@examples
-#'library(diRtscience)
-#'#'std_eff <- dplyr::filter(example_proctor_data, compaction_effort == 'standard')
-#'#'proctor_fit(std_eff)
+#'std_eff <- dplyr::filter(example_proctor_data, compaction_effort == 'standard')
+#'proctor_fit(std_eff)
 #'
 #'
 

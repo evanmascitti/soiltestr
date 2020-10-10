@@ -45,9 +45,8 @@ compaction effort. The values of \eqn{w_{opt}} and \eqn{d_{max}} are computed by
 optimization of the the spline function.
 }
 \examples{
-library(diRtscience)
-#'std_eff <- dplyr::filter(example_proctor_data, compaction_effort == 'standard')
-#'proctor_fit(std_eff)
+std_eff <- dplyr::filter(example_proctor_data, compaction_effort == 'standard')
+proctor_fit(std_eff)
 
 
 }
