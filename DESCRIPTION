@@ -31,7 +31,11 @@ Imports:
     stats,
     rlang,
     utils,
-    lifecycle
+    lifecycle,
+    mathjaxr
 Depends: 
     R (>= 2.10)
-RdMacros: lifecycle
+RdMacros: 
+    lifecycle,
+    mathjaxr
+            

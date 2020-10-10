@@ -1,16 +1,17 @@
 #' Calculate gravimetric water content & add to the data frame
 #'
-#'\lifecycle{stable}
-#'The input data should contain columns named "tin_w_wet_sample",
-#'"tin_w_OD_sample", and "tin_tare". Note that the tin tare should be looked up
-#'from the appropriate set of pre-weighed tins. The formula for computing water
-#'content is \eqn{\frac{m_{water}{m_{oven-dry soil}} } } .
-#'
+#'@description \lifecycle{stable}
+#' The input data should contain
+#' columns named `tin_w_wet_sample`, `tin_w_OD_sample`, and `tin_tare`"`. Note
+#' that the tin tare should be looked up from the appropriate set of
+#' pre-weighed tins. The formula for computing water content is
+#'\loadmathjax
+#' \mjdeqn{ \frac{m_{water}}{m_{OD~soil}}}{}
 #'
 #' @param df A data frame
 #'
 #' @return A new data frame containing the original data with an added column,
-#'   "water_content" in decimal form.
+#'   `"water_content"` in decimal form.
 #'
 #' @export
 #'
