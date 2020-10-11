@@ -16,9 +16,10 @@ A new data frame containing the original data with an added column,
 \description{
 \lifecycle{stable}
 The input data should contain
-columns named \code{tin_w_wet_sample}, \code{tin_w_OD_sample}, and \code{tin_tare}"`. Note
+columns named \code{tin_w_wet_sample}, \code{tin_w_OD_sample}, and \code{tin_tare}. Note
 that the tin tare should be looked up from the appropriate set of
 pre-weighed tins. The formula for computing water content is
+
 \loadmathjax
 \mjdeqn{ \frac{m_{water}}{m_{OD~soil}}}{}
 }
