@@ -22,8 +22,8 @@ devtools::install_github("evanmascitti/diRtscience")
 ```
 
 This package contains concise functions to analyze laboratory soil test
-data. I wrote this package for my own use but other soil scientists may
-find it useful. The code encompasses several commonly performed tests
+data. I wrote the package primarily for my own use, but other soil scientists may also
+find it of value. The code encompasses several commonly performed lab tests
 (including particle size analysis, Proctor maximum density, and
 Atterberg limits) and specialized analyses that were developed
 specifically for this project. Examples include 3D morphometric analyses
