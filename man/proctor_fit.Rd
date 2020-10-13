@@ -7,7 +7,7 @@
 proctor_fit(df, spline.degree = 3, Gs = 2.7)
 }
 \arguments{
-\item{df}{A data frame of raw compaction data containing (at a
+\item{df}{A tibble containing raw compaction data containing (at a
 minimum) columns named "water_content", "filled_cylinder_mass_g",
 "empty_cylinder_mass_g", and " cylinder_vol_cm3"}
 
@@ -23,7 +23,7 @@ measured pycnometer value is used.)}
 }
 \value{
 \describe{
-{physical_props }{A data frame containing the cylinder number, water content, moist density, dry density, total porosity, and void ratio for each compaction cylinder}
+{physical_props }{A tibble containing the cylinder number, water content, moist density, dry density, total porosity, and void ratio for each compaction cylinder}
 
 {proctor_model }{Model object of class "lm"}
 

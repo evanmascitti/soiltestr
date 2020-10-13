@@ -32,10 +32,10 @@ Imports:
     rlang,
     utils,
     lifecycle,
-    mathjaxr
+    mathjaxr,
+    lubridate
 Depends: 
     R (>= 2.10)
 RdMacros: 
     lifecycle,
     mathjaxr
-            

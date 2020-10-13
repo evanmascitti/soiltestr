@@ -1,0 +1,106 @@
+#' Calculate soil mixture component weights
+#'
+#'\lifecycle{maturing}
+#'
+#'This function returns a concise, printer-friendly
+#'reference sheet. It is useful when mixing two soils ("sand" and "clay") from
+#'an air-dry condition. To arrive at a final mixture with the correct % sand by
+#'oven-dry mass, one must account for the % sand-size particles in both the
+#'"sand" component and the "clay" component, as well as the hygroscopic water
+#'held by each soil component when air-dry.
+#'
+#'The equation for the air-dry mass of sandy soil is
+#'\loadmathjax
+#' \mjdeqn{
+#'m_{sandy~(air-dry)}~=~\frac{S_f~-~S_{clayey}}{S_{sandy}~-~S_{clayey}}~\cdot~
+#'(1+w_{sandy}) }{} and the equation for the air-dry mass of clayey soil is
+#'\mjdeqn{
+#' m_{clayey~(air-dry)}~=~\left\lbrack(1~-~\left(\frac{S_f~-~S_{clayey}}
+#' {S_{sandy}~-~S_{clayey}}\right)\right\rbrack~\cdot~
+#' (1~+~w_{clayey})~\cdot~m_{~total~mixture} }{}
+#'
+#'
+#' @param mix_date Date the mixture is being produced in yyyy-mm-dd
+#' @param expt_mix_nums Character or numeric vector of the unique mix identifiers
+#' @param sand_name Unique name assigned to the particular sand material (for
+#'   example, "Boyd's Fine").
+#' @param clay_name Unique name assigned to the particular sand material (for
+#'   example, "LA black gumbo).
+#' @param final_sand_pcts Numeric vector of equal length to
+#'   \code{expt.mix.nums}. It corresponds to the final desired % of sand-size
+#'   particles in the soil mixture on an oven-dry mass basis.
+#' @param final_OD_kg  desired mass of mixed soil to obtain, on an oven-dry mass
+#'   basis (in kilograms). Defaults to 43 kg. This is a good estimate of the
+#'   mass needed to perform a standard Proctor test, a modified Proctor test,
+#'   and to prepare 6 "chunk" cylinders (3 each at standard and modified compaction
+#'   effort), with a 10% extra estimate to allow for PSA, Atterberg limits,
+#'   and a margin for error.
+#' @param w_final a numeric vector of the same length as \code{expt.mix.nums}
+#'   (if the mixes are to have different water contents), or a single numeric
+#'   value (if all mixes are to have the same final water content). Defaults to
+#'   0.05 which is the lowest water content typically used in a compaction test.
+#' @param sand_pct_in_sand a numeric vector of length 1 representing the
+#'   fraction of the "sand" component which is >53 \mjeqn{\mu}{}m sieve diameter, on an
+#'   oven-dry mass basis (decimal form).
+#' @param sand_pct_in_clay a numeric vector of length 1 representing the
+#'   fraction of the "clay" component which is >53 \mjeqn{\mu}{}m sieve diameter, on an
+#'   oven-dry mass basis (decimal form).
+#' @param w_sand The gravimetric water content of the air-dry "sand" component,
+#'   in decimal form.
+#' @param w_clay The gravimetric water content of the air-dry "clay" component,
+#'   in decimal form.
+#' @param backpack_flo_rate_g_per_sec The measured flow rate of water which is
+#'   being sprayed on the soil while in the mixer, in cm^3^ per second.
+#'
+#'@usage calculate_mix_wts(mix_date, expt_mix_nums, sand_name, clay_name,
+#'  final_sand_pcts, final_OD_kg= 43, w_final= 0.05, sand_pct_in_sand,
+#'  sand_pct_in_clay, w_sand= 0.001, w_clay, backpack_flo_rate_g_per_sec= 28.3)
+#'
+#'
+#'@return A ready-to-print table of values with an appropriate number of
+#'  significant figures.
+#'
+#'@example /R/examples/calculate_mix_wts.R
+#'
+#'@export
+#'
+#'
+
+calculate_mix_wts <- function(mix_date, expt_mix_nums, sand_name, clay_name,
+                              final_sand_pcts, final_OD_kg= 43, w_final= 0.05,
+                                  sand_pct_in_sand, sand_pct_in_clay, w_sand= 0.001,
+                              w_clay, backpack_flo_rate_g_per_sec= 28.3) {
+  mix_ref <-   tibble::tibble(
+    mix_date= lubridate::as_date(mix_date),
+    expt_mix_nums = expt_mix_nums,
+    sand_name = sand_name,
+    clay_name = clay_name,
+    sand_pct = final_sand_pcts,
+    final_OD_kg = final_OD_kg,
+    OD_sand_size_mass_in_final_mix = final_OD_kg*.data$sand_pct,
+    OD_non_sand_size_mass_in_final_mix = final_OD_kg - .data$OD_sand_size_mass_in_final_mix,
+    kg_OD_sand_component = ( final_OD_kg * (.data$sand_pct - sand_pct_in_clay) / (sand_pct_in_sand - sand_pct_in_clay) ),
+    kg_OD_clay_component = final_OD_kg - .data$kg_OD_sand_component,
+    kg_air_dry_sand_component = .data$kg_OD_sand_component*(1+w_sand),
+    kg_air_dry_clay_component = .data$kg_OD_clay_component*(1+w_clay),
+    kg_water_already_present = ( (w_sand * .data$kg_OD_sand_component) + (w_clay * .data$kg_OD_clay_component) ),
+    kg_water_desired_after_mixing = w_final * final_OD_kg,
+    kg_water_to_add = .data$kg_water_desired_after_mixing - .data$kg_water_already_present,
+    sec_to_spray_w_backpack = (.data$kg_water_to_add*1000) / backpack_flo_rate_g_per_sec ) %>%
+    dplyr::select(mix_date, expt_mix_nums, sand_name, clay_name, .data$sand_pct,
+                  .data$kg_air_dry_sand_component, .data$kg_air_dry_clay_component,
+                  .data$sec_to_spray_w_backpack ) %>%
+    dplyr::mutate(sand_pct= round(100*.data$sand_pct, 2),
+           kg_air_dry_sand_component= round(.data$kg_air_dry_sand_component, 1),
+           kg_air_dry_clay_component = round(.data$kg_air_dry_clay_component, 1),
+           sec_to_spray_w_backpack= round(.data$sec_to_spray_w_backpack, 1) ) %>%
+    dplyr::rename(`Mix Date`=  mix_date,
+                  `Mix number` = expt_mix_nums,
+                  `Sand name` = sand_name,
+                  `Clay name`= clay_name,
+                  `Final % sand-size` = .data$sand_pct,
+                  `kg sand component`= .data$kg_air_dry_sand_component,
+                  `kg clay component`= .data$kg_air_dry_clay_component,
+                  `seconds to spray`= .data$sec_to_spray_w_backpack)
+  return(mix_ref)
+}

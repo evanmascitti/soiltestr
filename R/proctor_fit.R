@@ -12,7 +12,7 @@
 #'
 #'
 #'
-#' @param df A data frame of raw compaction data containing (at a
+#' @param df A tibble containing raw compaction data containing (at a
 #'   minimum) columns named "water_content", "filled_cylinder_mass_g",
 #'   "empty_cylinder_mass_g", and " cylinder_vol_cm3"
 #'
@@ -27,7 +27,7 @@
 #'    measured pycnometer value is used.)
 #'
 #' @return \describe{
-#'    {physical_props }{A data frame containing the cylinder number, water content, moist density, dry density, total porosity, and void ratio for each compaction cylinder}
+#'    {physical_props }{A tibble containing the cylinder number, water content, moist density, dry density, total porosity, and void ratio for each compaction cylinder}
 #'
 #'    {proctor_model }{Model object of class "lm"}
 #'
@@ -55,10 +55,6 @@
 proctor_fit <- function(df, spline.degree=3, Gs= 2.70) {
   # first compute water content, oven-dry soil mass, moist density, and dry density
 
- #  add .data and . as global variables to suppress note during R CMD CHECK
-
-
-
   df_expanded <- df %>%
     dplyr::mutate(OD_soil_g = (.data$filled_cylinder_mass_g - .data$empty_cylinder_mass_g) / (1+ .data$water_content ),
            moist_density= (.data$filled_cylinder_mass_g - .data$empty_cylinder_mass_g) / .data$cylinder_vol_cm3,
@@ -66,7 +62,7 @@ proctor_fit <- function(df, spline.degree=3, Gs= 2.70) {
            total_porosity = 1 - (.data$dry_density / Gs) ,
            void_ratio= 1/ (1 + .data$total_porosity) ) %>%
     dplyr::select(c("cylinder_num", "water_content", "moist_density", "dry_density", "total_porosity", "void_ratio") )%>%
-    as.data.frame()
+    tibble::as_tibble()
 
   proctor_model <- stats::na.omit(stats::lm(data=df_expanded, formula = dry_density ~ splines::ns(water_content, spline.degree ) ) )
 
