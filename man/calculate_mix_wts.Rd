@@ -6,7 +6,7 @@
 \usage{
 calculate_mix_wts(mix_date, expt_mix_nums, sand_name, clay_name,
  final_sand_pcts, final_OD_kg= 43, w_final= 0.05, sand_pct_in_sand,
- sand_pct_in_clay, w_sand= 0.001, w_clay, backpack_flo_rate_g_per_sec= 28.3)
+ sand_pct_in_clay, w_sand= 0.001, w_clay=0.02, backpack_flo_rate_g_per_sec= 28.3)
 }
 \arguments{
 \item{mix_date}{Date the mixture is being produced in yyyy-mm-dd}
@@ -50,7 +50,7 @@ in decimal form.}
 in decimal form.}
 
 \item{backpack_flo_rate_g_per_sec}{The measured flow rate of water which is
-being sprayed on the soil while in the mixer, in cm^3^ per second.}
+being sprayed on the soil while in the mixer, in cm\mjeqn{^3}{}/second.}
 }
 \value{
 A ready-to-print table of values with an appropriate number of
@@ -67,22 +67,20 @@ oven-dry mass, one must account for the \% sand-size particles in both the
 "sand" component and the "clay" component, as well as the hygroscopic water
 held by each soil component when air-dry.
 
-The equation for the air-dry mass of sandy soil is
-\loadmathjax
-\mjdeqn{
+The equation for the air-dry mass of sandy soil is \loadmathjax \mjdeqn{
 m_{sandy~(air-dry)}~=~\frac{S_f~-~S_{clayey}}{S_{sandy}~-~S_{clayey}}~\cdot~
-(1+w_{sandy}) }{} and the equation for the air-dry mass of clayey soil is
-\mjdeqn{
+(1+w_{sandy})~\cdot~m_{~total~mixture~(oven-dry)} }{} and the equation for the
+air-dry mass of clayey soil is \mjdeqn{
 m_{clayey~(air-dry)}~=~\left\lbrack(1~-~\left(\frac{S_f~-~S_{clayey}}
 {S_{sandy}~-~S_{clayey}}\right)\right\rbrack~\cdot~
-(1~+~w_{clayey})~\cdot~m_{~total~mixture} }{}
+(1~+~w_{clayey})~\cdot~m_{~total~mixture~(oven-dry)} }{}
 }
 \examples{
 calculate_mix_wts(mix_date="2020-10-12", expt_mix_nums=c(1:5),
                   sand_name="concrete_sand", clay_name='brown_gumbo',
-                  final_sand_pcts=seq(0, 0.8, length.out = 5),
+                  final_sand_pcts=c(0.057, seq(0.2, 0.8, length.out = 4) ),
                   final_OD_kg= 43, w_final= 0.05, sand_pct_in_sand= 0.978,
-                  sand_pct_in_clay= 0.057, w_sand= 0.0011, w_clay= 0.014,
+                  sand_pct_in_clay= 0.057, w_sand= 0.0011, w_clay= 0.039,
                   backpack_flo_rate_g_per_sec= 28.3)
 
 

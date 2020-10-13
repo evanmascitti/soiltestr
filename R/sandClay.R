@@ -9,15 +9,13 @@
 #'"sand" component and the "clay" component, as well as the hygroscopic water
 #'held by each soil component when air-dry.
 #'
-#'The equation for the air-dry mass of sandy soil is
-#'\loadmathjax
-#' \mjdeqn{
+#'The equation for the air-dry mass of sandy soil is \loadmathjax \mjdeqn{
 #'m_{sandy~(air-dry)}~=~\frac{S_f~-~S_{clayey}}{S_{sandy}~-~S_{clayey}}~\cdot~
-#'(1+w_{sandy}) }{} and the equation for the air-dry mass of clayey soil is
-#'\mjdeqn{
-#' m_{clayey~(air-dry)}~=~\left\lbrack(1~-~\left(\frac{S_f~-~S_{clayey}}
-#' {S_{sandy}~-~S_{clayey}}\right)\right\rbrack~\cdot~
-#' (1~+~w_{clayey})~\cdot~m_{~total~mixture} }{}
+#'(1+w_{sandy})~\cdot~m_{~total~mixture~(oven-dry)} }{} and the equation for the
+#'air-dry mass of clayey soil is \mjdeqn{
+#'m_{clayey~(air-dry)}~=~\left\lbrack(1~-~\left(\frac{S_f~-~S_{clayey}}
+#'{S_{sandy}~-~S_{clayey}}\right)\right\rbrack~\cdot~
+#'(1~+~w_{clayey})~\cdot~m_{~total~mixture~(oven-dry)} }{}
 #'
 #'
 #' @param mix_date Date the mixture is being produced in yyyy-mm-dd
@@ -50,17 +48,17 @@
 #' @param w_clay The gravimetric water content of the air-dry "clay" component,
 #'   in decimal form.
 #' @param backpack_flo_rate_g_per_sec The measured flow rate of water which is
-#'   being sprayed on the soil while in the mixer, in cm^3^ per second.
+#'   being sprayed on the soil while in the mixer, in cm\mjeqn{^3}{}/second.
 #'
 #'@usage calculate_mix_wts(mix_date, expt_mix_nums, sand_name, clay_name,
 #'  final_sand_pcts, final_OD_kg= 43, w_final= 0.05, sand_pct_in_sand,
-#'  sand_pct_in_clay, w_sand= 0.001, w_clay, backpack_flo_rate_g_per_sec= 28.3)
+#'  sand_pct_in_clay, w_sand= 0.001, w_clay=0.02, backpack_flo_rate_g_per_sec= 28.3)
 #'
 #'
 #'@return A ready-to-print table of values with an appropriate number of
 #'  significant figures.
 #'
-#'@example /R/examples/calculate_mix_wts.R
+#'@example /R/examples/calculate_mix_wts_example.R
 #'
 #'@export
 #'
@@ -69,7 +67,7 @@
 calculate_mix_wts <- function(mix_date, expt_mix_nums, sand_name, clay_name,
                               final_sand_pcts, final_OD_kg= 43, w_final= 0.05,
                                   sand_pct_in_sand, sand_pct_in_clay, w_sand= 0.001,
-                              w_clay, backpack_flo_rate_g_per_sec= 28.3) {
+                              w_clay=0.02, backpack_flo_rate_g_per_sec= 28.3) {
   mix_ref <-   tibble::tibble(
     mix_date= lubridate::as_date(mix_date),
     expt_mix_nums = expt_mix_nums,
