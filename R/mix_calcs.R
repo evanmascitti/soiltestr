@@ -2,21 +2,11 @@
 #'
 #'\lifecycle{maturing}
 #'
-#'This function returns a concise, printer-friendly
+#'\loadmathjax
+#'Returns a concise, printer-friendly
 #'reference sheet. It is useful when mixing two soils ("sand" and "clay") from
-#'an air-dry condition. To arrive at a final mixture with the correct % sand by
-#'oven-dry mass, one must account for the % sand-size particles in both the
-#'"sand" component and the "clay" component, as well as the hygroscopic water
-#'held by each soil component when air-dry.
-#'
-#'The equation for the air-dry mass of sandy soil is \loadmathjax \mjdeqn{
-#'m_{sandy~(air-dry)}~=~\frac{S_f~-~S_{clayey}}{S_{sandy}~-~S_{clayey}}~\cdot~
-#'(1+w_{sandy})~\cdot~m_{~total~mixture~(oven-dry)} }{} and the equation for the
-#'air-dry mass of clayey soil is \mjdeqn{
-#'m_{clayey~(air-dry)}~=~\left\lbrack(1~-~\left(\frac{S_f~-~S_{clayey}}
-#'{S_{sandy}~-~S_{clayey}}\right)\right\rbrack~\cdot~
-#'(1~+~w_{clayey})~\cdot~m_{~total~mixture~(oven-dry)} }{}
-#'
+#'an air-dry condition to produce a final mixture having a particular %
+#'sand-size particles. See \strong{Details} for more info on the calculations.
 #'
 #' @param mix_date Date the mixture is being produced in yyyy-mm-dd
 #' @param expt_mix_nums Character or numeric vector of the unique mix identifiers
@@ -50,7 +40,7 @@
 #' @param backpack_flo_rate_g_per_sec The measured flow rate of water which is
 #'   being sprayed on the soil while in the mixer, in cm\mjeqn{^3}{}/second.
 #'
-#'@usage calculate_mix_wts(mix_date, expt_mix_nums, sand_name, clay_name,
+#'@usage mix_calcs(mix_date, expt_mix_nums, sand_name, clay_name,
 #'  final_sand_pcts, final_OD_kg= 43, w_final= 0.05, sand_pct_in_sand,
 #'  sand_pct_in_clay, w_sand= 0.001, w_clay=0.02, backpack_flo_rate_g_per_sec= 28.3)
 #'
@@ -58,15 +48,31 @@
 #'@return A ready-to-print table of values with an appropriate number of
 #'  significant figures.
 #'
-#'@example /R/examples/calculate_mix_wts_example.R
+#'@details
+#'This function solves a 2-member system of equations, accounting for the
+#'hygroscopic water content of each soil and their respective % sand-size
+#'particles. The user may choose any desired final % sand, and (so long as the
+#'water contents of each soil are known), the final mixture will contain the
+#'desired % sand on an oven-dry mass basis.
+#'
+#'The equation for the air-dry mass of sandy soil is  \mjdeqn{
+#'m_{sandy~(air-dry)}~=~\frac{S_f~-~S_{clayey}}{S_{sandy}~-~S_{clayey}}~\cdot~
+#'(1+w_{sandy})~\cdot~m_{~total~mixture~(oven-dry)} }{} and the equation for the
+#'air-dry mass of clayey soil is \mjdeqn{
+#'m_{clayey~(air-dry)}~=~\left\lbrack(1~-~\left(\frac{S_f~-~S_{clayey}}
+#'{S_{sandy}~-~S_{clayey}}\right)\right\rbrack~\cdot~
+#'(1~+~w_{clayey})~\cdot~m_{~total~mixture~(oven-dry)} }{}
+#'
+#'
+#'@example /R/examples/mix_calcs_example.R
 #'
 #'@export
 #'
 #'
 
-calculate_mix_wts <- function(mix_date, expt_mix_nums, sand_name, clay_name,
+mix_calcs <- function(mix_date, expt_mix_nums, sand_name, clay_name,
                               final_sand_pcts, final_OD_kg= 43, w_final= 0.05,
-                                  sand_pct_in_sand, sand_pct_in_clay, w_sand= 0.001,
+                              sand_pct_in_sand, sand_pct_in_clay, w_sand= 0.001,
                               w_clay=0.02, backpack_flo_rate_g_per_sec= 28.3) {
   mix_ref <-   tibble::tibble(
     mix_date= lubridate::as_date(mix_date),
@@ -89,9 +95,9 @@ calculate_mix_wts <- function(mix_date, expt_mix_nums, sand_name, clay_name,
                   .data$kg_air_dry_sand_component, .data$kg_air_dry_clay_component,
                   .data$sec_to_spray_w_backpack ) %>%
     dplyr::mutate(sand_pct= round(100*.data$sand_pct, 2),
-           kg_air_dry_sand_component= round(.data$kg_air_dry_sand_component, 1),
-           kg_air_dry_clay_component = round(.data$kg_air_dry_clay_component, 1),
-           sec_to_spray_w_backpack= round(.data$sec_to_spray_w_backpack, 1) ) %>%
+                  kg_air_dry_sand_component= round(.data$kg_air_dry_sand_component, 1),
+                  kg_air_dry_clay_component = round(.data$kg_air_dry_clay_component, 1),
+                  sec_to_spray_w_backpack= round(.data$sec_to_spray_w_backpack, 1) ) %>%
     dplyr::rename(`Mix Date`=  mix_date,
                   `Mix number` = expt_mix_nums,
                   `Sand name` = sand_name,

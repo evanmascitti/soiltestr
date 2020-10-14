@@ -8,8 +8,8 @@ proctor_fit(df, spline.degree = 3, Gs = 2.7)
 }
 \arguments{
 \item{df}{A tibble containing raw compaction data containing (at a
-minimum) columns named "water_content", "filled_cylinder_mass_g",
-"empty_cylinder_mass_g", and " cylinder_vol_cm3"}
+minimum) columns \code{"water_content", "filled_cylinder_mass_g",
+  "empty_cylinder_mass_g", "cylinder_vol_cm3"}}
 
 \item{spline.degree}{The number of terms in each piecewise polynomial
 spline (defaults to 3). May not exceed more than n-1 where n is the number
@@ -36,13 +36,14 @@ measured pycnometer value is used.)}
 }
 \description{
 \lifecycle{maturing}
+\loadmathjax
 The compaction curve is fit using a natural cubic spline. The function
 returns a 5-item list.  Porosity is calculated using a default specific
-gravity value of 2.7, but this must be over-ridden with a measured \eqn{G_s} value
+gravity value of 2.7, but this must be over-ridden with a measured \mjseqn{G_s} value
 if better control is required. The other 4 items in the list are the model
 object, the object converted to a  function, the optimum water content for
 the present compaction effort, and the maximum dry density for the present
-compaction effort. The values of \eqn{w_{opt}} and \eqn{d_{max}} are computed by an
+compaction effort. The values of \mjseqn{w_{opt}} and \mjseqn{d_{max}} are computed by an
 optimization of the the spline function.
 }
 \examples{
@@ -57,4 +58,7 @@ Proctor, 1932. Description of field and laboratory methods. \emph{Eng. News Reco
 Standard effort: \href{https://www.astm.org/Standards/D698.htm}{ASTM D698-12e2}
 
 Modified effort: \href{https://www.astm.org/Standards/D1557}{ASTM D1557-12e1}
+}
+\seealso{
+\code{\link[=compaction_aliquots]{compaction_aliquots()}}
 }

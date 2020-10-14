@@ -1,24 +1,22 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# diRtscience
-
 <!-- badges: start -->
 
 [![Lifecycle:
 maturing](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
 <!-- badges: end -->
 
-## Note: I am still in the process of tweaking a few functions. The package should be fully updated by Nov 1. 2020 .
+#### \*\* *Note: I am still in the process of tweaking a few functions. The package should be fully updated by Nov 1. 2020 .* \*\*
 
 ## Installation
 
 An official version of `diRtscience` is not yet available on CRAN.
-However, if you have the `devtools` package, you can install
-`diRtscience` with the command:
+However, if you have `devtools` or `remotes` installed, you can install
+it with the command:
 
 ``` r
-devtools::install_github("evanmascitti/diRtscience")
+remotes::install_github("evanmascitti/diRtscience")
 ```
 
 This package contains concise functions to analyze laboratory soil test
@@ -36,13 +34,20 @@ derived from unconfined compression tests.
 
 ## Utility
 
-The function `calculate_mix_wts` is supplied for generating the air-dry
-masses of soil to use when batch-blending sand-clay mixtures. It is a
-relatively simple solution to a 2-member system of equations which
-accounts for the hygroscopic water content of each soil and their
-respective % sand-size particles. The user may choose any desired final
-% sand, and (so long as the water contents of each soil are known), the
-final mixture will contain the desired % sand on an oven-dry mass basis.
+Brief descriptions of each function:
+
+**mix\_calcs**: Precise calculations for sand-clay soil mixtures
+
+**compaction\_aliquots**: Specimen preparation for Proctor compaction
+tests
+
+**proctor\_fit**: Fit a compaction curve and compute the optimum water
+content and maximum density.
+
+**add\_w**: Calculate gravimetric water content and add to an existing
+data frame
+
+## Methods included
 
 The standardized soil tests which may be deployed using this package
 include:

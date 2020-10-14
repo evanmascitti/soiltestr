@@ -2,6 +2,7 @@
 
 export("%>%")
 export(add_w)
-export(calculate_mix_wts)
+export(compaction_aliquots)
+export(mix_calcs)
 export(proctor_fit)
 importFrom(magrittr,"%>%")
