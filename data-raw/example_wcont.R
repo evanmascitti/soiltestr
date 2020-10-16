@@ -6,7 +6,7 @@
 
 set.seed(10)
 
-example_wcont_data <- readr::read_csv('data-raw/example_wcont-raw-data.csv') %>%
+example_wcont <- readr::read_csv('data-raw/example_wcont-raw-data.csv') %>%
   tibble::as_tibble() %>%
   dplyr::select(tin_w_wet_sample, tin_w_OD_sample, tin_tare) %>%
   tidyr::drop_na() %>%
@@ -14,6 +14,6 @@ example_wcont_data <- readr::read_csv('data-raw/example_wcont-raw-data.csv') %>%
 
 set.seed(NULL)
 
-example_wcont_data
+example_wcont
 
-usethis::use_data(example_wcont_data, overwrite = TRUE)
+usethis::use_data(example_wcont, overwrite = TRUE)
