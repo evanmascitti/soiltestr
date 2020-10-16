@@ -1,0 +1,133 @@
+expt_mix_num,test_type,rep,tin_w_wet_sample,tin_w_OD_sample,tin_tare,comments
+1,PL,1,12.006,11.633,7.198,NA
+1,PL,2,9.957,9.746,7.162,NA
+1,PL,3,10.367,10.129,7.213,NA
+2,PL,1,10.33,10.069,7.234,NA
+2,PL,2,10.895,10.605,7.249,NA
+2,PL,3,10.782,10.488,7.182,NA
+3,PL,1,11.521,11.141,7.25,NA
+3,PL,2,10.744,10.441,7.165,NA
+3,PL,3,9.998,9.751,7.127,NA
+4,PL,1,9.576,9.369,7.285,NA
+4,PL,2,9.791,9.539,7.232,NA
+4,PL,3,9.617,9.378,7.097,NA
+5,PL,1,10.934,10.499,7.182,NA
+5,PL,2,11.708,11.168,7.151,NA
+5,PL,3,10.2,9.841,7.211,NA
+6,PL,1,13.054,12.464,7.299,NA
+6,PL,2,12.488,11.939,7.242,NA
+6,PL,3,12.231,11.697,7.053,NA
+7,PL,1,11.791,11.321,7.281,NA
+7,PL,2,12.559,11.987,7.066,NA
+7,PL,3,12.408,11.875,7.184,NA
+8,PL,1,13.607,12.913,7.221,NA
+8,PL,2,13.063,12.421,7.181,NA
+8,PL,3,14.607,13.798,7.091,NA
+9,PL,1,10.836,10.427,7.148,NA
+9,PL,2,13.166,12.507,7.248,NA
+9,PL,3,10.882,10.472,7.264,NA
+10,PL,1,13.22,12.532,7.223,NA
+10,PL,2,10.455,10.083,7.198,NA
+10,PL,3,11.472,10.983,7.162,NA
+11,PL,1,10.775,10.298,7.179,NA
+11,PL,2,10.91,10.432,7.182,NA
+11,PL,3,10.831,10.364,7.151,NA
+11,PL,4,10.191,9.812,7.281,NA
+11,PL,5,9.481,9.172,7.066,NA
+11,PL,6,11.229,10.693,7.091,NA
+12,PL,1,13.962,13.087,7.211,NA
+12,PL,2,10.514,10.108,7.299,NA
+12,PL,3,10.602,10.177,7.242,NA
+13,PL,1,10.381,9.956,7.053,NA
+13,PL,2,12.034,11.417,7.25,NA
+13,PL,3,10.877,10.399,7.199,NA
+14,PL,1,11.558,10.976,7.117,NA
+14,PL,2,10.967,10.512,7.311,NA
+14,PL,3,5.121,4.614,1.288,NA
+14,PL,4,10.662,10.196,7.182,NA
+14,PL,5,11.176,10.664,7.285,NA
+14,PL,6,11.152,10.627,7.232,NA
+15,PL,1,5.402,4.862,1.286,NA
+15,PL,2,3.296,2.966,0.699,NA
+15,PL,3,3.023,2.727,0.748,NA
+15,PL,4,10.007,9.629,7.182,NA
+15,PL,5,10.678,10.209,7.151,NA
+15,PL,6,11.845,11.237,7.211,NA
+16,PL,1,NA,NA,NA,test not performed- nonplastic
+16,PL,2,NA,NA,NA,test not performed- nonplastic
+16,PL,3,NA,NA,NA,test not performed- nonplastic
+17,PL,1,NA,NA,NA,test not performed- nonplastic
+17,PL,2,NA,NA,NA,test not performed- nonplastic
+17,PL,3,NA,NA,NA,test not performed- nonplastic
+18,PL,1,NA,NA,NA,test not performed- nonplastic
+18,PL,2,NA,NA,NA,test not performed- nonplastic
+18,PL,3,NA,NA,NA,test not performed- nonplastic
+19,PL,1,NA,NA,NA,test not performed- nonplastic
+19,PL,2,NA,NA,NA,test not performed- nonplastic
+19,PL,3,NA,NA,NA,test not performed- nonplastic
+20,PL,1,NA,NA,NA,test not performed- nonplastic
+20,PL,2,NA,NA,NA,test not performed- nonplastic
+20,PL,3,NA,NA,NA,test not performed- nonplastic
+21,PL,1,13.061,12.688,7.25,NA
+21,PL,2,12.164,11.858,7.199,NA
+21,PL,3,11.775,11.49,7.117,NA
+22,PL,1,11.887,11.542,7.281,NA
+22,PL,2,13.782,13.322,7.066,NA
+22,PL,3,11.797,11.485,7.184,NA
+23,PL,1,19.308,18.912,13.943,NA
+23,PL,2,20.214,19.706,14.195,NA
+23,PL,3,18.681,18.334,14.115,NA
+24,PL,1,20.225,19.478,13.945,NA
+24,PL,2,18.643,18.156,14.259,NA
+24,PL,3,20.654,19.894,14.06,NA
+25,PL,1,23.314,22.094,14.034,NA
+25,PL,2,24.591,23.239,14.029,NA
+25,PL,3,24.21,22.979,14.225,NA
+26,PL,1,NA,NA,NA,could not be rolled out to 3 mm. Slight ductile deformation between ~8 and 6 mm
+26,PL,2,NA,NA,NA,could not be rolled out to 3 mm. Slight ductile deformation between ~8 and 6 mm
+26,PL,3,NA,NA,NA,could not be rolled out to 3 mm. Slight ductile deformation between ~8 and 6 mm
+27,PL,1,NA,NA,NA,could not be rolled out to 3 mm. Slight ductile deformation between ~8 and 6 mm
+27,PL,2,NA,NA,NA,could not be rolled out to 3 mm. Slight ductile deformation between ~8 and 6 mm
+27,PL,3,NA,NA,NA,could not be rolled out to 3 mm. Slight ductile deformation between ~8 and 6 mm
+28,PL,1,NA,NA,NA,could not be rolled out to 3 mm. Slight ductile deformation between ~8 and 6 mm
+28,PL,2,NA,NA,NA,could not be rolled out to 3 mm. Slight ductile deformation between ~8 and 6 mm
+28,PL,3,NA,NA,NA,could not be rolled out to 3 mm. Slight ductile deformation between ~8 and 6 mm
+29,PL,1,NA,NA,NA,could not be rolled out to 3 mm. Slight ductile deformation between ~8 and 6 mm
+29,PL,2,NA,NA,NA,could not be rolled out to 3 mm. Slight ductile deformation between ~8 and 6 mm
+29,PL,3,NA,NA,NA,could not be rolled out to 3 mm. Slight ductile deformation between ~8 and 6 mm
+30,PL,1,NA,NA,NA,could not be rolled out to 3 mm. Slight ductile deformation between ~8 and 6 mm
+30,PL,2,NA,NA,NA,could not be rolled out to 3 mm. Slight ductile deformation between ~8 and 6 mm
+30,PL,3,NA,NA,NA,could not be rolled out to 3 mm. Slight ductile deformation between ~8 and 6 mm
+31,PL,1,10.746,10.291,7.25,NA
+31,PL,2,9.979,9.621,7.199,NA
+31,PL,3,9.494,9.187,7.117,NA
+32,PL,1,12.238,11.731,7.311,NA
+32,PL,2,19.17,18.654,14.118,NA
+32,PL,3,18.216,17.765,13.8,NA
+33,PL,1,18.049,17.724,13.943,NA
+33,PL,2,18.254,17.935,14.195,NA
+33,PL,3,18.358,18.03,14.115,NA
+34,PL,1,19.837,19.442,13.945,NA
+34,PL,2,19.561,19.194,14.259,NA
+34,PL,3,19.703,19.332,14.06,NA
+35,PL,1,NA,NA,14.034,could not be rolled out
+35,PL,2,NA,NA,14.029,could not be rolled out
+35,PL,3,NA,NA,14.225,could not be rolled out
+36,PL,1,NA,NA,14.044,could not be rolled out
+36,PL,2,NA,NA,14.215,could not be rolled out
+36,PL,3,NA,NA,14.167,could not be rolled out
+37,PL,1,17.629,17.092,14.044,all the same sample. Have to replicate so the zero pct sand data point shows up properly in the facets
+37,PL,2,17.088,16.66,14.215,all the same sample. Have to replicate so the zero pct sand data point shows up properly in the facets
+37,PL,3,18.611,17.964,14.167,all the same sample. Have to replicate so the zero pct sand data point shows up properly in the facets
+38,PL,1,17.629,17.092,14.044,all the same sample. Have to replicate so the zero pct sand data point shows up properly in the facets
+38,PL,2,17.088,16.66,14.215,all the same sample. Have to replicate so the zero pct sand data point shows up properly in the facets
+38,PL,3,18.611,17.964,14.167,all the same sample. Have to replicate so the zero pct sand data point shows up properly in the facets
+39,PL,1,17.629,17.092,14.044,all the same sample. Have to replicate so the zero pct sand data point shows up properly in the facets
+39,PL,2,17.088,16.66,14.215,all the same sample. Have to replicate so the zero pct sand data point shows up properly in the facets
+39,PL,3,18.611,17.964,14.167,all the same sample. Have to replicate so the zero pct sand data point shows up properly in the facets
+40,PL,1,17.629,17.092,14.044,all the same sample. Have to replicate so the zero pct sand data point shows up properly in the facets
+40,PL,2,17.088,16.66,14.215,all the same sample. Have to replicate so the zero pct sand data point shows up properly in the facets
+40,PL,3,18.611,17.964,14.167,all the same sample. Have to replicate so the zero pct sand data point shows up properly in the facets
+41,PL,1,17.629,17.092,14.044,all the same sample. Have to replicate so the zero pct sand data point shows up properly in the facets
+41,PL,2,17.088,16.66,14.215,all the same sample. Have to replicate so the zero pct sand data point shows up properly in the facets
+41,PL,3,18.611,17.964,14.167,all the same sample. Have to replicate so the zero pct sand data point shows up properly in the facets

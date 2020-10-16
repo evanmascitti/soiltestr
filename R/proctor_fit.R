@@ -8,7 +8,7 @@
 #' if better control is required. The other 4 items in the list are the model
 #' object, the object converted to a  function, the optimum water content for
 #' the present compaction effort, and the maximum dry density for the present
-#' compaction effort. The values of \mjseqn{w_{opt}} and \mjseqn{d_{max}} are computed by an
+#' compaction effort. The values of \mjseqn{w_{opt}} and \mjseqn{\rho_{max}} are computed by an
 #' optimization of the the spline function.
 #'
 #'
