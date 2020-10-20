@@ -23,12 +23,14 @@ it with the command:
 remotes::install_github("evanmascitti/diRtscience")
 ```
 
+## Utility
+
 This package contains concise functions to analyze laboratory soil test
-data. I wrote this code for my own use but other soil scientists may
-find it of value. The code encompasses several commonly performed tests
+data. I wrote this code for my own use, but other soil scientists who do similar lab work may
+find it of value. Supported test methods include common characterization techniques
 (including particle size analysis, Proctor maximum density, and
 Atterberg limits) and specialized analyses that were developed
-specifically for this project. Examples include 3D morphometric analyses
+specifically for this project. These include 3D morphometric analyses
 of soil surfaces and numerical integration of stress-strain curves
 derived from unconfined compression tests.
 
@@ -36,7 +38,7 @@ derived from unconfined compression tests.
 
 <!-- un-comment this line once the vignettes are added  -->
 
-## Utility
+## Functions
 
 Brief descriptions of each function:
 
