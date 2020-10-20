@@ -9,6 +9,10 @@ maturing](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www
 
 #### \*\* *Note: I am still in the process of tweaking a few functions. The package should be fully updated by Nov 1. 2020 .* \*\*
 
+## Covering my bases with other soil scientists
+
+Please don't be enraged with my use of the "d-word." I'm keenly aware that soils are complex three-dimensional bodies warranting our respect and our study. But on a baseball field, we call it dirt. Let's not dwell on pedantic minutiae and instead move on to something more interesting than terminology grudges. 
+
 ## Installation
 
 An official version of `diRtscience` is not yet available on CRAN.
