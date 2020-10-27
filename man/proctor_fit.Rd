@@ -4,14 +4,14 @@
 \alias{proctor_fit}
 \title{Fit a compaction curve}
 \usage{
-proctor_fit(df, spline.degree = 3, Gs = 2.7)
+proctor_fit(df, spline_degree = 3, Gs = 2.7)
 }
 \arguments{
 \item{df}{A tibble containing raw compaction data containing (at a
 minimum) columns \code{"water_content", "filled_cylinder_mass_g",
   "empty_cylinder_mass_g", "cylinder_vol_cm3"}}
 
-\item{spline.degree}{The number of terms in each piecewise polynomial
+\item{spline_degree}{The number of terms in each piecewise polynomial
 spline (defaults to 3). May not exceed more than n-1 where n is the number
 of compaction cylinders tested.}
 

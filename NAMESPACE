@@ -3,6 +3,8 @@
 export("%>%")
 export(add_w)
 export(compaction_aliquots)
+export(d_max)
 export(mix_calcs)
 export(proctor_fit)
+export(w_opt)
 importFrom(magrittr,"%>%")

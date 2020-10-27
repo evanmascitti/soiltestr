@@ -34,15 +34,21 @@ derived from unconfined compression tests.
 
 Brief descriptions of each function:
 
-`mix_calcs`: Precise calculations for sand-clay soil mixtures
+`mix_calcs()`: Precise calculations for sand-clay soil mixtures
 
-`compaction_aliquots`: Specimen preparation for Proctor compaction tests
+`compaction_aliquots()`: Specimen preparation for Proctor compaction
+tests
 
-`proctor_fit`: Fit a compaction curve and compute the optimum water
+`proctor_fit()`: Fit a compaction curve and compute the optimum water
 content and maximum density.
 
-`add_w`: Calculate gravimetric water content and add to an existing data
-frame
+`d_max()` Fit a compaction curve and compute the maximum density only.
+
+`w_opt()` Fit a compaction curve and compute the optimum water content
+only.
+
+`add_w()`: Calculate gravimetric water content and add to an existing
+data frame
 
 ## Methods included
 

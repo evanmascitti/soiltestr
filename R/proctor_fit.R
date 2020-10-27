@@ -16,7 +16,7 @@
 #' @param df A tibble containing raw compaction data containing (at a
 #'   minimum) columns \code{"water_content", "filled_cylinder_mass_g",
 #'   "empty_cylinder_mass_g", "cylinder_vol_cm3"}
-#' @param spline.degree The number of terms in each piecewise polynomial
+#' @param spline_degree The number of terms in each piecewise polynomial
 #'   spline (defaults to 3). May not exceed more than n-1 where n is the number
 #'   of compaction cylinders tested.
 #' @param Gs The specific gravity of the soil solids, used to calculate
@@ -53,7 +53,7 @@
 #'
 #'
 
-proctor_fit <- function(df, spline.degree=3, Gs= 2.70) {
+proctor_fit <- function(df, spline_degree=3, Gs= 2.70) {
   # first compute water content, oven-dry soil mass, moist density, and dry density
 
   df_expanded <- df %>%
@@ -65,7 +65,7 @@ proctor_fit <- function(df, spline.degree=3, Gs= 2.70) {
     dplyr::select(c("cylinder_num", "water_content", "moist_density", "dry_density", "total_porosity", "void_ratio") )%>%
     tibble::as_tibble()
 
-  proctor_model <- stats::na.omit(stats::lm(data=df_expanded, formula = dry_density ~ splines::ns(water_content, spline.degree ) ) )
+  proctor_model <- stats::na.omit(stats::lm(data=df_expanded, formula = dry_density ~ splines::ns(water_content, spline_degree ) ) )
 
   proctor_function <- mosaic::makeFun(object= proctor_model)
 
