@@ -6,7 +6,11 @@
 maturing](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
 <!-- badges: end -->
 
-#### \*\* *Note: I am still in the process of tweaking a few functions. The package should be fully updated by Nov 1. 2020 .* \*\*
+To other soil scientists: Please do not label me a heretic simply from
+the package name. I too appreciate the complexity and beauty of natural
+soil bodies. The package name is a bit tongue-in-cheek; I wrote this
+code for my PhD project on baseball infield soils….and in baseball, like
+it or not, the infield skin is called “dirt.”
 
 ## Installation
 
