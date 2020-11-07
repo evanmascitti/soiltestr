@@ -1,6 +1,6 @@
 Package: diRtscience
 Title: Functions for analyzing baseball/softball infield mixes and other sports turf soils
-Version: 0.0.0.9000
+Version: 0.0.0.9001
 Authors@R: 
     person(given = "Evan",
            family = "Mascitti",
