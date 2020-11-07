@@ -34,7 +34,9 @@ Imports:
     lifecycle,
     mathjaxr,
     lubridate,
-    tidyr
+    tidyr,
+    ggplot2,
+    cowplot
 Depends: 
     R (>= 2.10)
 RdMacros: 
