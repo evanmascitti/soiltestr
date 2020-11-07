@@ -2,25 +2,25 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 <!-- badges: start -->
 
-[![Lifecycle:
-maturing](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
+[![Project Status: Active – The project has reached a stable, usable
+state and is being actively
+developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
+[![packageversion](https://img.shields.io/badge/Package%20version-0.0.0.9001-orange.svg?style=flat-square)](commits/master)
+[![Last-changedate](https://img.shields.io/badge/last%20change-2020--11--07-yellowgreen.svg)](/commits/master)
+
 <!-- badges: end -->
+
+## Disclaimer
 
 To other soil scientists: Please do not label me a heretic simply from
 the package name. I too appreciate the complexity and beauty of natural
-soil bodies. The package name is a bit tongue-in-cheek; I wrote this
-code for my PhD project on baseball infield soils….and in baseball, like
-it or not, the infield skin is called “dirt.”
+soil bodies, and I am fully aware of connotations associated with those
+who use the “d-word”. In this sense, the package name is a bit
+tongue-in-cheek; I wrote the code for my PhD project on baseball infield
+soils, and in baseball, like it or not, the infield skin is called
+“dirt.”
 
-## Installation
-
-An official version of `diRtscience` is not yet available on CRAN.
-However, if you have `devtools` or `remotes` installed, you can install
-it with the command:
-
-``` r
-remotes::install_github("evanmascitti/diRtscience")
-```
+## Utility
 
 This package contains concise functions to analyze laboratory soil test
 data. I wrote this package for my own use but other soil scientists may
@@ -31,12 +31,22 @@ specifically for this project. Examples include 3D morphometric analyses
 of soil surfaces and numerical integration of stress-strain curves
 derived from unconfined compression tests.
 
+## Installation
+
+An official version of `diRtscience` is not yet available on CRAN.
+However, like other packages on GitHub, you can install it with
+`devtools` or `remotes`:
+
+``` r
+remotes::install_github("evanmascitti/diRtscience")
+```
+
 <!-- The best way to learn about this package is through the vignettes  -->
 <!-- un-comment this line once the vignettes are added  -->
 
-## Utility
+## Functions
 
-Brief descriptions of each function:
+Below are terse descriptions of each function’s purpose:
 
 `mix_calcs()`: Precise calculations for sand-clay soil mixtures
 
@@ -54,7 +64,7 @@ only.
 `add_w()`: Calculate gravimetric water content and add to an existing
 data frame
 
-## Methods included
+## Standard method references
 
 The standardized soil tests which may be deployed using this package
 include:
@@ -75,4 +85,5 @@ include:
 
 #### Atterberg limits
 
--   [ASTM D4318-17e1](https://www.astm.org/Standards/D4318)
+-   Canonical thread-rolling/Casagrande cup: [ASTM
+    D4318-17e1](https://www.astm.org/Standards/D4318)
