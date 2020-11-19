@@ -11,7 +11,7 @@ scissor_trim_mesh(mesh, top_radius = 70, bottom_radius = 10, z_depth = 800)
 
 \item{top_radius}{the radius of the quasi-cone, i.e. the radius from the center of the mesh object along with to trim (measured in mm)}
 
-\item{bottom_radius}{the lower radius of the quasi-cone(measured in mm)}
+\item{bottom_radius}{the lower radius of the quasi-cone (measured in mm)}
 
 \item{z_depth}{the distance between top and bottom of the quasi-cone}
 }
