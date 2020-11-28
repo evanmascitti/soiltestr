@@ -1,10 +1,10 @@
+#' \lifecycle{deprecated}
 #'
 #' Plot a single compaction curve
 #'
 #' Fits a compaction curve using [proctor_fit()] and returns a **ggplot2** plot.
 #' User may specify several annotations to the plot including the maximum
-#' density, optimum water content, and zero air-voids curve. For plotting
-#' multiple samples on the same plot, see `facet_ggproctor()`.
+#' density, optimum water content, and zero air-voids curve. Faceting is **not** supported.
 #'
 #' @param df Raw laboratory data (masses and volumes)
 #' @param points Show compaction points?
@@ -28,9 +28,8 @@
 #' @return A "gg" plot object
 #' @export
 #'
-#' @example inst/examples/ggproctor_example.R
 #'
-ggproctor <- function(df = NULL,
+proctor_plot <- function(df = NULL,
                        points = TRUE,
                        curve = TRUE,
                        curve_se = FALSE,
@@ -47,6 +46,7 @@ ggproctor <- function(df = NULL,
                        line_size = 0.5,
                        ...) {
 
+  warning('\n `proctor_plot()` is deprecated; please use `ggproctor` instead.')
   fit <- diRtscience::proctor_fit(df, spline_degree = spline_degree)
 
   points_data <- fit$physical_props

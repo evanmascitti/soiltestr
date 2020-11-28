@@ -4,6 +4,7 @@
 #'Check out the package website \href{https://evanmascitti.github.io/diRtscience/}{here}.
 #'
 #' @docType package
+#' @importFrom rlang .data
 #' @name diRtscience
 
 NULL

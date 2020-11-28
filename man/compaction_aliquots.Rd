@@ -2,79 +2,92 @@
 % Please edit documentation in R/compaction_aliquots.R
 \name{compaction_aliquots}
 \alias{compaction_aliquots}
-\title{Simplify the process of adding water to soil compaction specimens}
+\title{\lifecycle{experimental} Simplify the process of adding water to soil
+compaction specimens}
 \usage{
 compaction_aliquots(
-  expt_mix_nums,
+  soil_ID = NULL,
+  w_extant = NULL,
+  est_w_opt = NULL,
+  w_int = 0.0125,
+  assumed_d_max = 2.24,
   n_cylinders = 5,
-  effort = c("standard", "modified"),
-  w_extant = 0.05,
-  standard_w_range = c(0.08, 0.14),
-  modified_w_range = c(0.05, 0.11),
-  assumed_dry_density = 2.235,
-  cylinder_volume = 937.4,
-  spray_flo_rate = 2.4
+  cylinder_volume_cm3 = 937.4,
+  spray_flo_rate_cm3 = 2.4
 )
 }
 \arguments{
-\item{expt_mix_nums}{A vector of the unique identifiers for the soils being
-prepared}
+\item{soil_ID}{unique identifier for the soil being tested}
 
-\item{n_cylinders}{The number of compaction points to prepare for each soil}
+\item{w_extant}{current water content (g/g)}
 
-\item{effort}{A character vector containing the names of the compaction
-methods to use}
+\item{est_w_opt}{estimated optimum water content for the effort to be tested
+(g/g); usually this is ~90\% of the plastic limit.}
 
-\item{w_extant}{The current water content of the soil}
+\item{w_int}{water content interval between successive compaction points,
+defaults to 0.0125 (i.e. 1.25\%)}
 
-\item{standard_w_range}{The full range of water contents to test with the
-standard effort}
+\item{assumed_d_max}{a conservatively high estimate of the maximum density
+that will be achieved in this test}
 
-\item{modified_w_range}{The full range of water contents to test with the
-modified effort}
+\item{n_cylinders}{number of compaction points to prepare, defaults to 6}
 
-\item{assumed_dry_density}{A conservatively high estimate of the maximum dry
-density achievable for this soil with the modified effort. Used to determine
-the aliquot mass for each compaction point.}
+\item{cylinder_volume_cm3}{volume of the compaction mold in cm^3^}
 
-\item{cylinder_volume}{The volume of the compaction mold, defaults to 937.4
-cm\mjeqn{^3}{}. Should be calibrated by the user for their own apparatus
-(see \href{https://www.astm.org/Standards/D698.htm}{ASTM D698-12e2} Annex A1
-for protocol)}
-
-\item{spray_flo_rate}{The flow rate of water being sprayed on the mixture, in
-cm/s}
+\item{spray_flo_rate_cm3}{flow rate of bottle sprayer in cm^3^}
 }
 \value{
-A tibble containing information about the specimens to prepare, most
-critically the initial moist mass to use and the time each specimen should
-be sprayed to bring it the desired water content.
+a tibble with one row per aliquot
 }
 \description{
-\lifecycle{experimental} \loadmathjax When preparing soil for compaction
-testing, it is often desired to mix the specimens to known water contents,
-rather than "eyeballing" the water additions. This ensures the water contents
-of the test specimens tested will bracket the optimum water content and be
-spaced along a roughly equal range. Some \emph{a priori} knowledge about the
-soil is needed to predict what this range will be. The function allows the
-user to specify the range of water contents that should be obtained for the
-test along with the anticipated maximum density, and it returns information
-about the mass of soil to prepare and how much water to add to each specimen.
+When preparing soil for compaction testing, it is often desired to mix the
+specimens to known water contents, rather than "eyeballing" the water
+additions. This ensures the water contents of the test specimens tested will
+bracket the optimum water content and be spaced along a roughly equal range.
+Some \emph{a priori} knowledge about the soil is needed to predict what this range
+will be. The function allows the user to specify the range of water contents
+that should be obtained for the test along with the anticipated maximum
+density, and it returns information about the mass of soil to prepare and how
+much water to add to each specimen.
 }
 \details{
 Using a battery-powered spray bottle increases the uniformity of water
 throughout the soil, and improves the efficiency of the process. The
-\code{spray_flo_rate} argument allows the user to specify the flow rate of the
+\code{spray_flo_rate_cm3} argument allows the user to specify the flow rate of the
 bottle, if used.
 
-Many tests are often performed in the same day, so the function is designed to
-make the calculations for multiple soils at multiple compaction efforts.
+Many tests are often performed in the same day. In this case it is
+recommended to construct a tibble containing columns named \code{soil_ID},
+\code{w_extant}, and \code{est_w_opt} and then use \code{purrr::pmap()} with this tibble as
+the \code{.l} argument. This action iteratively calls \code{compaction_aliquots()} for
+each row in the tibble and generates a tibble of the relevant info for each
+sample. This list can then be reduced in to a single tibble with \code{reduce(.f= rbind)} for saving to disk or printing. If multiple compaction efforts are
+also needed, repeat the above operation with different inputs for the
+alternative compaction efforts.
+
+The \code{assumed_d_max} argument is used to ensure enough soil is mixed
+for each water content. All the aliquots use the same oven-dry soil mass for
+mixing purposes; more soil will be left for points very dry or wet of
+optimum
 }
 \examples{
-compaction_aliquots(expt_mix_nums= c("01", "02", "03", "04"),
-                    w_extant = 0.17,
-                    standard_w_range = c(0.22, 0.32),
-                    modified_w_range = c(0.18, 0.28))
+# a single sample
+ compaction_aliquots(soil_ID = 'soilB',
+                            w_extant = 0.05,
+                            est_w_opt = 0.09)
+
+
+# Use purrr to run this function for multiple soils and combine into a single
+# tibble; each column should be a vector with one value per soil.
+ mixes <- tibble::tibble(
+  soil_ID = paste0("soil_0", c(1:3)),
+  w_extant= c(0.08, 0.077, 0.089),
+  est_w_opt = c(0.11, 0.105, 0.121)
+)
+
+purrr::pmap(.l = mixes,
+     .f= compaction_aliquots) \%>\%
+  purrr::reduce(rbind)
 
 
 }
@@ -82,5 +95,5 @@ compaction_aliquots(expt_mix_nums= c("01", "02", "03", "04"),
 \href{https://www.astm.org/Standards/D698.htm}{ASTM D698-12e2}
 }
 \seealso{
-\link{proctor_fit}
+\code{\link[=proctor_fit]{proctor_fit()}}, \code{\link[=mix_calcs]{mix_calcs()}}
 }

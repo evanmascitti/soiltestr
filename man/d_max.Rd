@@ -4,29 +4,22 @@
 \alias{d_max}
 \title{Fit a compaction curve, returning max density only}
 \usage{
-d_max(df, spline_degree = 3, Gs = 2.7)
+d_max(df, ...)
 }
 \arguments{
 \item{df}{A tibble containing raw compaction data containing (at a minimum)
 columns \code{"water_content", "filled_cylinder_mass_g",
  "empty_cylinder_mass_g", "cylinder_vol_cm3"}}
 
-\item{spline_degree}{The number of terms in each piecewise polynomial spline
-(defaults to 3). May not exceed more than n-1 where n is the number of
-compaction cylinders tested.}
-
-\item{Gs}{The specific gravity of the soil solids, used to calculate total
-porosity. The default value of 2.7 may be used as this is typical for
-sand-clay mixes. If better control is desired (i.e. for publication rather
-than a "first glance"; in this case it is strongly suggested that a measured
-pycnometer value is used.)}
+\item{...}{other arguments passed on to \code{\link[=proctor_fit]{proctor_fit()}}}
 }
 \value{
 {d_max }{The maximum dry density for the present compaction effort}
 }
 \description{
 \lifecycle{stable} \loadmathjax This is a convenient wrapper around
-\code{\link[=proctor_fit]{proctor_fit()}} which returns only the \strong{maximum dry density} (at the effort used), which is derived from the compaction
+\code{\link[=proctor_fit]{proctor_fit()}} which returns only the \strong{maximum dry density} (at the effort
+used), which is derived from the compaction
 curve. This is useful when the user wants to perform a "quick-and-dirty"
 analysis and avoid additional indexing into the more verbose result if
 \code{proctor_fit()}.
@@ -37,11 +30,6 @@ by the user (defaults to cubic). Porosity is calculated using a default
 specific gravity value of 2.7, but this must be over-ridden with a measured
 \mjseqn{G_s} value if better control is required. The \mjseqn{\rho_{max}} is
 computed by an optimization of the the spline function.
-#'
-}
-\examples{
-std_eff <- dplyr::filter(example_proctor_data, compaction_effort == 'standard')
-d_max(std_eff)
 }
 \references{
 Proctor, 1932. Description of field and laboratory methods.

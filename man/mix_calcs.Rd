@@ -2,7 +2,8 @@
 % Please edit documentation in R/mix_calcs.R
 \name{mix_calcs}
 \alias{mix_calcs}
-\title{Calculate soil mixture component weights}
+\title{#'\lifecycle{maturing}
+Calculate soil mixture component weights}
 \usage{
 mix_calcs(mix_date, expt_mix_nums, sand_name, clay_name,
  final_sand_pcts, final_OD_kg= 43, w_final= 0.05, sand_pct_in_sand,
@@ -57,15 +58,13 @@ A ready-to-print table of values with an appropriate number of
 significant figures.
 }
 \description{
-\lifecycle{maturing}
-}
-\details{
 \loadmathjax
 Returns a concise, printer-friendly
 reference sheet. It is useful when mixing two soils ("sand" and "clay") from
 an air-dry condition to produce a final mixture having a particular \%
 sand-size particles. See \strong{Details} for more info on the calculations.
-
+}
+\details{
 This function solves a 2-member system of equations, accounting for the
 hygroscopic water content of each soil and their respective \% sand-size
 particles. The user may choose any desired final \% sand, and (so long as the

@@ -1,12 +1,22 @@
-# one sample only
-standard_dat <- dplyr::filter(example_proctor_data, compaction_effort == "standard")
-ggproctor(standard_dat)
+# compute raw density values
+library(ggplot2)
+library(dplyr)
 
-# two samples aligned horizontally (not recommended, prefer faceting to preserve curve shapes)
-compaction_plots <- example_proctor_data %>%
-  dplyr::group_by(compaction_effort) %>%
-  tidyr::nest() %>%
-  dplyr::mutate(plot = purrr::map(data, ggproctor)) %>%
-  .$plot
+compaction_data <- example_proctor_data %>%
+  add_physical_properties()
 
-cowplot::plot_grid(compaction_plots, align = "h", axis = "x")
+# a single sample
+standard_data <- filter(compaction_data, compaction_effort == "standard")
+ggproctor(standard_data, identifier = )
+
+# two samples on same plot; annotations turned off
+ggproctor(compaction_data, identifier = compaction_effort, annotate = FALSE)
+
+# facet and leave data annotations on but turn off 90% saturation line
+ggproctor(compaction_data, sat_90 = FALSE, identifier = compaction_effort)+
+  facet_wrap(~compaction_effort)
+
+# change color of both curves to the same value
+ggproctor(compaction_data, sat_90 = FALSE,
+          identifier = compaction_effort, color = 'darkgreen')+
+  facet_wrap(~compaction_effort)

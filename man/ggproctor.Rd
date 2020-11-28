@@ -2,82 +2,64 @@
 % Please edit documentation in R/ggproctor.R
 \name{ggproctor}
 \alias{ggproctor}
-\title{Plot a single compaction curve}
+\title{Plot one or more compaction curves}
 \usage{
 ggproctor(
-  df = NULL,
-  points = TRUE,
-  curve = TRUE,
-  curve_se = FALSE,
-  spline_degree = 3,
-  label_d_max = TRUE,
-  label_w_opt = TRUE,
-  guideline = TRUE,
-  zav = TRUE,
-  zav_Gs = 2.7,
-  set_labs = TRUE,
-  point_col = "steelblue",
-  point_size = 2.5,
-  line_col = "grey20",
-  line_size = 0.5,
+  df,
+  identifier = sample_ID,
+  annotate = TRUE,
+  sat_100 = TRUE,
+  sat_90 = TRUE,
   ...
 )
 }
 \arguments{
-\item{df}{Raw laboratory data (masses and volumes)}
+\item{df}{data frame containing water contents and dry densities}
 
-\item{points}{Show compaction points?}
+\item{identifier}{unquoted column name which distinguishes the samples from each other, defaults to \code{sample_ID}}
 
-\item{curve}{Show compaction curve}
+\item{annotate}{whether to print the values of maximum density and optimum water content on the plot}
 
-\item{curve_se}{Display standard error around compaction curve?}
+\item{sat_100}{display the 100\% saturation line (temperature of 22 °^C^ assumed)}
 
-\item{spline_degree}{Number of knots to fit compaction curve, see
-\code{\link[=proctor_fit]{proctor_fit()}}}
+\item{sat_90}{display the 90\% saturation line (temperature of 22 °^C^ assumed)}
 
-\item{label_d_max}{Label the maximum density?}
-
-\item{label_w_opt}{Label the optimum water content?}
-
-\item{guideline}{Draw a vertical line between ρ~max~ and the x-axis?}
-
-\item{zav}{Plot the zero air-voids curve?}
-
-\item{zav_Gs}{Specific gravity used to compute the position of the ZAV curve;
-defaults to 2.7 but user should specify for better accuracy}
-
-\item{set_labs}{Add formatted titles to axes?}
-
-\item{point_col}{Color of points}
-
-\item{point_size}{Size of points in mm}
-
-\item{line_col}{Color of compaction curve trace}
-
-\item{line_size}{Thickness of compaction curve trace in mm}
-
-\item{...}{Other arguments passed to layers comprising the plot}
+\item{...}{other arguments passed on to \code{geom_smooth} and `geom_point()``}
 }
 \value{
-A "gg" plot object
+a 'gg' plot object
 }
 \description{
-Fits a compaction curve using \code{\link[=proctor_fit]{proctor_fit()}} and returns a \strong{ggplot2} plot.
-User may specify several annotations to the plot including the maximum
-density, optimum water content, and zero air-voids curve. For plotting
-multiple samples on the same plot, see \code{facet_ggproctor()}.
+Fits a compaction curve using a natural cubic spline and returns a
+\strong{ggplot2} plot. The maximum dry density and optimum water content can be
+annotated on the plot and the user may specify whether the 90\% and 100\%
+satration curves should be drawn. Faceting and the addition of other
+\strong{ggplot} layers are supported.
+}
+\details{
+\lifecycle{experimental}
 }
 \examples{
-# one sample only
-standard_dat <- dplyr::filter(example_proctor_data, compaction_effort == "standard")
-ggproctor(standard_dat)
+# compute raw density values
+library(ggplot2)
+library(dplyr)
 
-# two samples aligned horizontally (not recommended, prefer faceting to preserve curve shapes)
-compaction_plots <- example_proctor_data \%>\%
-  dplyr::group_by(compaction_effort) \%>\%
-  tidyr::nest() \%>\%
-  dplyr::mutate(plot = purrr::map(data, ggproctor)) \%>\%
-  .$plot
+compaction_data <- example_proctor_data \%>\%
+  add_physical_properties()
 
-cowplot::plot_grid(compaction_plots, align = "h", axis = "x")
+# a single sample
+standard_data <- filter(compaction_data, compaction_effort == "standard")
+ggproctor(standard_data, identifier = )
+
+# two samples on same plot; annotations turned off
+ggproctor(compaction_data, identifier = compaction_effort, annotate = FALSE)
+
+# facet and leave data annotations on but turn off 90\% saturation line
+ggproctor(compaction_data, sat_90 = FALSE, identifier = compaction_effort)+
+  facet_wrap(~compaction_effort)
+
+# change color of both curves to the same value
+ggproctor(compaction_data, sat_90 = FALSE,
+          identifier = compaction_effort, color = 'darkgreen')+
+  facet_wrap(~compaction_effort)
 }

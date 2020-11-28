@@ -1,216 +1,203 @@
+#' \lifecycle{experimental}
 #'
-#' Plot a single compaction curve
+#' @title Plot one or more compaction curves
 #'
-#' Fits a compaction curve using [proctor_fit()] and returns a **ggplot2** plot.
-#' User may specify several annotations to the plot including the maximum
-#' density, optimum water content, and zero air-voids curve. For plotting
-#' multiple samples on the same plot, see `facet_ggproctor()`.
+#' @description Fits a compaction curve using a natural cubic spline and returns a
+#' **ggplot2** plot. The maximum dry density and optimum water content can be
+#' annotated on the plot and the user may specify whether the 90% and 100%
+#' satration curves should be drawn. Faceting and the addition of other
+#' **ggplot** layers are supported.
 #'
-#' @param df Raw laboratory data (masses and volumes)
-#' @param points Show compaction points?
-#' @param curve Show compaction curve
-#' @param curve_se Display standard error around compaction curve?
-#' @param spline_degree Number of knots to fit compaction curve, see
-#'   [proctor_fit()]
-#' @param label_d_max Label the maximum density?
-#' @param label_w_opt Label the optimum water content?
-#' @param guideline Draw a vertical line between &rho;~max~ and the x-axis?
-#' @param zav Plot the zero air-voids curve?
-#' @param zav_Gs Specific gravity used to compute the position of the ZAV curve;
-#'   defaults to 2.7 but user should specify for better accuracy
-#' @param set_labs Add formatted titles to axes?
-#' @param point_col Color of points
-#' @param point_size Size of points in mm
-#' @param line_col Color of compaction curve trace
-#' @param line_size Thickness of compaction curve trace in mm
-#' @param ... Other arguments passed to layers comprising the plot
+#' @param df data frame containing water contents and dry densities
+#' @param identifier unquoted column name which distinguishes the samples from each other, defaults to `sample_ID`
+#' @param annotate whether to print the values of maximum density and optimum water content on the plot
+#' @param sat_100 display the 100% saturation line (temperature of 22 &deg;^C^ assumed)
+#' @param sat_90 display the 90% saturation line (temperature of 22 &deg;^C^ assumed)
+#' @param ... other arguments passed on to `geom_smooth` and `geom_point()``
 #'
-#' @return A "gg" plot object
+#' @return a 'gg' plot object
 #' @export
 #'
-#' @example inst/examples/ggproctor_example.R
+#' @example /inst/examples/ggproctor_example.R
 #'
-ggproctor <- function(df = NULL,
-                       points = TRUE,
-                       curve = TRUE,
-                       curve_se = FALSE,
-                       spline_degree = 3,
-                       label_d_max = TRUE,
-                       label_w_opt = TRUE,
-                       guideline = TRUE,
-                       zav = TRUE,
-                       zav_Gs = 2.7,
-                       set_labs = TRUE,
-                       point_col = "steelblue",
-                       point_size = 2.5,
-                       line_col = "grey20",
-                       line_size = 0.5,
-                       ...) {
 
-  fit <- diRtscience::proctor_fit(df, spline_degree = spline_degree)
+ggproctor <- function(df, identifier = sample_ID,
+                       annotate = TRUE, sat_100 = TRUE,
+                       sat_90 = TRUE, ...){
 
-  points_data <- fit$physical_props
+  # error if plotting soils with different Gs values and not using faceting
 
-  w_opt_label_data <- tibble::tibble(
-    w_opt = fit$w_opt[1],
-    water_content = fit$w_opt[1],
-    dry_density = min(points_data$dry_density) - 0.01,
-    w_opt_label_text = paste("w[opt]==",
-                             signif(w_opt[1], 3))
+
+  # make new data frame and then
+  # write function for annotating d_max and w_opt
+
+  annotation_df <- suppressMessages( df %>%
+    dplyr::group_by({{identifier}}) %>%
+    tidyr::nest() %>%
+    dplyr::mutate(
+      d_max = purrr::map_dbl(.data$data, diRtscience::d_max),
+      w_opt = purrr::map_dbl(.data$data, diRtscience::w_opt),
+      d_max_label_text = paste(
+        "bold(rho)[max]==", round(.data$d_max, 2)),
+      w_opt_label_text = paste(
+        "w[opt]==", round(.data$w_opt, 3))
+    ) %>%
+    dplyr::ungroup() %>%
+    dplyr::select(
+      {{identifier}},
+      .data$d_max,
+      .data$w_opt,
+      .data$d_max_label_text,
+      .data$w_opt_label_text  )
   )
 
-  d_max_label_data <- tibble::tibble(
-    d_max = fit$d_max[1],
-    water_content = fit$w_opt[1],
-    dry_density = fit$d_max[1] + 0.03,
-    d_max_label_text = paste("bold(rho)[max]==",
-                             signif(d_max, 3))
-  )
-
-  vert_guideline_data <- tibble::tibble(
-    x = fit$w_opt[1],
-    xend = fit$w_opt[1],
-    y = -Inf,
-    yend = fit$d_max - 0.005
-  )
-
-  zav_label_data <- tibble::tibble(
-    water_content = 1.65 * fit$w_opt[1],
-    dry_density = 0.9978 * zav_Gs / (1 + (zav_Gs * .data$water_content)),
-    zav_label_text = "100%\nsaturation"
-  )
-
-  zav_line <-
-    function(water_content)
-      (0.9978 * zav_Gs) / (1 + (zav_Gs * water_content))
-
-  zav_span <-
-    max(points_data$water_content) - min(points_data$water_content)
-
-  zav_min <- fit$w_opt[1] * 0.95
-
-  zav_lims <- c(zav_min, 1.65 * fit$w_opt[1])
-
-
-  # fudging some tick marks
-  # ticks <- seq(#round(min(points_data$water_content), 2) - 0.03,
-  #   0,
-  #   round(1.65*fit$w_opt[1], 2) + 0.01,
-  #   0.01)
-
-
-  geom_proctor <- function() {
-    list(
-
-      # ggplot2::geom_vline(
-      #   xintercept = ticks,
-      #   color= "grey85"),
-
-      if (zav) {
-        list(
-          ggplot2::geom_function(
-            fun =  zav_line,
-            color = "grey30",
-            linetype = "dotted",
-            xlim = zav_lims
-          ),
-          ggplot2::geom_label(
-            data = zav_label_data,
-            ggplot2::aes(label = .data$zav_label_text),
-            size = 8 / .pt,
-            color = "grey60",
-            hjust = "inward",
-            #vjust = "inward",
-            nudge_y = -0.015,
-            label.size = 0,
-
-          )
+  geom_proctor_annotation <- function(){
+    if(annotate == TRUE){
+      list(
+        ggplot2::geom_text(
+          data = annotation_df,
+          mapping = aes(x= w_opt,
+                        y= d_max,
+                        label = .data$d_max_label_text),
+          nudge_y = 0.03,
+          size = 7/.pt,
+          parse = TRUE
+        ),
+        ggplot2::geom_text(
+          data = annotation_df,
+          mapping = aes(x= w_opt,
+                        y= d_max,
+                        label = .data$w_opt_label_text),
+          nudge_y = 0.01,
+          size = 7/.pt,
+          parse = TRUE
         )
-      },
-
-      if (guideline) {
-        ggplot2::geom_segment(
-          data = vert_guideline_data,
-          ggplot2::aes(
-            x = .data$x,
-            xend = .data$xend,
-            y = .data$y,
-            yend = .data$yend
-          ),
-          linetype = "dashed",
-          color = line_col,
-          size = 0.6
-        )
-      },
-
-      if (label_w_opt) {
-        ggplot2::geom_label(
-          data = w_opt_label_data,
-          ggplot2::aes(label = .data$w_opt_label_text),
-          parse = TRUE,
-          label.size = 0,
-        )
-      },
-
-      if (label_d_max) {
-        ggplot2::geom_label(
-          data = d_max_label_data,
-          ggplot2::aes(label = .data$d_max_label_text),
-          parse = TRUE,
-          label.size = 0
-        )
-      },
-
-      if (set_labs)
-      {
-        ggplot2::labs(x = bquote("Water content, g g" ^ -1),
-                      y = bquote("Dry density, Mg m" ^ -3))
-      },
-
-      if (curve) {
-        ggplot2::geom_smooth(
-          data = points_data,
-          method = "lm",
-          formula = y ~ splines::ns(x, spline_degree),
-          se = curve_se,
-          color = line_col,
-          size = line_size,
-          ...
-        )
-      },
-
-      if (points) {
-        ggplot2::geom_point(data = points_data,
-                            color = point_col,
-                            size = point_size,
-                            ...)
-      },
-
-      ggplot2::scale_x_continuous(expand = ggplot2::expansion(
-        mult = c(0, 0),
-        add = c(0.03, 0.01)),
-        breaks = scales::breaks_width(width = 0.05, offset = 0)),
-      ggplot2::scale_y_continuous(expand = ggplot2::expansion(
-        mult = c(0, 0),
-        add = c(0.03, 0)),
-        breaks = scales::breaks_width(width = 0.05, offset = 0)),
-      cowplot::theme_cowplot(),
-      cowplot::background_grid(major = "xy", minor = "x"),
-      ggplot2::coord_fixed(ratio = .3185),
-      ggplot2::theme(panel.grid.major = element_line(linetype = "dotted"),
-                     panel.grid.minor = element_line(linetype = "dotted"))
-    )
+      )
+    }
   }
-  # end of geom_proctor
 
-  # generate the actual plot object
-  plot <- ggplot2::ggplot(data = points_data,
-                          ggplot2::aes(.data$water_content,
-                                       .data$dry_density,
-                                       ...)) +
-    geom_proctor()
+  # make geom for curve
+  geom_proctor_curve <- function(){
+
+      ggplot2::geom_smooth(
+      data = df,
+      ggplot2::aes(x= .data$water_content,
+                   y= .data$dry_density,
+                   color = {{identifier}}),
+      method= "lm",
+      formula = y~splines::ns(x, 3),
+      se = FALSE,
+      ...)
+
+  }
+
+  # make geom for points
+  geom_proctor_points <- function(){
+
+    ggplot2::geom_point(
+      data = df,
+      ggplot2::aes(x= .data$water_content,
+                   y= .data$dry_density,
+                   color = {{identifier}}),
+      size=1.5,
+      alpha = 0.8,
+      ...)
+  }
+
+  # make data frame and tat_function with label for 100 % saturation line
+
+  sat_curves_data <- df %>%
+    dplyr::mutate(w_rank = dplyr::row_number(.data$water_content)) %>%
+    dplyr::filter(.data$w_rank > 2) %>%
+    dplyr::mutate(
+      w_grid = modelr::seq_range(x= .data$water_content,
+                                 n = length(.data$water_content),
+                                 expand = 0.25),
+      sat_100_density =
+        1 / ( (1/.data$Gs) + (.data$w_grid/0.9978) + ((.data$w_grid/0.9978)*(1-1)/(1) ) ),
+      sat_90_density=
+        1 / ( (1/.data$Gs) + (.data$w_grid/0.9978) + ((.data$w_grid/0.9978)*(1-0.9)/(0.9)) )
+    )
+
+  geom_sat_100 <- function(){
 
 
-  return(plot)
+    if(sat_100 == TRUE) {
+      list(
+        ggplot2::stat_function(
+          fun = ~1 / ( (1/unique(df$Gs)) + (.x/0.9978) + ((.x/0.9978)*(1-1)/(1) ) ),
+          linetype= 'dotted',
+          xlim = c(min(sat_curves_data$w_grid),
+                   max(sat_curves_data$w_grid) ),
+          size = 0.25,
+          color= 'grey40'
+          ),
+        ggplot2::annotate(
+          "text",
+          label = "S[e]==1",
+          x= max(sat_curves_data$w_grid),
+          y= min(sat_curves_data$sat_100_density + 0.02),
+          size= 6/.pt,
+          color= 'grey40',
+          parse= T,
+          angle = -55
+        )
+      )
+    }
+  }
 
-}
+  geom_sat_90 <- function(){
+
+
+    if(sat_90 == TRUE) {
+      list(
+        ggplot2::stat_function(
+          fun = ~1 / ( (1/unique(df$Gs)) + (.x/0.9978) + ((.x/0.9978)*(1-0.9)/(0.9) ) ),
+          linetype= 'dotted',
+          xlim = c(min(sat_curves_data$w_grid),
+                   max(sat_curves_data$w_grid) ),
+          size = 0.25,
+          color= 'grey60'
+        ),
+        ggplot2::annotate(
+          "text",
+          label = "S[e]==0.9",
+          x= max(sat_curves_data$w_grid),
+          y= min(sat_curves_data$sat_90_density + 0.02),
+          size= 6/.pt,
+          color= 'grey60',
+          parse= T,
+          angle= -55
+        )
+      )
+    }
+  }
+
+  # make plot
+
+  proctor_plot <- ggplot2::ggplot(data = df)+
+    geom_sat_100()+
+    geom_sat_90()+
+    geom_proctor_annotation()+
+    geom_proctor_curve()+
+    geom_proctor_points()+
+    ggplot2::scale_x_continuous(
+      name= bquote("Water content, % g g" ^ -1),
+      labels = scales::label_percent(accuracy=1, suffix = ""),
+      breaks = scales::breaks_width(width = 0.02, offset = 0),
+      expand = expansion(mult=c(0,0),
+                         add= c(0.01, 0.01))) +
+    ggplot2::scale_y_continuous(
+      name = bquote("Dry density, Mg m"^-3),
+      labels = scales::label_number(accuracy = 0.01),
+      breaks= scales::breaks_width(width = 0.05, offset = 0),
+      expand= expansion(mult= c(0,0),
+                        add= c(0.05, 0.05)))+
+    ggplot2::coord_fixed(ratio = 0.32) +
+    ggplot2::scale_color_brewer(palette = "Set1") +
+    cowplot::theme_cowplot() +
+    cowplot::background_grid(minor="xy")
+
+  return(proctor_plot)
+
+} # end of function

@@ -1,12 +1,11 @@
+#' #'\lifecycle{maturing}
 #' Calculate soil mixture component weights
-#'
-#'\lifecycle{maturing}
 #'
 #'\loadmathjax
 #'Returns a concise, printer-friendly
 #'reference sheet. It is useful when mixing two soils ("sand" and "clay") from
 #'an air-dry condition to produce a final mixture having a particular %
-#'sand-size particles. See \strong{Details} for more info on the calculations.
+#'sand-size particles. See **Details** for more info on the calculations.
 #'
 #' @param mix_date Date the mixture is being produced in yyyy-mm-dd
 #' @param expt_mix_nums Character or numeric vector of the unique mix identifiers
@@ -40,7 +39,7 @@
 #' @param backpack_flo_rate_g_per_sec The measured flow rate of water which is
 #'   being sprayed on the soil while in the mixer, in cm\mjeqn{^3}{}/second.
 #'
-#'@usage mix_calcs(mix_date, expt_mix_nums, sand_name, clay_name,
+#' @usage mix_calcs(mix_date, expt_mix_nums, sand_name, clay_name,
 #'  final_sand_pcts, final_OD_kg= 43, w_final= 0.05, sand_pct_in_sand,
 #'  sand_pct_in_clay, w_sand= 0.001, w_clay=0.02, backpack_flo_rate_g_per_sec= 28.3)
 #'
@@ -64,7 +63,7 @@
 #'(1~+~w_{clayey})~\cdot~m_{~total~mixture~(oven-dry)} }{}
 #'
 #'
-#'@example /R/examples/mix_calcs_example.R
+#'@example inst/examples/mix_calcs_example.R
 #'
 #'@export
 #'

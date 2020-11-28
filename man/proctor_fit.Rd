@@ -4,61 +4,61 @@
 \alias{proctor_fit}
 \title{Fit a compaction curve}
 \usage{
-proctor_fit(df, spline_degree = 3, Gs = 2.7)
+proctor_fit(df, spline_degree = 3)
 }
 \arguments{
-\item{df}{A tibble containing raw compaction data containing (at a
-minimum) columns \code{"water_content", "filled_cylinder_mass_g",
-  "empty_cylinder_mass_g", "cylinder_vol_cm3"}}
+\item{df}{A tibble containing raw compaction data containing (at a minimum)
+columns \code{"water_content", "filled_cylinder_mass_g",
+ "empty_cylinder_mass_g", "cylinder_vol_cm3"}}
 
-\item{spline_degree}{The number of terms in each piecewise polynomial
-spline (defaults to 3). May not exceed more than n-1 where n is the number
-of compaction cylinders tested.}
-
-\item{Gs}{The specific gravity of the soil solids, used to calculate
-total porosity. The default value of 2.7 may be used as this is typical
-for sand-clay mixes. If better control is desired (i.e. for publication
-rather than a "first glance"; in this case it is strongly suggested that a
-measured pycnometer value is used.)}
+\item{spline_degree}{The number of terms in each piece-wise polynomial spline
+(defaults to 3). May not exceed more than n-1 where n is the number of
+compaction cylinders tested.}
 }
 \value{
-\describe{
-{physical_props }{A tibble containing the cylinder number, water content, moist density, dry density, total porosity, and void ratio for each compaction cylinder}
+A list with 5 elements:
+\itemize{
+\item \code{physical_props} a tibble containing the cylinder number, the water content,
+and the computed physical properties for each specimen:
+\item moist density
+\item dry density
+\item total porosity
+\item void ratio
+\item effective saturation
+}
 
-{proctor_model }{Model object of class "lm"}
-
-{proctor_function }{A function derived from proctor_model}
-
-{w_opt }{The optimum water content for the present compaction effort}
-
-{d_max }{The maximum dry density for the present compaction effort}
+Note: porosity is calculated using the specific gravity contained in
+the required \code{Gs} column of the data frame passed via \code{df}.
+\itemize{
+\item \code{proctor_model} S3 object returned by a call to \code{lm}
+\item \code{proctor_function} R bytecode function derived from proctor_model
+\item \code{w_opt} The optimum water content for the present compaction effort
+\item \code{d_max} The maximum dry density for the present compaction effort
 }
 }
 \description{
 \lifecycle{maturing}
 \loadmathjax
-The compaction curve is fit using a natural cubic spline. The function
-returns a 5-item list.  Porosity is calculated using a default specific
-gravity value of 2.7, but this must be over-ridden with a measured \mjseqn{G_s} value
-if better control is required. The other 4 items in the list are the model
-object, the object converted to a  function, the optimum water content for
-the present compaction effort, and the maximum dry density for the present
-compaction effort. The values of \mjseqn{w_{opt}} and \mjseqn{\rho_{max}} are computed by an
-optimization of the the spline function.
+The compaction curve is fit using a natural
+cubic spline and optimized to find \eqn{D_{max}} and \eqn{w_{opt}}.
+}
+\details{
+The values of \mjseqn{w_{opt}} and \mjseqn{\rho_{max}} are computed
+by an optimization of the the spline function, see \code{\link[stats:optimize]{stats::optimize()}}.
 }
 \examples{
-std_eff <- dplyr::filter(example_proctor_data, compaction_effort == 'standard')
+std_eff <- dplyr::filter(example_proctor_data, compaction_effort == 'standard') \%>\%
+  add_physical_properties()
 proctor_fit(std_eff)
-
-
 }
 \references{
-Proctor, 1932. Description of field and laboratory methods. \emph{Eng. News Record}, 110:10, p. 286-289.
+Proctor, 1932. Description of field and laboratory methods. _Eng.
+News Record-, 110:10, p. 286-289.
 
 Standard effort: \href{https://www.astm.org/Standards/D698.htm}{ASTM D698-12e2}
 
 Modified effort: \href{https://www.astm.org/Standards/D1557}{ASTM D1557-12e1}
 }
 \seealso{
-\code{\link[=compaction_aliquots]{compaction_aliquots()}}
+\code{\link[=generate_proctor_datasheet]{generate_proctor_datasheet()}}, \code{\link[=compaction_aliquots]{compaction_aliquots()}}, \code{\link[=mix_calcs]{mix_calcs()}}, \code{\link[stats:optimize]{stats::optimize()}}
 }

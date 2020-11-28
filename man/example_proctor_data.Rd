@@ -5,7 +5,7 @@
 \alias{example_proctor_data}
 \title{Compaction data for an example professional-type infield mix}
 \format{
-A data frame with 10 rows and 10 columns.
+A data frame with 10 rows and 13 columns.
 }
 \usage{
 example_proctor_data

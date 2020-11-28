@@ -4,22 +4,14 @@
 \alias{w_opt}
 \title{Fit a compaction curve, returning optimum water content only}
 \usage{
-w_opt(df, spline_degree = 3, Gs = 2.7)
+w_opt(df, ...)
 }
 \arguments{
 \item{df}{A tibble containing raw compaction data containing (at a minimum)
 columns \code{"water_content", "filled_cylinder_mass_g",
  "empty_cylinder_mass_g", "cylinder_vol_cm3"}}
 
-\item{spline_degree}{The number of terms in each piecewise polynomial spline
-(defaults to 3). May not exceed more than n-1 where n is the number of
-compaction cylinders tested.}
-
-\item{Gs}{The specific gravity of the soil solids, used to calculate total
-porosity. The default value of 2.7 may be used as this is typical for
-sand-clay mixes. If better control is desired (i.e. for publication rather
-than a "first glance"; in this case it is strongly suggested that a measured
-pycnometer value is used.)}
+\item{...}{Other arguments passed on to \code{\link[=proctor_fit]{proctor_fit()}}}
 }
 \value{
 {w_opt }{The optimum water content for the present compaction effort}
@@ -37,11 +29,6 @@ by the user (defaults to cubic). Porosity is calculated using a default
 specific gravity value of 2.7, but this must be over-ridden with a measured
 \mjseqn{G_s} value if better control is required. The \mjseqn{w_{opt}} is
 computed by an optimization of the the spline function.
-#'
-}
-\examples{
-std_eff <- dplyr::filter(example_proctor_data, compaction_effort == 'standard')
-w_opt(std_eff)
 }
 \references{
 Proctor, 1932. Description of field and laboratory methods.
@@ -54,5 +41,5 @@ Modified effort: \href{https://www.astm.org/Standards/D1557}{ASTM
 D1557-12e1}
 }
 \seealso{
-\code{\link[=proctor_fit]{proctor_fit()}}, \link{d_max}
+\code{\link[=proctor_fit]{proctor_fit()}}, \code{\link[=d_max]{d_max()}}
 }
