@@ -5,8 +5,8 @@
 [![Project Status: Active – The project has reached a stable, usable
 state and is being actively
 developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
-[![packageversion](https://img.shields.io/badge/Package%20version-0.0.0.9001-orange.svg?style=flat-square)](commits/master)
-[![Last-changedate](https://img.shields.io/badge/last%20change-2020--11--07-yellowgreen.svg)](/commits/master)
+[![packageversion](https://img.shields.io/badge/Package%20version-0.0.2-orange.svg?style=flat-square)](commits/master)
+[![Last-changedate](https://img.shields.io/badge/last%20change-2020--11--28-yellowgreen.svg)](/commits/master)
 
 <!-- badges: end -->
 
@@ -48,21 +48,40 @@ remotes::install_github("evanmascitti/diRtscience")
 
 Below are terse descriptions of each function’s purpose:
 
-`mix_calcs()`: Precise calculations for sand-clay soil mixtures
+### Data analysis
+
+`add_w()`: Calculate gravimetric water content and add to an existing
+data frame
+
+`add_physical_properties()` Compute various metrics from raw Proctor
+data
 
 `compaction_aliquots()`: Specimen preparation for Proctor compaction
 tests
 
-`proctor_fit()`: Fit a compaction curve and compute the optimum water
-content and maximum density.
+`proctor_fit()`: Fit a compaction curve to compute w<sub>opt</sub> and
+ρ<sub>max</sub>
 
 `d_max()` Fit a compaction curve and compute the maximum density only.
 
 `w_opt()` Fit a compaction curve and compute the optimum water content
 only.
 
-`add_w()`: Calculate gravimetric water content and add to an existing
-data frame
+`compute_LL()` calculate the liquid limit from water contents and blow
+counts
+
+### Visualization
+
+`ggproctor()` plotting compaction curves with **ggplot2**
+
+`ggflowcurve()` plotting liquid limit data with **ggplot2**
+
+### Data managmement and reference sheets
+
+`mix_calcs()`: Precise calculations for sand-clay soil mixtures
+
+`generate_proctor_datasheet()` populates a skeleton .csv file for data
+collection
 
 ## Standard method references
 
