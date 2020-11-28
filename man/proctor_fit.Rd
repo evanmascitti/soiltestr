@@ -60,5 +60,5 @@ Standard effort: \href{https://www.astm.org/Standards/D698.htm}{ASTM D698-12e2}
 Modified effort: \href{https://www.astm.org/Standards/D1557}{ASTM D1557-12e1}
 }
 \seealso{
-\code{\link[=generate_proctor_datasheet]{generate_proctor_datasheet()}}, \code{\link[=compaction_aliquots]{compaction_aliquots()}}, \code{\link[=mix_calcs]{mix_calcs()}}, \code{\link[stats:optimize]{stats::optimize()}}
+\code{\link[=generate_proctor_datasheet]{generate_proctor_datasheet()}}, \code{\link[=proctor_prep]{proctor_prep()}}, \code{\link[=mix_calcs]{mix_calcs()}}, \code{\link[stats:optimize]{stats::optimize()}}
 }

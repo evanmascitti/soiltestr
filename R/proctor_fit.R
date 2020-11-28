@@ -45,7 +45,7 @@
 #'
 #'@references Modified effort: \href{https://www.astm.org/Standards/D1557}{ASTM D1557-12e1}
 #'
-#'@seealso [`generate_proctor_datasheet()`], [compaction_aliquots()], [mix_calcs()], [`stats::optimize()`]
+#'@seealso [`generate_proctor_datasheet()`], [`proctor_prep()`], [`mix_calcs()`], [`stats::optimize()`]
 #'
 #'@example inst/examples/proctor_fit_example.R
 #'
