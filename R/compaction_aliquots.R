@@ -13,7 +13,7 @@
 #'
 #'Using a battery-powered spray bottle increases the uniformity of water
 #'throughout the soil, and improves the efficiency of the process. The
-#'`spray_flo_rate_cm3` argument allows the user to specify the flow rate of the
+#'`spray_flo_rate_cm3_sec` argument allows the user to specify the flow rate of the
 #'bottle, if used.
 #'
 #'@details Many tests are often performed in the same day. In this case it is
@@ -21,22 +21,24 @@
 #'  `w_extant`, and `est_w_opt` and then use `purrr::pmap()` with this tibble as
 #'  the `.l` argument. This action iteratively calls `compaction_aliquots()` for
 #'  each row in the tibble and generates a tibble of the relevant info for each
-#'  sample. This list can then be reduced in to a single tibble with `reduce(.f=
+#'  sample. This list can then be reduced to a single tibble with `reduce(.f=
 #'  rbind)` for saving to disk or printing. If multiple compaction efforts are
-#'  also needed, repeat the above operation with different inputs for the
-#'  alternative compaction efforts.
+#'  also needed, add a column to the arguments tibble before performing the
+#'  operation above.
 #'
 #'@param soil_ID unique identifier for the soil being tested
 #'@param w_extant current water content (g/g)
 #'@param est_w_opt estimated optimum water content for the effort to be tested
-#'  (g/g); usually this is ~90% of the plastic limit.
+#'(g/g); usually this is ~90% of the plastic limit.
 #'@param w_int water content interval between successive compaction points,
 #'  defaults to 0.0125 (i.e. 1.25%)
 #'@param assumed_d_max a conservatively high estimate of the maximum density
 #'  that will be achieved in this test
 #'@param n_cylinders number of compaction points to prepare, defaults to 6
-#'@param cylinder_volume_cm3 volume of the compaction mold in cm^3^
-#'@param spray_flo_rate_cm3 flow rate of bottle sprayer in cm^3^
+#'@param cylinder_volume_cm3 volume of the compaction mold in
+#'  cm\ifelse{html}{\out{<sup>3</sup>}}{\eqn{^3}{^3}}
+#'@param spray_flo_rate_cm3_sec flow rate of bottle sprayer in
+#'  cm\ifelse{html}{\out{<sup>3</sup>}}{\eqn{^3}{^3}}/second
 #'
 #'@details The `assumed_d_max` argument is used to ensure enough soil is mixed
 #'  for each water content. All the aliquots use the same oven-dry soil mass for
@@ -58,7 +60,7 @@ compaction_aliquots <- function(soil_ID = NULL, w_extant = NULL,
                                         est_w_opt = NULL,w_int = 0.0125,
                                         assumed_d_max = 2.24,n_cylinders=5,
                                         cylinder_volume_cm3 = 937.4,
-                                        spray_flo_rate_cm3 = 2.40){
+                                        spray_flo_rate_cm3_sec = 2.40){
 
 
   # error messages if required arguments are not present
@@ -88,7 +90,7 @@ compaction_aliquots <- function(soil_ID = NULL, w_extant = NULL,
     w_desired_g = .data$w_desired*.data$OD_soil_to_use,
     w_already_present = .data$moist_soil_to_use - .data$OD_soil_to_use,
     w_to_add_g = .data$w_desired_g - .data$w_already_present,
-    sec_to_spray= round(.data$w_to_add_g/spray_flo_rate_cm3, 0),
+    sec_to_spray= round(.data$w_to_add_g/spray_flo_rate_cm3_sec, 0),
     sec_to_spray_period= lubridate::as.period(lubridate::as.duration(.data$sec_to_spray)),
     time_to_spray= sprintf('%02d:%02d',
                            lubridate::minute(.data$sec_to_spray_period),

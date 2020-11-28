@@ -22,22 +22,23 @@
 #'   and to prepare 6 "chunk" cylinders (3 each at standard and modified compaction
 #'   effort), with a 10% extra estimate to allow for PSA, Atterberg limits,
 #'   and a margin for error.
-#' @param w_final a numeric vector of the same length as \code{expt.mix.nums}
+#' @param w_final a numeric vector of the same length as `expt_mix_nums`
 #'   (if the mixes are to have different water contents), or a single numeric
 #'   value (if all mixes are to have the same final water content). Defaults to
 #'   0.05 which is the lowest water content typically used in a compaction test.
 #' @param sand_pct_in_sand a numeric vector of length 1 representing the
-#'   fraction of the "sand" component which is >53 \mjeqn{\mu}{}m sieve diameter, on an
+#'   fraction of the "sand" component which is >53 &mu;m sieve diameter, on an
 #'   oven-dry mass basis (decimal form).
 #' @param sand_pct_in_clay a numeric vector of length 1 representing the
-#'   fraction of the "clay" component which is >53 \mjeqn{\mu}{}m sieve diameter, on an
-#'   oven-dry mass basis (decimal form).
+#'   fraction of the "clay" component which is >53 &mu;m sieve diameter, on an
+#' oven-dry mass basis (decimal form).
 #' @param w_sand The gravimetric water content of the air-dry "sand" component,
 #'   in decimal form.
 #' @param w_clay The gravimetric water content of the air-dry "clay" component,
 #'   in decimal form.
 #' @param backpack_flo_rate_g_per_sec The measured flow rate of water which is
-#'   being sprayed on the soil while in the mixer, in cm\mjeqn{^3}{}/second.
+#'   being sprayed on the soil while in the mixer, in
+#'   cm\ifelse{html}{\out{<sup>3</sup>}}{\eqn{^3}{^3}}/second.
 #'
 #' @usage mix_calcs(mix_date, expt_mix_nums, sand_name, clay_name,
 #'  final_sand_pcts, final_OD_kg= 43, w_final= 0.05, sand_pct_in_sand,

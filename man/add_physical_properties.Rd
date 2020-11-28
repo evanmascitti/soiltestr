@@ -2,7 +2,8 @@
 % Please edit documentation in R/add_physical_properties.R
 \name{add_physical_properties}
 \alias{add_physical_properties}
-\title{\lifecycle{experimental}}
+\title{\lifecycle{experimental}
+\loadmathjax}
 \usage{
 add_physical_properties(df)
 }
@@ -21,13 +22,14 @@ each row. Output can be easily piped to \code{ggproctor()} for plotting purposes
 
 The data passed in via \code{df} must contain specific gravity values (in
 a column named \code{Gs}), gravimetric water contents in a column named
-\code{water_content}, and the ambient test temperature in °^C^ in a column
-named \code{ambient_temp_c}. Water contents can be easily computed with
-\code{\link[=add_w]{add_w()}}. The use of \code{generate_proctor_datasheet()} ensures compatibility
-of the the column names used during data collection with those expected by
-this function.
+\code{water_content}, and the ambient test temperature in ° in a column named
+\code{ambient_temp_c}. Water contents can be easily computed with \code{\link[=add_w]{add_w()}}.
+The use of \code{\link[=generate_proctor_datasheet]{generate_proctor_datasheet()}} ensures compatibility of the the
+column names used during data collection with those expected by this
+function.
 
 The properties added to the data frame include moist and oven-dry soil mass
-in grams, moist and dry density (ρ) in g/cm^3^, total porosity (n), void
+in grams, moist and dry density (ρ) in
+\ifelse{html}{\out{<sup>3</sup>}}{\eqn{^3}{^3}}, total porosity (n), void
 ratio (e), and effective saturation (Se).
 }

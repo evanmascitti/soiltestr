@@ -1,4 +1,5 @@
 #'\lifecycle{experimental}
+#'\loadmathjax
 #'
 #'Calculate physical properties of a soil specimen
 #'
@@ -9,15 +10,16 @@
 #'
 #'@details The data passed in via `df` must contain specific gravity values (in
 #'  a column named `Gs`), gravimetric water contents in a column named
-#'  `water_content`, and the ambient test temperature in &deg;^C^ in a column
-#'  named `ambient_temp_c`. Water contents can be easily computed with
-#'  [`add_w()`]. The use of `generate_proctor_datasheet()` ensures compatibility
-#'  of the the column names used during data collection with those expected by
-#'  this function.
+#'  `water_content`, and the ambient test temperature (&deg;C) in a column named
+#'  `ambient_temp_c`. Water contents can be easily computed with [`add_w()`].
+#'  The use of [`generate_proctor_datasheet()`] ensures compatibility of the the
+#'  column names used during data collection with those expected by this
+#'  function.
 #'
 #'  The properties added to the data frame include moist and oven-dry soil mass
-#'  in grams, moist and dry density (&rho;) in g/cm^3^, total porosity (n), void
-#'  ratio (e), and effective saturation (Se).
+#'  in grams, moist and dry density (&rho;) in
+#'  g/cm\ifelse{html}{\out{<sup>3</sup>}}{\eqn{^3}{^3}}, total porosity (n),
+#'  void ratio (e), and effective saturation (Se).
 #'
 #'@return mutated data frame with new columns, see details
 #'@export
