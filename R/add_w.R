@@ -21,6 +21,11 @@
 #' @references \href{https://www.pearson.com/us/higher-education/product/Brady-Nature-and-Properties-of-Soils-The-13th-Edition/9780130167637.html}{Brady and Weil, 2002. The Nature and Properties of Soil.}
 
 add_w <- function(df) {
+
+  if(!"tin_tare" %in% names(df)){
+    stop('\n\n No tin tare found. Did you forget to join the raw data with a set of tin tares?')
+  }
+
   df$water_content <- (df$tin_w_wet_sample - df$tin_w_OD_sample) / (df$tin_w_OD_sample - df$tin_tare)
   return(df)
 }

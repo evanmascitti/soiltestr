@@ -4,14 +4,46 @@
 \alias{compute_LL}
 \title{Calculate the liquid limit from the flow curve}
 \usage{
-compute_LL(flow_curve)
+compute_LL(df)
 }
 \arguments{
-\item{flow_curve}{the model object to use when computing the LL}
+\item{df}{data frame containing colums named \code{water_content} and
+\code{blow_count}. Water contents may be easily computed with \code{\link[=add_w]{add_w()}} once
+the raw data is joined with the appropriate set of tin tares from
+\code{\link{asi468_tin_tares}}.}
 }
 \value{
 numeric vector (length 1) containing the liquid limit as a decimal
 }
 \description{
 Uses a blow count of 25 to interpolate the liquid limit.
+}
+\details{
+\lifecycle{maturing}
+}
+\examples{
+# These operations work best with the pipe and other tidyverse conventions
+library(dplyr)
+library(magrittr)
+library(purrr)
+library(tidyr)
+
+# compute LL for one sample
+sample_2_LL <- example_LL_data[5:8, ] \%>\%
+  left_join(asi468_tin_tares$`2020-05-24`) \%>\%
+  add_w() \%>\%
+  compute_LL()
+sample_2_LL
+
+# use dplyr and purrr to iterate over multiple samples using a list-column
+# inside a nested tibble
+example_LL_data \%>\%
+  left_join(asi468_tin_tares$`2020-05-24`) \%>\%
+  add_w() \%>\%
+  group_by(expt_mix_num) \%>\%
+  nest() \%>\%
+  mutate(LL = map_dbl(data, compute_LL) )
+}
+\references{
+\href{https://www.astm.org/Standards/D4318}{ASTM D4318 - 17e1}
 }
