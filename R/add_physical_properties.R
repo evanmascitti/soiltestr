@@ -1,10 +1,11 @@
 #'\lifecycle{experimental}
 #'\loadmathjax
 #'
-#'Calculate physical properties of a soil specimen
+#' @title Calculate physical properties of a soil specimen
 #'
-#'Generates all property values for every soil specimen in the data frame, i.e
-#'each row. Output can be easily piped to `ggproctor()` for plotting purposes.
+#'@description Generates all property values for every soil specimen in the
+#'data frame, i.e each row. Output can be easily piped to `ggproctor()` for
+#'plotting purposes.
 #'
 #'@param df a data frame containing relevant specimen data, see **Details**
 #'

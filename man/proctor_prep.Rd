@@ -28,16 +28,18 @@ cm\ifelse{html}{\out{<sup>3</sup>}}{\eqn{^3}{^3}}}
 cm\ifelse{html}{\out{<sup>3</sup>}}{\eqn{^3}{^3}}/second}
 }
 \value{
-a tibble with one row per aliquot
+a tibble with one row per aliquot. If there are soils with water
+content exceeding the minimum value desired, a negative numer will populate
+the \code{w_to_add_g} and \code{time_to_spray} output columns
 }
 \description{
 Pass in a tibble of specimen information and compute the amount
 of water to add via bulk addition or spray bottle
 }
 \details{
-\lifecycle{experimental}
+\ifelse{html}{\out{<a href='https://www.tidyverse.org/lifecycle/#experimental'><img src='figures/lifecycle-experimental.svg' alt='Experimental lifecycle'></a>}}{\strong{Experimental}}
 
-#'When preparing soil for compaction testing, it is often desired to
+When preparing soil for compaction testing, it is often desired to
 mix the specimens to known water contents, rather than "eyeballing" the
 water additions. This ensures the water contents of the test specimens
 tested will bracket the optimum water content and be spaced along a roughly
@@ -49,19 +51,23 @@ mass of soil to prepare and how much water to add.
 
 Multiple tests are often performed in the same day and at multiple
 compaction efforts. For this reason, the data frame passed to
-\code{compaction_aliquots()} should contain the following columns: - \code{effort}: a
-character string specifying the type of compactive effort, i.e. "standard",
-"modified", or "reduced" - \code{sample_ID} a unique identifier between the
-samples tested, i.e. mix number or name - \code{w_extant} the current water
-content of the soil (g/g) - \code{est_w_opt} the estimated optimum water content
-for the compaction effort to be tested.
-w\ifelse{html}{\out{<sub>opt</sup>}}{\eqn{_{opt}}{}} for the standard effort
-is tyipcally ~ 90\% of the plastic limit and
-w\ifelse{html}{\out{<sub>opt-modified</sup>}}{\eqn{_{opt-modified}}{}} is
-3-4 \% below
-w\ifelse{html}{\out{<sub>opt-standard</sup>}}{\eqn{_{opt-standard}}{}}.
+\code{compaction_aliquots()} should contain the following columns:
+\itemize{
+\item \code{effort}: a character string specifying the type of compactive effort,
+i.e. "standard", "modified", or "reduced"
+\item \code{sample_ID} a unique identifier
+between the samples tested, i.e. mix number or name
+\item \code{w_extant} the current
+water content of the soil (g/g)
+\item \code{est_w_opt} the estimated optimum water
+content for the compaction effort to be tested.
+}
 
-This data frame can be easily prepared using \code{\link[dplyr:mutate-joins]{dplyr::left_join()}} if the
+Note that \code{w_opt} for the standard effort is ~ 90\% of the plastic limit.
+\code{w_opt} for the modified effort is typically 3-4 \% below that for the
+standard effort.
+
+The data frame passed to \code{df} can be easily prepared using \code{\link[dplyr:mutate-joins]{dplyr::left_join()}} if the
 data are already in R, as demonstrated in \strong{Examples}, or by using
 \code{\link[tidyr:expand]{tidyr::crossing()}} to generate all combinations of \code{effort} and
 \code{sample_ID}, then adding a data frame column containing the water contents.
@@ -69,9 +75,8 @@ The standard \code{w_opt}can be estimated in one of two ways: - Gradually add
 water to a ~ 25 mL soil specimen until it appears close to the optimum water
 content. Take a representative sample and measure the water content via
 oven-drying \href{https://www.astm.org/Standards/D2216.htm}{ASTM 2216 - 19} -
-Perform a plastic limit test via \href{https://www.astm.org/Standards/D4318}{ASTM D 4318} and estimate
-w\ifelse{html}{\out{<sub>opt-standard</sup>}}{\eqn{_{opt-standard}}{}} as
-90\% of this value. This routine is demonstrated in \strong{Examples}*
+Perform a plastic limit test and estimate \code{w_opt} as 90\% of
+this value. This routine is demonstrated in \strong{Examples}
 
 Using a battery-powered spray bottle increases the uniformity of water
 throughout the soil, and improves the efficiency of the process. The
@@ -80,7 +85,7 @@ of the bottle, if used.
 
 The \code{assumed_d_max} argument is used to ensure enough soil is mixed for each
 water content. All the aliquots use the same oven-dry soil mass for mixing
-purposes; more soil will be left for points very dry or wet of optimum.
+purposes; more soil will be left over for points very dry or wet of optimum.
 }
 \examples{
 # prepare tibble from existing water contents and estimated w_opt values (these

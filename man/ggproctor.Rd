@@ -24,7 +24,7 @@ ggproctor(
 
 \item{sat_90}{display the 90\% saturation line (temperature of 22 °^C^ assumed)}
 
-\item{...}{other arguments passed on to \code{geom_smooth} and `geom_point()``}
+\item{...}{other arguments passed on to \code{geom_smooth} and \code{geom_point()}}
 }
 \value{
 a 'gg' plot object

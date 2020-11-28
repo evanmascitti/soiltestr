@@ -1,9 +1,9 @@
-#' \lifecycle{experimental}
+#' `r lifecycle::badge('maturing')`
 #'
-#' Plots the results of Atterberg limit tests on the standard Casagrande
+#' @title Plots the results of Atterberg limit tests on the standard Casagrande
 #' plasticity chart
 #'
-#' Plots the U-line, A-line, and the classification symbols for
+#' @description Plots the U-line, A-line, and the classification symbols for
 #' the regions on the chart.The water content is converted from decimal form to
 #' percent form before plotting; therefore it should be in the data frame as a
 #' decimal.
@@ -11,7 +11,7 @@
 #'
 #' @param df a data frame containing LL and PI values
 #' @import ggplot2
-#' @return A ggplot2 object including the plot and its other components
+#' @return A `gg` plot object
 #' @export
 #'
 casagrande_chart <- function(df) {

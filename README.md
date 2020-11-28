@@ -46,7 +46,7 @@ remotes::install_github("evanmascitti/diRtscience")
 
 ## Functions
 
-Below are terse descriptions of each function’s purpose:
+Below are one-line overviews of each function’s purpose:
 
 ### Data analysis
 
@@ -56,8 +56,7 @@ data frame
 `add_physical_properties()` Compute various metrics from raw Proctor
 data
 
-`compaction_aliquots()`: Specimen preparation for Proctor compaction
-tests
+`proctor_prep()`: Specimen preparation for Proctor compaction tests
 
 `proctor_fit()`: Fit a compaction curve to compute w<sub>opt</sub> and
 ρ<sub>max</sub>

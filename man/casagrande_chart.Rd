@@ -2,7 +2,8 @@
 % Please edit documentation in R/casagrande_chart.R
 \name{casagrande_chart}
 \alias{casagrande_chart}
-\title{\lifecycle{experimental}}
+\title{Plots the results of Atterberg limit tests on the standard Casagrande
+plasticity chart}
 \usage{
 casagrande_chart(df)
 }
@@ -10,15 +11,14 @@ casagrande_chart(df)
 \item{df}{a data frame containing LL and PI values}
 }
 \value{
-A ggplot2 object including the plot and its other components
+A \code{gg} plot object
 }
 \description{
-Plots the results of Atterberg limit tests on the standard Casagrande
-plasticity chart
-}
-\details{
 Plots the U-line, A-line, and the classification symbols for
 the regions on the chart.The water content is converted from decimal form to
 percent form before plotting; therefore it should be in the data frame as a
 decimal.
+}
+\details{
+\ifelse{html}{\out{<a href='https://www.tidyverse.org/lifecycle/#maturing'><img src='figures/lifecycle-maturing.svg' alt='Maturing lifecycle'></a>}}{\strong{Maturing}}
 }

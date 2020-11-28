@@ -2,7 +2,7 @@
 % Please edit documentation in R/generate_proctor_datasheet.R
 \name{generate_proctor_datasheet}
 \alias{generate_proctor_datasheet}
-\title{\ifelse{html}{\out{<a href='https://www.tidyverse.org/lifecycle/#experimental'><img src='figures/lifecycle-experimental.svg' alt='Experimental lifecycle'></a>}}{\strong{Experimental}}}
+\title{Generate a table to hold raw data in compaction tests.}
 \usage{
 generate_proctor_datasheet(
   soil_IDs,
@@ -47,13 +47,13 @@ a tibble if \code{write = FALSE}; otherwise writes file to disk and
 displays a message.
 }
 \description{
-Generate a table to hold raw data in compaction tests.
-}
-\details{
 Generating a skeleton file permits a consistent data structure to be
 maintained over time. It also eliminates the need to manually create a file
 via Excel or another GUI, which is a nuisance and allows errors via
 copy-paste or typos.
+}
+\details{
+\ifelse{html}{\out{<a href='https://www.tidyverse.org/lifecycle/#experimental'><img src='figures/lifecycle-experimental.svg' alt='Experimental lifecycle'></a>}}{\strong{Experimental}}
 }
 \examples{
 generate_proctor_datasheet(soil_IDs= c("soil_A", "soil_B"),

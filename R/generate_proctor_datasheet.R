@@ -1,8 +1,8 @@
 #' `r lifecycle::badge('experimental')`
 #'
-#' Generate a table to hold raw data in compaction tests.
+#' @title Generate a table to hold raw data in compaction tests.
 #'
-#' Generating a skeleton file permits a consistent data structure to be
+#' @description Generating a skeleton file permits a consistent data structure to be
 #' maintained over time. It also eliminates the need to manually create a file
 #' via Excel or another GUI, which is a nuisance and allows errors via
 #' copy-paste or typos.

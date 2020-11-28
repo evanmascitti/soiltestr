@@ -1,4 +1,4 @@
-#' Calculate gravimetric water content & add to the data frame
+#' @title Calculate gravimetric water content & add to the data frame
 #'
 #'@description \lifecycle{stable}
 #' The input data should contain

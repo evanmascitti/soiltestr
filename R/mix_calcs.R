@@ -1,8 +1,9 @@
-#' #'\lifecycle{maturing}
-#' Calculate soil mixture component weights
+#' `r lifecycle::badge('maturing')`
+#'
+#' @title Calculate soil mixture component weights
 #'
 #'\loadmathjax
-#'Returns a concise, printer-friendly
+#'@description Returns a concise, printer-friendly
 #'reference sheet. It is useful when mixing two soils ("sand" and "clay") from
 #'an air-dry condition to produce a final mixture having a particular %
 #'sand-size particles. See **Details** for more info on the calculations.

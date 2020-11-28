@@ -2,8 +2,7 @@
 % Please edit documentation in R/add_physical_properties.R
 \name{add_physical_properties}
 \alias{add_physical_properties}
-\title{\lifecycle{experimental}
-\loadmathjax}
+\title{Calculate physical properties of a soil specimen}
 \usage{
 add_physical_properties(df)
 }
@@ -14,11 +13,13 @@ add_physical_properties(df)
 mutated data frame with new columns, see details
 }
 \description{
-Calculate physical properties of a soil specimen
+Generates all property values for every soil specimen in the
+data frame, i.e each row. Output can be easily piped to \code{ggproctor()} for
+plotting purposes.
 }
 \details{
-Generates all property values for every soil specimen in the data frame, i.e
-each row. Output can be easily piped to \code{ggproctor()} for plotting purposes.
+\lifecycle{experimental}
+\loadmathjax
 
 The data passed in via \code{df} must contain specific gravity values (in
 a column named \code{Gs}), gravimetric water contents in a column named
