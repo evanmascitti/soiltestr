@@ -129,7 +129,7 @@ proctor_prep <- function(df, w_int = 0.0125, assumed_d_max = 2.24,
     tidyr::unnest(.data$aliquots) %>%
     dplyr::ungroup() %>%
     dplyr::select(
-      .data$effort, .data$sample_ID, .data$moist_soil_to_use,
+      .data$effort, .data$sample_ID, .data$moist_soil_to_use, .data$w_desired,
       .data$w_to_add_g, .data$cylinder_number, .data$time_to_spray )
 
   return(newdf)
