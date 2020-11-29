@@ -20,9 +20,9 @@ ggproctor(
 
 \item{annotate}{whether to print the values of maximum density and optimum water content on the plot}
 
-\item{sat_100}{display the 100\% saturation line (temperature of 22 °^C^ assumed)}
+\item{sat_100}{display the 100\% saturation line (temperature of 22 °C assumed)}
 
-\item{sat_90}{display the 90\% saturation line (temperature of 22 °^C^ assumed)}
+\item{sat_90}{display the 90\% saturation line (temperature of 22 °C assumed)}
 
 \item{...}{other arguments passed on to \code{geom_smooth} and \code{geom_point()}}
 }

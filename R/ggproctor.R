@@ -11,8 +11,8 @@
 #' @param df data frame containing water contents and dry densities
 #' @param identifier unquoted column name which distinguishes the samples from each other, defaults to `sample_ID`
 #' @param annotate whether to print the values of maximum density and optimum water content on the plot
-#' @param sat_100 display the 100% saturation line (temperature of 22 &deg;^C^ assumed)
-#' @param sat_90 display the 90% saturation line (temperature of 22 &deg;^C^ assumed)
+#' @param sat_100 display the 100% saturation line (temperature of 22 &deg;C assumed)
+#' @param sat_90 display the 90% saturation line (temperature of 22 &deg;C assumed)
 #' @param ... other arguments passed on to `geom_smooth` and `geom_point()`
 #'
 #' @return a 'gg' plot object
