@@ -5,7 +5,7 @@
 #' @description Fits a compaction curve using a natural cubic spline and returns a
 #' **ggplot2** plot. The maximum dry density and optimum water content can be
 #' annotated on the plot and the user may specify whether the 90% and 100%
-#' satration curves should be drawn. Faceting and the addition of other
+#' saturation curves should be drawn. Faceting and the addition of other
 #' **ggplot** layers are supported.
 #'
 #' @param df data frame containing water contents and dry densities
@@ -25,7 +25,7 @@ ggproctor <- function(df, identifier = sample_ID,
                        annotate = TRUE, sat_100 = TRUE,
                        sat_90 = TRUE, ...){
 
-  # error if plotting soils with different Gs values and not using faceting
+  # warning if plotting soils with different Gs values and not using faceting
 
 
   # make new data frame and then
@@ -58,6 +58,7 @@ ggproctor <- function(df, identifier = sample_ID,
           data = annotation_df,
           mapping = aes(x= w_opt,
                         y= d_max,
+                        group= {{identifier}},
                         label = .data$d_max_label_text),
           nudge_y = 0.03,
           size = 7/.pt,
@@ -67,6 +68,7 @@ ggproctor <- function(df, identifier = sample_ID,
           data = annotation_df,
           mapping = aes(x= w_opt,
                         y= d_max,
+                        group= {{identifier}},
                         label = .data$w_opt_label_text),
           nudge_y = 0.01,
           size = 7/.pt,
@@ -104,7 +106,16 @@ ggproctor <- function(df, identifier = sample_ID,
       ...)
   }
 
-  # make data frame and tat_function with label for 100 % saturation line
+  # make data frame and function with label for 100 % saturation line
+
+
+  if(length(unique(df$Gs)) > 1){
+
+    stop('\n\n
+    More than one `Gs` value detected in data frame.
+    Relative saturation curves cannot be accurately drawn.')
+
+  } else{
 
   sat_curves_data <- df %>%
     dplyr::mutate(w_rank = dplyr::row_number(.data$water_content)) %>%
@@ -118,6 +129,7 @@ ggproctor <- function(df, identifier = sample_ID,
       sat_90_density=
         1 / ( (1/.data$Gs) + (.data$w_grid/0.9978) + ((.data$w_grid/0.9978)*(1-0.9)/(0.9)) )
     )
+  }
 
   geom_sat_100 <- function(){
 
