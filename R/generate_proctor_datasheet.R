@@ -7,7 +7,7 @@
 #' via Excel or another GUI, which is a nuisance and allows errors via
 #' copy-paste or typos.
 #'
-#' @param soil_IDs a vector of unique identifiers for the soils to test
+#' @param sample_IDs a vector of unique identifiers for the soils to test
 #' @param compaction_date the date the actual compaction test was performed
 #'   (c.f. the mixing or sample prep)
 #' @param efforts character vector of compaction conditions. Defaults to both
@@ -30,7 +30,7 @@
 #' @export
 #'
 
-generate_proctor_datasheet <- function(soil_IDs,
+generate_proctor_datasheet <- function(sample_IDs,
                                        compaction_date,
                                        efforts = c("standard", "modified"),
                                        write = FALSE,
@@ -43,7 +43,7 @@ generate_proctor_datasheet <- function(soil_IDs,
 
   # error and warning messages if required fields are left blank
 
-  if (missing(soil_IDs)) {
+  if (missing(sample_IDs)) {
     stop('\n\nNo soil IDs provided. Please provide a single ID or a character vector of IDs.')
   }
 
@@ -58,7 +58,7 @@ generate_proctor_datasheet <- function(soil_IDs,
   # Make tibble
 
     datasheet <- tidyr::crossing(
-      soil_ID = soil_IDs,
+      sample_ID = sample_IDs,
       effort= efforts,
       cylinder_number = 1:n_cyl
     ) %>%
@@ -78,9 +78,9 @@ generate_proctor_datasheet <- function(soil_IDs,
         comments = ""
       ) %>%
       dplyr::select(
-        .data$soil_ID, .data$effort, dplyr::everything()
+        .data$sample_ID, .data$effort, dplyr::everything()
       ) %>%
-      dplyr::arrange(dplyr::desc(.data$effort), .data$soil_ID, .data$cylinder_number)
+      dplyr::arrange(dplyr::desc(.data$effort), .data$sample_ID, .data$cylinder_number)
 
     # return error message if file path was not supplied
 

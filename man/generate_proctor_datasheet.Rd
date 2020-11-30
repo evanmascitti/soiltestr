@@ -5,7 +5,7 @@
 \title{Generate a table to hold raw data in compaction tests.}
 \usage{
 generate_proctor_datasheet(
-  soil_IDs,
+  sample_IDs,
   compaction_date,
   efforts = c("standard", "modified"),
   write = FALSE,
@@ -17,7 +17,7 @@ generate_proctor_datasheet(
 )
 }
 \arguments{
-\item{soil_IDs}{a vector of unique identifiers for the soils to test}
+\item{sample_IDs}{a vector of unique identifiers for the soils to test}
 
 \item{compaction_date}{the date the actual compaction test was performed
 (c.f. the mixing or sample prep)}
