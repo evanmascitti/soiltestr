@@ -24,17 +24,17 @@ w_info <- w_extant_values %>%
   arrange(desc(effort))
 
 # generate the reference table
-proctor_prep(df= w_info)
+proctor_prep(df= w_info, date= Sys.Date())
 
 # widen the interval for a clayey soil
 mix_03 <- w_info %>%
   filter(sample_ID == 'mix_03')
-proctor_prep(df= mix_03, w_int = 0.025)
+proctor_prep(df= mix_03, date= Sys.Date(), w_int = 0.025)
 
 # the function works fine with only one compaction effort but be sure this is
 # still one of the columns
 mix_03 %>%
   filter(effort == 'modified') %>%
-  proctor_prep()
+  proctor_prep(date= Sys.Date())
 
 

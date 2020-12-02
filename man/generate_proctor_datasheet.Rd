@@ -5,57 +5,92 @@
 \title{Generate a table to hold raw data in compaction tests.}
 \usage{
 generate_proctor_datasheet(
-  sample_IDs,
-  compaction_date,
-  efforts = c("standard", "modified"),
-  write = FALSE,
-  path = NULL,
+  prep_sheet,
+  dir,
+  path = "auto",
+  write = TRUE,
   cylinder_vol_cm3 = 937.4,
   empty_cylinder_mass_g = 1484.5,
-  n_cyl = 5,
-  ambient_temp_c = 22
+  ambient_temp_c = 22,
+  tin_tares_lookup = NULL
 )
 }
 \arguments{
-\item{sample_IDs}{a vector of unique identifiers for the soils to test}
+\item{prep_sheet}{A data frame. It is recommended to pipe this argument
+directly from \code{\link[=proctor_prep]{proctor_prep()}}.}
 
-\item{compaction_date}{the date the actual compaction test was performed
-(c.f. the mixing or sample prep)}
+\item{dir}{Directory in which to save the file, should end with \code{"/"}}
 
-\item{efforts}{character vector of compaction conditions. Defaults to both
-standard and modified}
+\item{path}{If \code{"auto"}, constructs a file name from the date column of \code{df}
+and the \code{dir} argument; otherwise specify a path to save the file
+(including relative directory)}
 
-\item{write}{if TRUE, saves the table to disk as a \code{.csv} file}
+\item{write}{Defaults to \code{TRUE} and saves data sheet as a .csv; if set to
+\code{FALSE}, returns a tibble instead of writing to disk}
 
-\item{path}{location to save the file}
+\item{cylinder_vol_cm3}{Volume of compaction mold}
 
-\item{cylinder_vol_cm3}{volume of compaction mold}
+\item{empty_cylinder_mass_g}{Mass of compaction mold}
 
-\item{empty_cylinder_mass_g}{mass of compaction mold}
+\item{ambient_temp_c}{Ambient temperature during the test in °C. Used
+to compute water density during data analysis (see
+\code{\link[=add_physical_properties]{add_physical_properties()}}). Defaults to 22 for filling data sheet; user
+should measure temperature during test and input before data collection. Be
+careful to record only one value during the test or
+\code{\link[=add_physical_properties]{add_physical_properties()}} will fail.}
 
-\item{n_cyl}{Number of compaction specimens to prepare per soil, defaults to
-5}
-
-\item{ambient_temp_c}{The ambient temperature during the test in °^C^.
-Used in \code{\link[=add_physical_properties]{add_physical_properties()}} to compute water density. Defaults to
-22 for filling data sheet; user should measure temperature during test and
-input before data collection. Be careful to record only one value during
-the test or \code{\link[=add_physical_properties]{add_physical_properties()}} will fail.}
+\item{tin_tares_lookup}{quoted string which identifies the set of tin tare
+measurements to use during subsequent data analyses. These are not used by
+this function, but including this information in the raw data file saves a
+step later in the analysis pipeline.}
 }
 \value{
-a tibble if \code{write = FALSE}; otherwise writes file to disk and
-displays a message.
+Writes file to disk if \code{write = TRUE}; returns a tibble if \code{write = FALSE} .
 }
 \description{
-Generating a skeleton file permits a consistent data structure to be
-maintained over time. It also eliminates the need to manually create a file
-via Excel or another GUI, which is a nuisance and allows errors via
-copy-paste or typos.
+Generating a skeleton file permits a consistent data structure
+to be maintained over time. It also eliminates the need to manually create
+a file via Excel or another GUI, which is a nuisance and allows errors via
+copy-paste or typos. The user may simply specify a directory and the file
+is automatically written to disk with a sensible name(
+\verb{~/<directory>/<date>_<proctor_raw_data>}). Alternatively, a custom
+file name can be specified.
 }
 \details{
 \ifelse{html}{\out{<a href='https://www.tidyverse.org/lifecycle/#experimental'><img src='figures/lifecycle-experimental.svg' alt='Experimental lifecycle'></a>}}{\strong{Experimental}}
 }
 \examples{
-generate_proctor_datasheet(soil_IDs= c("soil_A", "soil_B"),
-                          compaction_date = "2020-11-28")
+# prepare reference sheet for wetting samples from existing water contents and
+# estimated w_opt values (these should be estimated visually and confirmed with
+# water content measurements, but are simply typed here for demonstration)
+library(tibble)
+library(dplyr)
+library(tidyr)
+
+w_extant_values <- tibble(
+  sample_ID = paste0("mix_0", 1:3),
+  w_extant = c(0.048, 0.057, 0.062))
+
+PL_values <- tibble(
+  sample_ID = paste0("mix_0", 1:3),
+  PL= c(0.095, 0.10, 0.14),
+  standard = 0.9*PL,
+  modified= standard - 0.03)
+
+prep_sheet <- w_extant_values \%>\%
+  left_join(PL_values) \%>\%
+  select(-PL) \%>\%
+  pivot_longer(cols= c(standard:modified),
+               names_to =  'effort',
+               values_to = 'est_w_opt')\%>\%
+  select(sample_ID, effort, everything()) \%>\%
+  arrange(desc(effort)) \%>\%
+  proctor_prep(date = Sys.Date())
+
+# write file to disk
+generate_proctor_datasheet(prep_sheet, dir= paste0(tempdir(), "/") )
+
+# alternatively, return the data sheet as a tibble
+generate_proctor_datasheet(prep_sheet, write = FALSE)
+
 }

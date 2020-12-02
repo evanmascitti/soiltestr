@@ -2,72 +2,67 @@
 #'
 #' @title Generate a table to hold raw data in compaction tests.
 #'
-#' @description Generating a skeleton file permits a consistent data structure to be
-#' maintained over time. It also eliminates the need to manually create a file
-#' via Excel or another GUI, which is a nuisance and allows errors via
-#' copy-paste or typos.
+#' @description Generating a skeleton file permits a consistent data structure
+#'   to be maintained over time. It also eliminates the need to manually create
+#'   a file via Excel or another GUI, which is a nuisance and allows errors via
+#'   copy-paste or typos. The user may simply specify a directory and the file
+#'   is automatically written to disk with a sensible name(
+#'   `~/<directory>/<date>_<proctor_raw_data>`). Alternatively, a custom
+#'   file name can be specified.
+#' @param prep_sheet A data frame. It is recommended to pipe this argument
+#'   directly from [`proctor_prep()`].
+#' @param dir Directory in which to save the file, should end with `"/"`
+#' @param path If `"auto"`, constructs a file name from the date column of `df`
+#'   and the `dir` argument; otherwise specify a path to save the file
+#'   (including relative directory)
+#' @param write Defaults to `TRUE` and saves data sheet as a .csv; if set to
+#'   `FALSE`, returns a tibble instead of writing to disk
+#' @param cylinder_vol_cm3 Volume of compaction mold
+#' @param empty_cylinder_mass_g Mass of compaction mold
+#' @param ambient_temp_c Ambient temperature during the test in &deg;C. Used
+#'   to compute water density during data analysis (see
+#'   [`add_physical_properties()`]). Defaults to 22 for filling data sheet; user
+#'   should measure temperature during test and input before data collection. Be
+#'   careful to record only one value during the test or
+#'   [`add_physical_properties()`] will fail.
+#' @param tin_tares_lookup quoted string which identifies the set of tin tare
+#'   measurements to use during subsequent data analyses. These are not used by
+#'   this function, but including this information in the raw data file saves a
+#'   step later in the analysis pipeline.
 #'
-#' @param sample_IDs a vector of unique identifiers for the soils to test
-#' @param compaction_date the date the actual compaction test was performed
-#'   (c.f. the mixing or sample prep)
-#' @param efforts character vector of compaction conditions. Defaults to both
-#'   standard and modified
-#' @param write if TRUE, saves the table to disk as a `.csv` file
-#' @param path location to save the file
-#' @param cylinder_vol_cm3 volume of compaction mold
-#' @param empty_cylinder_mass_g mass of compaction mold
-#' @param n_cyl Number of compaction specimens to prepare per soil, defaults to
-#' 5
-#' @param ambient_temp_c The ambient temperature during the test in &deg;^C^.
-#'   Used in [`add_physical_properties()`] to compute water density. Defaults to
-#'   22 for filling data sheet; user should measure temperature during test and
-#'   input before data collection. Be careful to record only one value during
-#'   the test or [`add_physical_properties()`] will fail.
-#'
-#' @return a tibble if `write = FALSE`; otherwise writes file to disk and
-#'   displays a message.
+#' @return Writes file to disk if `write = TRUE`; returns a tibble if `write =
+#'   FALSE` .
 #' @example /inst/examples/generate_proctor_datasheet_example.R
 #' @export
 #'
 
-generate_proctor_datasheet <- function(sample_IDs,
-                                       compaction_date,
-                                       efforts = c("standard", "modified"),
-                                       write = FALSE,
-                                       path = NULL,
+generate_proctor_datasheet <- function(prep_sheet,
+                                       dir,
+                                       path = "auto",
+                                       write = TRUE,
                                        cylinder_vol_cm3 = 937.4,
                                        empty_cylinder_mass_g = 1484.5,
-                                       n_cyl = 5,
-                                       ambient_temp_c = 22)
-{
+                                       ambient_temp_c = 22,
+                                       tin_tares_lookup = NULL) {
 
-  # error and warning messages if required fields are left blank
 
-  if (missing(sample_IDs)) {
-    stop('\n\nNo soil IDs provided. Please provide a single ID or a character vector of IDs.')
+  # error message if required field is left blank
+
+  if (missing(prep_sheet)) {
+    stop('\n\nNo prep sheet provided.')
   }
 
-  if (missing(compaction_date)) {
-    stop('\n\n No date provided. Provide specify the date of the compaction test.')
-  }
-
-  if (!is.character(compaction_date)) {
-    stop('\n\n The date you provided was passed as a type other than `character`. Please use quotation marks.')
-  }
 
   # Make tibble
 
-    datasheet <- tidyr::crossing(
-      sample_ID = sample_IDs,
-      effort= efforts,
-      cylinder_number = 1:n_cyl
-    ) %>%
+    datasheet <- prep_sheet %>%
+      dplyr::select(c(.data$sample_ID, .data$effort, .data$date, .data$cylinder_number, .data$w_target)) %>%
       dplyr::mutate(
-        compaction_date = compaction_date,
         cylinder_vol_cm3 = cylinder_vol_cm3,
         empty_cylinder_mass_g = empty_cylinder_mass_g,
         ambient_temp_c = ambient_temp_c,
-        w_estimated = "",
+        tin_tares_lookup = tin_tares_lookup,
+        w_target = as.character(round(.data$w_target, 3)),
         filled_cylinder_mass_g = "",
         penetrometer1 = "",
         penetrometer2 = "",
@@ -78,20 +73,55 @@ generate_proctor_datasheet <- function(sample_IDs,
         comments = ""
       ) %>%
       dplyr::select(
-        .data$sample_ID, .data$effort, dplyr::everything()
-      ) %>%
-      dplyr::arrange(dplyr::desc(.data$effort), .data$sample_ID, .data$cylinder_number)
+        .data$sample_ID,
+        .data$date,
+        .data$effort,
+        .data$cylinder_vol_cm3,
+        .data$empty_cylinder_mass_g,
+        .data$ambient_temp_c,
+        tin_tares_lookup,
+        .data$cylinder_number,
+        .data$w_target,
+        .data$filled_cylinder_mass_g,
+        .data$penetrometer1,
+        .data$penetrometer2,
+        .data$penetrometer3,
+        .data$tin_number,
+        .data$tin_w_wet_sample,
+        .data$tin_w_OD_sample,
+        .data$comments) %>%
+      dplyr::arrange(
+        dplyr::desc(.data$effort),
+        .data$sample_ID,
+        .data$cylinder_number)
+
+
+# write file to disk if write ==  TRUE
+
+  if(write == TRUE){
 
     # return error message if file path was not supplied
 
-  if(write == TRUE){
-    if(missing(path) ){
-      stop('\n\n No file path supplied. Please provide a file path.')
+    if(missing(dir) && path == "auto"){
+      stop('\n\nNo directory provided, please specify a directory OR manually provide a full `path`')
     }
+
+    if(length(unique(datasheet$date)) > 1){
+      stop('\n\n Multiple dates found in data sheet, cannot write to a single file. Please split `prep_sheet` by date and save separately.')
+    }
+
+    if(path == "auto"){
+      file_path <- paste0(dir, unique(datasheet$date), "_proctor_raw_data.csv")
+      } else{
+        file_path <- path
+      }
+
     readr::write_csv(x= datasheet,
-                     file = path)
+                     file = file_path)
   }
 
-  return(if(write == TRUE) {message("File was written to disk.")} else {datasheet})
+    # return message if file was written to disk and return tibble if not
+
+  return(if(write == TRUE) {message(crayon::green("Please verify that file was correctly written to disk."))} else {datasheet})
 
 } # end of function

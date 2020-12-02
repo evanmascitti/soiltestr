@@ -6,8 +6,9 @@
 \usage{
 proctor_prep(
   df,
+  date,
   w_int = 0.0125,
-  assumed_d_max = 2.24,
+  assumed_d_max = 2.25,
   cylinder_volume_cm3 = 937.4,
   spray_flo_rate_cm3_sec = 2.4
 )
@@ -15,26 +16,31 @@ proctor_prep(
 \arguments{
 \item{df}{a data frame, see Details for required columns}
 
+\item{date}{date of actual compaction test}
+
 \item{w_int}{water content interval between successive compaction points,
 defaults to 0.0125 (i.e. 1.25\%)}
 
 \item{assumed_d_max}{a conservatively high estimate of the maximum density
-that will be achieved in this test}
+that will be achieved in this test. Defaults to 2.25
+g/cm\ifelse{html}{\out{<sup>3</sup>}}{\eqn{^3}{^3}}}
 
 \item{cylinder_volume_cm3}{volume of the compaction mold in
-cm\ifelse{html}{\out{<sup>3</sup>}}{\eqn{^3}{^3}}}
+cm\ifelse{html}{\out{<sup>3</sup>}}{\eqn{^3}{^3}}. Used to compute compacted
+volume of soil plus 0.25" of "over-pack" extending above the top of the
+4.5"-high mold.}
 
 \item{spray_flo_rate_cm3_sec}{flow rate of bottle sprayer in
 cm\ifelse{html}{\out{<sup>3</sup>}}{\eqn{^3}{^3}}/second}
 }
 \value{
-a tibble with one row per aliquot. If there are soils with water
-content exceeding the minimum value desired, a negative numer will populate
-the \code{w_to_add_g} and \code{time_to_spray} output columns
+A tibble with one row per aliquot. If there are soils with water
+content exceeding the minimum value desired, a negative number will populate
+the \code{w_to_add_g} and \code{time_to_spray} output columns.
 }
 \description{
 Pass in a tibble of specimen information and compute the amount
-of water to add via bulk addition or spray bottle
+of water to add via bulk addition or spray bottle.
 }
 \details{
 \ifelse{html}{\out{<a href='https://www.tidyverse.org/lifecycle/#experimental'><img src='figures/lifecycle-experimental.svg' alt='Experimental lifecycle'></a>}}{\strong{Experimental}}
@@ -44,39 +50,41 @@ mix the specimens to known water contents, rather than "eyeballing" the
 water additions. This ensures the water contents of the test specimens
 tested will bracket the optimum water content and be spaced along a roughly
 equal range. Some \emph{a priori} knowledge about the soil is needed to predict
-what this range will be. \code{compaction_aliquots()} allows the user to specify
+what this range will be. \code{proctor_prep()} allows the user to specify
 the interval between 5 successive water contents to use along with the
 anticipated maximum density. Returned table contains information about the
 mass of soil to prepare and how much water to add.
 
 Multiple tests are often performed in the same day and at multiple
 compaction efforts. For this reason, the data frame passed to
-\code{compaction_aliquots()} should contain the following columns:
+\code{proctor_prep()} should contain the following columns:
 \itemize{
 \item \code{effort}: a character string specifying the type of compactive effort,
 i.e. "standard", "modified", or "reduced"
 \item \code{sample_ID} a unique identifier
-between the samples tested, i.e. mix number or name
-\item \code{w_extant} the current
+between the samples tested, i.e. mix number or name - \code{w_extant} the current
 water content of the soil (g/g)
 \item \code{est_w_opt} the estimated optimum water
 content for the compaction effort to be tested.
 }
 
-Note that \code{w_opt} for the standard effort is ~ 90\% of the plastic limit.
-\code{w_opt} for the modified effort is typically 3-4 \% below that for the
+Note that \code{w_opt} for the standard effort is commonly ~ 90\% of the plastic
+limit. \code{w_opt} for the modified effort is typically 3-4 \% below that for the
 standard effort.
 
-The data frame passed to \code{df} can be easily prepared using \code{\link[dplyr:mutate-joins]{dplyr::left_join()}} if the
-data are already in R, as demonstrated in \strong{Examples}, or by using
-\code{\link[tidyr:expand]{tidyr::crossing()}} to generate all combinations of \code{effort} and
-\code{sample_ID}, then adding a data frame column containing the water contents.
-The standard \code{w_opt}can be estimated in one of two ways: - Gradually add
-water to a ~ 25 mL soil specimen until it appears close to the optimum water
-content. Take a representative sample and measure the water content via
-oven-drying \href{https://www.astm.org/Standards/D2216.htm}{ASTM 2216 - 19} -
-Perform a plastic limit test and estimate \code{w_opt} as 90\% of
-this value. This routine is demonstrated in \strong{Examples}
+The data frame passed to \code{df} can be easily prepared using
+\code{\link[dplyr:mutate-joins]{dplyr::left_join()}} if the data are already in R, as demonstrated in
+the examples, or by using \code{\link[tidyr:expand]{tidyr::crossing()}} to generate all combinations
+of \code{effort} and \code{sample_ID}, then adding a data frame column containing the
+water contents. The standard \code{w_opt} can be estimated in one of two ways:
+\itemize{
+\item Gradually add water to a ~ 25 mL soil specimen until it appears close to
+the optimum water content. Take a representative sample and measure the
+water content via oven-drying
+\href{https://www.astm.org/Standards/D2216.htm}{ASTM 2216 - 19}
+\item Perform a plastic limit test and estimate \code{w_opt} as 90\% of this value.
+This routine is demonstrated in the examples.
+}
 
 Using a battery-powered spray bottle increases the uniformity of water
 throughout the soil, and improves the efficiency of the process. The
@@ -114,18 +122,18 @@ w_info <- w_extant_values \%>\%
   arrange(desc(effort))
 
 # generate the reference table
-proctor_prep(df= w_info)
+proctor_prep(df= w_info, date= Sys.Date())
 
 # widen the interval for a clayey soil
 mix_03 <- w_info \%>\%
   filter(sample_ID == 'mix_03')
-proctor_prep(df= mix_03, w_int = 0.025)
+proctor_prep(df= mix_03, date= Sys.Date(), w_int = 0.025)
 
 # the function works fine with only one compaction effort but be sure this is
 # still one of the columns
 mix_03 \%>\%
   filter(effort == 'modified') \%>\%
-  proctor_prep()
+  proctor_prep(date= Sys.Date())
 
 
 }
@@ -133,5 +141,5 @@ mix_03 \%>\%
 \href{https://www.astm.org/Standards/D698.htm}{ASTM D698-12e2}
 }
 \seealso{
-\code{\link[=proctor_fit]{proctor_fit()}}, \code{\link[=mix_calcs]{mix_calcs()}}
+\code{\link[=proctor_fit]{proctor_fit()}}, \code{\link[=mix_calcs]{mix_calcs()}}, \code{\link[=generate_proctor_datasheet]{generate_proctor_datasheet()}}
 }
