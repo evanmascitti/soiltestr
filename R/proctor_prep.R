@@ -81,9 +81,9 @@
 #'
 #'@export
 #'
-#'@references \href{https://www.astm.org/Standards/D698.htm}{ASTM D698-12e2}
+#'@references \href{https://www.astm.org/Standards/D698.htm}{ASTMc D698-12e2}
 
-proctor_prep <- function(df, date, w_int = 0.0125, assumed_d_max = 2.25,
+proctor_prep <- function(df, date, w_int = 0.015, assumed_d_max = 2.20,
                            cylinder_volume_cm3 = 937.4,
                            spray_flo_rate_cm3_sec = 2.40){
 

@@ -7,8 +7,8 @@
 proctor_prep(
   df,
   date,
-  w_int = 0.0125,
-  assumed_d_max = 2.25,
+  w_int = 0.015,
+  assumed_d_max = 2.2,
   cylinder_volume_cm3 = 937.4,
   spray_flo_rate_cm3_sec = 2.4
 )
@@ -138,7 +138,7 @@ mix_03 \%>\%
 
 }
 \references{
-\href{https://www.astm.org/Standards/D698.htm}{ASTM D698-12e2}
+\href{https://www.astm.org/Standards/D698.htm}{ASTMc D698-12e2}
 }
 \seealso{
 \code{\link[=proctor_fit]{proctor_fit()}}, \code{\link[=mix_calcs]{mix_calcs()}}, \code{\link[=generate_proctor_datasheet]{generate_proctor_datasheet()}}
