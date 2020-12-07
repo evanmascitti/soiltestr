@@ -14,12 +14,12 @@ compute_spraytime <- function(df, OD_soil_mass_g = 8000,
 
   df %>%
     dplyr::mutate(
-      moist_mass_g = OD_soil_mass_g * .data$w_target,
-      water_already_present_g = .data$moist_mass_g - OD_soil_mass_g,
-      water_desired_g = .data$w_target * OD_soil_mass_g,
-      w_to_add_g = OD_soil_mass_g * .data$w_extant,
+      moist_mass_g = OD_soil_mass_g * (1+.data$w_target) ,
+      water_already_present_g = OD_soil_mass_g * .data$w_extant ,
+      water_desired_g = OD_soil_mass_g * .data$w_target ,
+      w_to_add_g = .data$water_desired_g  - .data$water_already_present_g ,
       sec_to_spray = round(
-        .data$w_to_add_g/spray_flo_rate_cm3_sec,0),
+        .data$w_to_add_g/spray_flo_rate_cm3_sec,0) ,
       sec_to_spray_period = lubridate::as.period(lubridate::as.duration(.data$sec_to_spray)),
       time_to_spray = sprintf("%02d:%02d",
                               lubridate::minute(.data$sec_to_spray_period),
