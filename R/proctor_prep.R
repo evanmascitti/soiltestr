@@ -58,7 +58,7 @@
 #'@param df a data frame, see Details for required columns
 #'@param date date of actual compaction test
 #'@param w_int water content interval between successive compaction points,
-#'  defaults to 0.0125 (i.e. 1.25%)
+#'  defaults to 0.015 (i.e. 1.5%)
 #'@param assumed_d_max a conservatively high estimate of the maximum density
 #'  that will be achieved in this test. Defaults to 2.25
 #'  g/cm\ifelse{html}{\out{<sup>3</sup>}}{\eqn{^3}{^3}}

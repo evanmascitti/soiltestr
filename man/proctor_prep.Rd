@@ -19,7 +19,7 @@ proctor_prep(
 \item{date}{date of actual compaction test}
 
 \item{w_int}{water content interval between successive compaction points,
-defaults to 0.0125 (i.e. 1.25\%)}
+defaults to 0.015 (i.e. 1.5\%)}
 
 \item{assumed_d_max}{a conservatively high estimate of the maximum density
 that will be achieved in this test. Defaults to 2.25

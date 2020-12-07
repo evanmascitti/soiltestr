@@ -7,10 +7,10 @@ compaction_data <- diRtscience::example_proctor_data %>%
 
 # a single sample
 standard_data <- filter(compaction_data, compaction_effort == "standard")
-ggproctor(standard_data)
+ggproctor(standard_data, identifier = compaction_effort)
 
 # two samples on same plot; annotations turned off
-ggproctor(compaction_data, annotate = FALSE)
+ggproctor(compaction_data, identifier = compaction_effort, annotate = FALSE)
 
 # facet and leave data annotations on but turn off 90% saturation line
 ggproctor(compaction_data, identifier = compaction_effort, sat_90 = FALSE)+
