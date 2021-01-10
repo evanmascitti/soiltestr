@@ -4,20 +4,34 @@
 \alias{ggproctor}
 \title{Plot one or more compaction curves}
 \usage{
-ggproctor(df, identifier, annotate = TRUE, sat_100 = TRUE, sat_90 = TRUE, ...)
+ggproctor(
+  df,
+  identifier = sample_ID,
+  annotate = TRUE,
+  sat_100 = TRUE,
+  sat_90 = TRUE,
+  ...
+)
 
-ggproctor(df, identifier, annotate = TRUE, sat_100 = TRUE, sat_90 = TRUE, ...)
+ggproctor(
+  df,
+  identifier = sample_ID,
+  annotate = TRUE,
+  sat_100 = TRUE,
+  sat_90 = TRUE,
+  ...
+)
 }
 \arguments{
 \item{df}{data frame containing water contents and dry densities}
 
-\item{identifier}{unquoted column name which distinguishes the samples from each other}
+\item{identifier}{unquoted column name which distinguishes the samples from each other, defaults to \code{sample_ID}}
 
 \item{annotate}{whether to print the values of maximum density and optimum water content on the plot}
 
-\item{sat_100}{display the 100\% saturation line (temperature of 22 °C assumed)}
+\item{sat_100}{display the 100\% saturation line (temperature of 22 °^C^ assumed)}
 
-\item{sat_90}{display the 90\% saturation line (temperature of 22 °C assumed)}
+\item{sat_90}{display the 90\% saturation line (temperature of 22 °^C^ assumed)}
 
 \item{...}{other arguments passed on to \code{geom_smooth} and \code{geom_point()}}
 }
@@ -36,7 +50,7 @@ satration curves should be drawn. Faceting and the addition of other
 Fits a compaction curve using a natural cubic spline and returns a
 \strong{ggplot2} plot. The maximum dry density and optimum water content can be
 annotated on the plot and the user may specify whether the 90\% and 100\%
-saturation curves should be drawn. Faceting and the addition of other
+satration curves should be drawn. Faceting and the addition of other
 \strong{ggplot} layers are supported.
 }
 \details{
