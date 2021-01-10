@@ -21,7 +21,7 @@ new_PL_datasheet <- function(date, expt_name, sample_ID, n_reps = 3, dir){
     tin_number = "",
     tin_w_wet_sample = "",
     tin_w_OD_sample = "",
-    comments = ""
+    comments = "-"
   )
 
   readr::write_csv(
