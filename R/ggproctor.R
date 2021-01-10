@@ -5,14 +5,14 @@
 #' @description Fits a compaction curve using a natural cubic spline and returns a
 #' **ggplot2** plot. The maximum dry density and optimum water content can be
 #' annotated on the plot and the user may specify whether the 90% and 100%
-#' saturation curves should be drawn. Faceting and the addition of other
+#' satration curves should be drawn. Faceting and the addition of other
 #' **ggplot** layers are supported.
 #'
 #' @param df data frame containing water contents and dry densities
-#' @param identifier unquoted column name which distinguishes the samples from each other
+#' @param identifier unquoted column name which distinguishes the samples from each other, defaults to `sample_ID`
 #' @param annotate whether to print the values of maximum density and optimum water content on the plot
-#' @param sat_100 display the 100% saturation line (temperature of 22 &deg;C assumed)
-#' @param sat_90 display the 90% saturation line (temperature of 22 &deg;C assumed)
+#' @param sat_100 display the 100% saturation line (temperature of 22 &deg;^C^ assumed)
+#' @param sat_90 display the 90% saturation line (temperature of 22 &deg;^C^ assumed)
 #' @param ... other arguments passed on to `geom_smooth` and `geom_point()`
 #'
 #' @return a 'gg' plot object
@@ -21,20 +21,11 @@
 #' @example /inst/examples/ggproctor_example.R
 #'
 
-ggproctor <- function(df, identifier,
+ggproctor <- function(df, identifier = sample_ID,
                        annotate = TRUE, sat_100 = TRUE,
                        sat_90 = TRUE, ...){
 
-  # # error if no Gs contained in data frame
-  # if(sat_100 == TRUE | sat_90 == TRUE && !"Gs" %in% names(df)){
-  #   stop('\n No `Gs` column, specific gravity is required to plot relative saturation curves.')
-  # }
-
-  # error message if no identifier column is provided for multiple curves
-  if(missing(identifier)){
-    stop('\n `identifier` argument is empty. Please specify which column in `df`
-    contains the information to differentiate each compaction curve.')
-  }
+  # error if plotting soils with different Gs values and not using faceting
 
 
   # make new data frame and then
@@ -67,7 +58,6 @@ ggproctor <- function(df, identifier,
           data = annotation_df,
           mapping = aes(x= w_opt,
                         y= d_max,
-                        group= {{identifier}},
                         label = .data$d_max_label_text),
           nudge_y = 0.03,
           size = 7/.pt,
@@ -77,7 +67,6 @@ ggproctor <- function(df, identifier,
           data = annotation_df,
           mapping = aes(x= w_opt,
                         y= d_max,
-                        group= {{identifier}},
                         label = .data$w_opt_label_text),
           nudge_y = 0.01,
           size = 7/.pt,
@@ -115,16 +104,7 @@ ggproctor <- function(df, identifier,
       ...)
   }
 
-  # make data frame and function with label for 100 % saturation line
-
-
-  if(length(unique(df$Gs)) > 1){
-
-    stop('\n\n
-    More than one `Gs` value detected in data frame.
-    Relative saturation curves cannot be accurately drawn.')
-
-  } else{
+  # make data frame and tat_function with label for 100 % saturation line
 
   sat_curves_data <- df %>%
     dplyr::mutate(w_rank = dplyr::row_number(.data$water_content)) %>%
@@ -138,7 +118,6 @@ ggproctor <- function(df, identifier,
       sat_90_density=
         1 / ( (1/.data$Gs) + (.data$w_grid/0.9978) + ((.data$w_grid/0.9978)*(1-0.9)/(0.9)) )
     )
-  }
 
   geom_sat_100 <- function(){
 
