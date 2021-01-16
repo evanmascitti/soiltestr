@@ -5,8 +5,8 @@
 [![Project Status: Active – The project has reached a stable, usable
 state and is being actively
 developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
-[![packageversion](https://img.shields.io/badge/Package%20version-0.0.2-orange.svg?style=flat-square)](commits/master)
-[![Last-changedate](https://img.shields.io/badge/last%20change-2020--11--28-yellowgreen.svg)](/commits/master)
+[![packageversion](https://img.shields.io/badge/Package%20version-0.0.2.9003-orange.svg?style=flat-square)](commits/master)
+[![Last-changedate](https://img.shields.io/badge/last%20change-2021--01--16-yellowgreen.svg)](/commits/master)
 
 <!-- badges: end -->
 
@@ -75,12 +75,23 @@ counts
 
 `ggflowcurve()` plotting liquid limit data with **ggplot2**
 
+`casagrande_chart()` display Atterberg limits on the traditional LL vs
+PI scatterplot, with U-line and A-line plotted
+
 ### Data managmement and reference sheets
 
 `mix_calcs()`: Precise calculations for sand-clay soil mixtures
 
-`generate_proctor_datasheet()` populates a skeleton .csv file for data
-collection
+#### Populate skeleton .csv files for data collection (function names self-explanatory)
+
+`generate_proctor_datasheet()`
+
+`new_PL_datasheet()`
+
+`new_LL_datasheet()`
+
+`new_pipette_datasheets()` \*creates multiple sheets for the different
+types of data required in this analysis
 
 ## Standard method references
 
