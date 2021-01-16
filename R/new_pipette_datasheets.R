@@ -38,7 +38,8 @@ new_pipette_datasheets <- function(date, experiment_name, sample_IDs, dir, n_rep
     sample_number = rep(1:length(sample_IDs), each = n_reps),
     sample_ID = rep(sample_IDs, each = n_reps),
     air_dry_specimen_mass_for_test = "",
-    hygroscopic_correction_tin_number = "",
+    tin_tare_set = "",
+    tin_number = "",
     tin_w_wet_sample = "",
     tin_w_OD_sample = "",
     comments = "-"
