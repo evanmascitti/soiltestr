@@ -83,5 +83,3 @@ new_pipette_datasheets <- function(date, experiment_name, sample_IDs, dir, n_rep
   message(crayon::green("Please verify that files were written to disk."))
 }
 
-
-
