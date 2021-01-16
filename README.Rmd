@@ -65,19 +65,29 @@ Below are one-line overviews of each function's purpose:
 
 `compute_LL()` calculate the liquid limit from water contents and blow counts 
 
+
 ### Visualization 
 
 `ggproctor()` plotting compaction curves with **ggplot2**
 
 `ggflowcurve()` plotting liquid limit data with **ggplot2**
 
+`casagrande_chart()` display Atterberg limits on the traditional LL vs PI scatterplot, with U-line and A-line plotted
+
 
 ### Data managmement and reference sheets
 
 `mix_calcs()`: Precise calculations for sand-clay soil mixtures
 
-`generate_proctor_datasheet()` populates a skeleton .csv file for data collection
+#### Populate skeleton .csv files for data collection (function names self-explanatory)
 
+`generate_proctor_datasheet()` 
+
+`new_PL_datasheet()`
+
+`new_LL_datasheet()`
+
+`new_pipette_datasheets()` *creates multiple sheets for the different types of data required in this analysis
 
 
 ## Standard method references

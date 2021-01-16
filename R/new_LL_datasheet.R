@@ -3,19 +3,32 @@
 #' Populates column names for Casagrande liquid limit test
 #'
 #' @param date date of test, quoted and in yyyy-mm-dd format
-#' @param expt_name unique identifier for the experiment or analysis
-#' @param sample_ID character vector including all tested specimens. Usually a mix number corresponding to the present experiment (i.e. set of mixes)
-#' @param dir directory to write the skeleton file
+#' @param experiment_name unique identifier for the experiment or analysis
+#' @param sample_IDs character vector including all tested specimens. Usually a
+#'   mix number corresponding to the present experiment (i.e. set of mixes)
+#' @param dir directory to write the skeleton file (with trailing slash)
+#' @param n_trials Number of data points collected per test; minimum is 3 (one with 25-35
+#'   blows, one with 20-30 blows, and one with 15-25 blows)
+#'
+#' @details The date refers to the date the first step of the test was begun. As
+#'   most soil tests span multiple days, this convention avoids any ambiguity
+#'   about when they were weighed, tested, etc.
 #'
 #' @return file written to disk and a message is printed
 #' @export
 #'
-new_LL_datasheet <- function(date, expt_name, sample_ID, dir){
+new_LL_datasheet <- function(date, experiment_name, sample_IDs, dir, n_trials = 4){
 
-  skeleton_sheet <- tibble::tibble(
+  if(length (list.files(pattern = paste0(dir, date, "_LL_raw_data.csv")) ) != 0){
+    stop("File with the same name already exists. Call halted to prevent over-writing existing datasheet.")
+  } else{
+    crayon::blue("writing file...")
+  }
+
+   skeleton_sheet <- tibble::tibble(
     date = date,
-    expt_name = expt_name,
-    sample_ID = rep(sample_ID, each = 4),
+    experiment_name = experiment_name,
+    sample_ID = rep(sample_IDs, each = n_trials),
     tin_tare_set = "",
     tin_number = "",
     blow_count = "",
@@ -25,7 +38,7 @@ new_LL_datasheet <- function(date, expt_name, sample_ID, dir){
   )
 
   readr::write_csv(
-    x = skeleton_sheet, file = paste0(dir, "/", date, "_LL_raw_data.csv"))
+    x = skeleton_sheet, file = paste0(dir, date, "_LL_raw_data.csv"))
 
   message(crayon::green("Please verify that file was written to disk."))
 }

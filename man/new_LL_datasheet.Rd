@@ -4,20 +4,29 @@
 \alias{new_LL_datasheet}
 \title{Generate an empty data sheet}
 \usage{
-new_LL_datasheet(date, expt_name, sample_ID, dir)
+new_LL_datasheet(date, experiment_name, sample_IDs, dir, n_trials = 4)
 }
 \arguments{
 \item{date}{date of test, quoted and in yyyy-mm-dd format}
 
-\item{expt_name}{unique identifier for the experiment or analysis}
+\item{experiment_name}{unique identifier for the experiment or analysis}
 
-\item{sample_ID}{character vector including all tested specimens. Usually a mix number corresponding to the present experiment (i.e. set of mixes)}
+\item{sample_IDs}{character vector including all tested specimens. Usually a
+mix number corresponding to the present experiment (i.e. set of mixes)}
 
-\item{dir}{directory to write the skeleton file}
+\item{dir}{directory to write the skeleton file (with trailing slash)}
+
+\item{n_trials}{Number of data points collected per test; minimum is 3 (one with 25-35
+blows, one with 20-30 blows, and one with 15-25 blows)}
 }
 \value{
 file written to disk and a message is printed
 }
 \description{
 Populates column names for Casagrande liquid limit test
+}
+\details{
+The date refers to the date the first step of the test was begun. As
+most soil tests span multiple days, this convention avoids any ambiguity
+about when they were weighed, tested, etc.
 }
