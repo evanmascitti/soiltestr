@@ -10,7 +10,8 @@ new_pipette_datasheets(
   sample_IDs,
   dir,
   n_reps = 1,
-  n_pipette_sizes = 4
+  n_pipette_sizes = 4,
+  sieves_um = c(2000, 1000, 500, 250, 150, 53)
 )
 }
 \arguments{
@@ -28,6 +29,9 @@ tested (for example, "EPK kaolin")}
 
 \item{n_pipette_sizes}{the number of pipette samples withdrawn; typically 4
 (sizes are 53, 20, 2, and 0.2 microns)}
+
+\item{sieves_um}{numeric or character vector containing the aperture size of
+the sieves to be used (in micrometers)}
 }
 \value{
 file written to disk and a message is printed

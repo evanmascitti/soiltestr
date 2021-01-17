@@ -12,6 +12,8 @@
 #' @param n_reps number of replicate specimens tested per sample
 #' @param n_pipette_sizes the number of pipette samples withdrawn; typically 4
 #'   (sizes are 53, 20, 2, and 0.2 microns)
+#' @param sieves_um numeric or character vector containing the aperture size of
+#'   the sieves to be used (in micrometers)
 #'
 #' @details The date refers to the date the first step of the test was begun. As
 #'   most soil tests span multiple days, this convention avoids any ambiguity
@@ -21,8 +23,9 @@
 #' @export
 #'
 
-new_pipette_datasheets <- function(date, experiment_name, sample_IDs, dir, n_reps = 1, n_pipette_sizes = 4){
-
+new_pipette_datasheets <- function(date, experiment_name, sample_IDs,
+                                   dir, n_reps = 1, n_pipette_sizes = 4,
+                                   sieves_um = c(2000, 1000, 500, 250, 150, 53)){
 
   skeleton_psa_metadatasheet <- tibble::tibble(
     date = date,
@@ -66,11 +69,21 @@ new_pipette_datasheets <- function(date, experiment_name, sample_IDs, dir, n_rep
     comments = "-"
   )
 
+  sieving_datasheet <- tibble::tibble(
+    date = date,
+    experiment_name = experiment_name,
+    sample_number = rep(1:length(sample_IDs), each = length(sieves_um)),
+    microns = rep(sieves_um, times = length(sample_IDs)),
+    cumulative_g_retained = "",
+    comments = ""
+  )
+
   all_datasheets <- list(
     psa_metadata = skeleton_psa_metadatasheet,
     psa_specimen_masses = skeleton_psa_specimen_masses_datasheet,
     psa_pipetting_data = skeleton_psa_pipetting_datasheet,
-    blank_correction = skeleton_blank_correction_pipetting_datasheet
+    blank_correction = skeleton_blank_correction_pipetting_datasheet,
+    sieving_datasheet = sieving_datasheet
   )
 
   files_to_write <- all_datasheets %>%
