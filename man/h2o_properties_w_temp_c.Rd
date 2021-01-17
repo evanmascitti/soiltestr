@@ -5,12 +5,13 @@
 \alias{h2o_properties_w_temp_c}
 \title{Variation in density and viscosity of pure water with temperature}
 \format{
-A data frame with 4 columns (temperature in °^C^, absolute
-viscosity, and density in two units (kg m^-3^ and Mg m^-3; the latter is
-the SI standard).
+A data frame with 5 columns (temperature in °^C^ and Kelvin; absolute
+viscosity, and density in two units (Mg m^-3^ and kg m^-3^; the former is
+the soil science standard unit; the latter uses SI base units).
 }
 \source{
-\href{https://www.astm.org/Standards/D854}{ASTM D854 - 14}
+\href{https://www.astm.org/Standards/D854}{ASTM D854 - 14};
+\href{https://www.engineersedge.com/physics/water__density_viscosity_specific_weight_13146.htm}{Engineer's edge}
 }
 \usage{
 h2o_properties_w_temp_c

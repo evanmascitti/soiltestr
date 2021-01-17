@@ -88,7 +88,7 @@ new_pipette_datasheets <- function(date, experiment_name, sample_IDs,
 
   files_to_write <- all_datasheets %>%
     tibble::enframe(value = "x") %>%
-    dplyr::select(-name) %>%
+    dplyr::select(-.data$name) %>%
     dplyr::mutate(file = paste0(dir, "/", experiment_name, "_", date, "_", names(all_datasheets), ".csv")
     )
 

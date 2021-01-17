@@ -4,10 +4,11 @@
 #' particle size analyses. This data set provides a convenient look-up table for
 #' internal functions in **diRtscience** or for the user's own computations.
 #'
-#' @source [ASTM D854 - 14](https://www.astm.org/Standards/D854)
+#' @source [ASTM D854 - 14](https://www.astm.org/Standards/D854);
+#' [Engineer's edge](https://www.engineersedge.com/physics/water__density_viscosity_specific_weight_13146.htm)
 #'
-#' @format A data frame with 4 columns (temperature in &deg;^C^, absolute
-#'   viscosity, and density in two units (kg m^-3^ and Mg m^-3; the latter is
-#'   the SI standard).
+#' @format A data frame with 5 columns (temperature in &deg;^C^ and Kelvin; absolute
+#'   viscosity, and density in two units (Mg m^-3^ and kg m^-3^; the former is
+#'   the soil science standard unit; the latter uses SI base units).
 #'
 "h2o_properties_w_temp_c"
