@@ -29,7 +29,7 @@ add_physical_properties <- function(df){
 
   # look up density of water at specified temperature
 
-  water_density <- diRtscience::h2o_properties_w_temp_c %>%
+  water_density <- soiltestr::h2o_properties_w_temp_c %>%
     dplyr::filter(.data$water_temp_c == round(unique(df$ambient_temp_c), 1)) %>%
     .$water_density_Mg_m3 %>%
     .[1]

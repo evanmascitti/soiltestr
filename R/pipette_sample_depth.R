@@ -18,12 +18,12 @@
 pipette_sample_depth <- function(particle_diameter, duration_hr,
                                  Gs = 2.7, ambient_temp_c = 22){
 
-  water_density <- diRtscience::h2o_properties_w_temp_c %>%
+  water_density <- soiltestr::h2o_properties_w_temp_c %>%
     dplyr::filter(.data$water_temp_c == round(ambient_temp_c, 1)) %>%
     .$water_density_kg_m3 %>%
     .[1]
 
-  water_viscosity <- diRtscience::h2o_properties_w_temp_c %>%
+  water_viscosity <- soiltestr::h2o_properties_w_temp_c %>%
     dplyr::filter(.data$water_temp_c == round(ambient_temp_c, 1)) %>%
     .$water_absolute_viscosity_poises %>%
     .[1]

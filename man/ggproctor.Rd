@@ -63,8 +63,8 @@ satration curves should be drawn. Faceting and the addition of other
 library(ggplot2)
 library(dplyr)
 
-compaction_data <- diRtscience::example_proctor_data \%>\%
-  diRtscience::add_physical_properties()
+compaction_data <- soiltestr::example_proctor_data \%>\%
+  soiltestr::add_physical_properties()
 
 # a single sample
 standard_data <- filter(compaction_data, compaction_effort == "standard")
@@ -85,8 +85,8 @@ ggproctor(compaction_data, sat_90 = FALSE,
 library(ggplot2)
 library(dplyr)
 
-compaction_data <- diRtscience::example_proctor_data \%>\%
-  diRtscience::add_physical_properties()
+compaction_data <- soiltestr::example_proctor_data \%>\%
+  soiltestr::add_physical_properties()
 
 # a single sample
 standard_data <- filter(compaction_data, compaction_effort == "standard")

@@ -2,7 +2,7 @@
 #'
 #' These parameters are required for specific gravity, bulk density, and
 #' particle size analyses. This data set provides a convenient look-up table for
-#' internal functions in **diRtscience** or for the user's own computations.
+#' internal functions in **soiltestr** or for the user's own computations.
 #'
 #' @source [ASTM D854 - 14](https://www.astm.org/Standards/D854),
 #' [Engineer's edge](https://www.engineersedge.com/physics/water__density_viscosity_specific_weight_13146.htm)

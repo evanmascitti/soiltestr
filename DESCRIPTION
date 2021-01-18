@@ -1,5 +1,5 @@
-Package: diRtscience
-Title: Functions for analyzing baseball/softball infield mixes and other sports turf soils
+Package: soiltestr
+Title: Functions for Laboratory Soil Testing
 Version: 0.0.2.9004
 Authors@R: 
     person(given = "Evan",
@@ -7,7 +7,7 @@ Authors@R:
            role = c("aut", "cre"),
            email = "evanmascitti@gmail.com",
            comment = c(ORCID = "0000-0002-0143-6100"))
-Description: This package is for analyzing laboratory tests of soil mixtures. The code was written as part of Evan Mascitti's PhD project. It may be useful to others performing soil physical analyses.
+Description: This package is for analyzing laboratory tests of soils and soil mixtures. The code was written as part of Evan Mascitti's PhD project. It may be useful to others performing soil physical analyses, especially artificial soil mixtures for athletic fields and golf courses.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true

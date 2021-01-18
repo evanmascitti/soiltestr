@@ -35,8 +35,8 @@ ggproctor <- function(df, identifier = sample_ID,
     dplyr::group_by({{identifier}}) %>%
     tidyr::nest() %>%
     dplyr::mutate(
-      d_max = purrr::map_dbl(.data$data, diRtscience::d_max),
-      w_opt = purrr::map_dbl(.data$data, diRtscience::w_opt),
+      d_max = purrr::map_dbl(.data$data, soiltestr::d_max),
+      w_opt = purrr::map_dbl(.data$data, soiltestr::w_opt),
       d_max_label_text = paste(
         "bold(rho)[max]==", round(.data$d_max, 2)),
       w_opt_label_text = paste(

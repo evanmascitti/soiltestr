@@ -5,40 +5,26 @@
 [![Project Status: Active – The project has reached a stable, usable
 state and is being actively
 developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
-[![packageversion](https://img.shields.io/badge/Package%20version-0.0.2.9003-orange.svg?style=flat-square)](commits/master)
-[![Last-changedate](https://img.shields.io/badge/last%20change-2021--01--16-yellowgreen.svg)](/commits/master)
+[![packageversion](https://img.shields.io/badge/Package%20version-0.0.2.9004-orange.svg?style=flat-square)](commits/master)
+[![Last-changedate](https://img.shields.io/badge/last%20change-2021--01--18-yellowgreen.svg)](/commits/master)
 
 <!-- badges: end -->
-
-## Disclaimer
-
-To other soil scientists: Please do not label me a heretic simply from
-the package name. I too appreciate the complexity and beauty of natural
-soil bodies, and I am fully aware of connotations associated with those
-who use the “d-word”. In this sense, the package name is a bit
-tongue-in-cheek; I wrote the code for my PhD project on baseball infield
-soils, and in baseball, like it or not, the infield skin is called
-“dirt.”
 
 ## Utility
 
 This package contains concise functions to analyze laboratory soil test
 data. I wrote this package for my own use but other soil scientists may
-find it of value. The code encompasses several commonly performed tests
-(including particle size analysis, Proctor maximum density, and
-Atterberg limits) and specialized analyses that were developed
-specifically for this project. Examples include 3D morphometric analyses
-of soil surfaces and numerical integration of stress-strain curves
-derived from unconfined compression tests.
+find it of value. The code encompasses commonly performed tests:
+particle size analysis, Proctor maximum density, and Atterberg limits,
+and particle density (specific gravity).
 
 ## Installation
 
-An official version of `diRtscience` is not yet available on CRAN.
-However, like other packages on GitHub, you can install it with
-`devtools` or `remotes`:
+A binary version of `soiltestr` is not yet available on CRAN. Install
+the development version with the following command:
 
 ``` r
-remotes::install_github("evanmascitti/diRtscience")
+remotes::install_github("evanmascitti/soiltestr")
 ```
 
 <!-- The best way to learn about this package is through the vignettes  -->

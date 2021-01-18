@@ -1,4 +1,4 @@
 library(testthat)
-library(diRtscience)
+library(soiltestr)
 
-test_check("diRtscience")
+test_check("soiltestr")

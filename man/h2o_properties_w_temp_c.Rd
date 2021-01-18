@@ -19,6 +19,6 @@ h2o_properties_w_temp_c
 \description{
 These parameters are required for specific gravity, bulk density, and
 particle size analyses. This data set provides a convenient look-up table for
-internal functions in \strong{diRtscience} or for the user's own computations.
+internal functions in \strong{soiltestr} or for the user's own computations.
 }
 \keyword{datasets}
