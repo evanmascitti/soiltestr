@@ -28,7 +28,7 @@ version <- gsub('-', '.', version)
 
 ## Utility
 
-**soiltestr** ontains concise functions to analyze laboratory soil test data. I wrote the functions for my own use, but other soil scientists may find them of value. The code encompasses commonly performed tests: particle size analysis, Atterberg limits, Proctor maximum density, and particle density (specific gravity).
+**soiltestr** is built to help collect and analyze laboratory soil test data. I wrote the functions for my own use, but other soil scientists may find them of value. The code streamlines commonly performed tests: particle size analysis, Atterberg limits, Proctor maximum density, and particle density (specific gravity).
 
 ## Installation
 
