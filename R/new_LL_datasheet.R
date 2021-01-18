@@ -4,7 +4,7 @@
 #'
 #' @param date date of test, quoted and in yyyy-mm-dd format
 #' @param experiment_name unique identifier for the experiment or analysis
-#' @param sample_IDs character vector including all tested specimens. Usually a
+#' @param sample_names character vector including all tested specimens. Usually a
 #'   mix number corresponding to the present experiment (i.e. set of mixes)
 #' @param dir directory to write the skeleton file (with trailing slash)
 #' @param n_trials Number of data points collected per test; minimum is 3 (one with 25-35
@@ -17,7 +17,7 @@
 #' @return file written to disk and a message is printed
 #' @export
 #'
-new_LL_datasheet <- function(date, experiment_name, sample_IDs, dir, n_trials = 4){
+new_LL_datasheet <- function(date, experiment_name, sample_names, dir, n_trials = 4){
 
   if(length (list.files(pattern = paste0(dir, date, "_LL_raw_data.csv")) ) != 0){
     stop("File with the same name already exists. Call halted to prevent over-writing existing datasheet.")
@@ -28,7 +28,8 @@ new_LL_datasheet <- function(date, experiment_name, sample_IDs, dir, n_trials = 
    skeleton_sheet <- tibble::tibble(
     date = date,
     experiment_name = experiment_name,
-    sample_ID = rep(sample_IDs, each = n_trials),
+    sample_name = rep(sample_names, each = n_trials),
+    sample_number = 1:length(sample_names),
     tin_tare_set = "",
     tin_number = "",
     blow_count = "",

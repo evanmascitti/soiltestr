@@ -7,10 +7,10 @@
 new_pipette_datasheets(
   date,
   experiment_name,
-  sample_IDs,
+  sample_names,
   dir,
   n_reps = 1,
-  n_pipette_sizes = 4,
+  pipette_sizes = c(20, 5, 2, 0.2),
   sieves_um = c(2000, 1000, 500, 250, 150, 53)
 )
 }
@@ -20,15 +20,15 @@ format}
 
 \item{experiment_name}{experiment with which the samples are associated}
 
-\item{sample_IDs}{a character vector of unique identifiers for the samples
+\item{sample_names}{a character vector of unique identifiers for the samples
 tested (for example, "EPK kaolin")}
 
 \item{dir}{directory to write the skeleton file (with trailing slash)}
 
 \item{n_reps}{number of replicate specimens tested per sample}
 
-\item{n_pipette_sizes}{the number of pipette samples withdrawn; typically 4
-(sizes are 53, 20, 2, and 0.2 microns)}
+\item{pipette_sizes}{numeric vector of particle diameters for which to
+sample; typically 20, 5, 2, and 0.2 &mum)}
 
 \item{sieves_um}{numeric or character vector containing the aperture size of
 the sieves to be used (in micrometers)}

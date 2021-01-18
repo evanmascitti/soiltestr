@@ -4,14 +4,14 @@
 \alias{new_PL_datasheet}
 \title{Generate an empty data sheet}
 \usage{
-new_PL_datasheet(date, experiment_name, sample_IDs, dir, n_reps = 3)
+new_PL_datasheet(date, experiment_name, sample_names, dir, n_reps = 3)
 }
 \arguments{
 \item{date}{date of test, quoted and in yyyy-mm-dd format}
 
 \item{experiment_name}{unique identifier for the experiment or analysis}
 
-\item{sample_IDs}{character vector including all tested specimens. Usually a
+\item{sample_names}{character vector including all tested specimens. Usually a
 mix number corresponding to the present experiment (i.e. set of mixes)}
 
 \item{dir}{directory to write the skeleton file (with trailing slash)}
