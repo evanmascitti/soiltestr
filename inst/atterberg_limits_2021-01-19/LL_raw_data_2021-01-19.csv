@@ -1,0 +1,9 @@
+test_type,date,experiment_name,sample_name,sample_number,tin_number,blow_count,tin_w_wet_sample,tin_w_OD_sample,tin_tare_set,comments
+LL,2021-01-19,expt1,a,1,,,,,,-
+LL,2021-01-19,expt1,a,1,,,,,,-
+LL,2021-01-19,expt1,a,1,,,,,,-
+LL,2021-01-19,expt1,a,1,,,,,,-
+LL,2021-01-19,expt1,b,2,,,,,,-
+LL,2021-01-19,expt1,b,2,,,,,,-
+LL,2021-01-19,expt1,b,2,,,,,,-
+LL,2021-01-19,expt1,b,2,,,,,,-

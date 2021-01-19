@@ -5,10 +5,10 @@
 \title{Populate empty data sheets}
 \usage{
 pipette_datasheets(
+  dir,
   date,
   experiment_name,
   sample_names,
-  dir,
   n_reps = 1,
   pipette_sizes = c(20, 5, 2, 0.2),
   sieves_um = c(4000, 2000, 1000, 500, 250, 150, 53),
@@ -19,6 +19,8 @@ pipette_datasheets(
 )
 }
 \arguments{
+\item{dir}{directory to write the skeleton file (with trailing slash)}
+
 \item{date}{date test was \strong{begun} by weighing air-dry specimens, yyyy-mm-dd
 format}
 
@@ -26,8 +28,6 @@ format}
 
 \item{sample_names}{a character vector of unique identifiers for the samples
 tested (for example, "EPK kaolin")}
-
-\item{dir}{directory to write the skeleton file (with trailing slash)}
 
 \item{n_reps}{number of replicate specimens tested per sample}
 

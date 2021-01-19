@@ -3,12 +3,12 @@
 #' @description Generates several empty .csv files with the correct column names
 #'   and structure. Use for pipette method of particle size analysis.
 #'
+#' @param dir directory to write the skeleton file (with trailing slash)
 #' @param date date test was **begun** by weighing air-dry specimens, yyyy-mm-dd
 #'   format
 #' @param experiment_name experiment with which the samples are associated
 #' @param sample_names a character vector of unique identifiers for the samples
 #'   tested (for example, "EPK kaolin")
-#' @param dir directory to write the skeleton file (with trailing slash)
 #' @param n_reps number of replicate specimens tested per sample
 #' @param pipette_sizes numeric vector of particle diameters for which to
 #'   sample; typically 20, 5, 2, and 0.2 &mum)
@@ -43,12 +43,11 @@
 #' @export
 #'
 
-pipette_datasheets <- function(date, experiment_name, sample_names,
-                                   dir, n_reps = 1, pipette_sizes = c(20, 5, 2, 0.2),
+pipette_datasheets <- function(dir, date, experiment_name, sample_names,
+                                  n_reps = 1, pipette_sizes = c(20, 5, 2, 0.2),
                                    sieves_um = c(4000, 2000, 1000, 500, 250, 150, 53),
                                    tin_tare_set = "", beaker_tare_set = "",
-                                   sample_beaker_numbers = "", blank_beaker_numbers = ""
-                                   ){
+                                   sample_beaker_numbers = "", blank_beaker_numbers = ""){
 
   # error message to ensure directory contains trailing slash
 
@@ -62,9 +61,9 @@ pipette_datasheets <- function(date, experiment_name, sample_names,
     stop("\n There is already a folder titled `pipette_w_sieves_data`. Call halted to prevent over-writing of the existing files.")
   }
 
-  new_folder <- paste0(dir, "pipette_w_sieves_data")
+  new_folder <- paste0(dir, "pipette_w_sieves_data_", date)
 
-  dir.create(new_folder)
+  dir.create(path = new_folder)
 
   skeleton_psa_metadatasheet <- tibble::tibble(
     date = date,

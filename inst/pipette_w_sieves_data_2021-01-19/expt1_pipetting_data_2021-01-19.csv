@@ -1,0 +1,9 @@
+date,experiment_name,sample_name,replication,sample_number,bouyoucous_cylinder_number,beaker_tare_set,microns,beaker_number,beaker_w_sample_OD_mass,comments
+2021-01-19,expt1,a,1,1,1,2021-01-15,20,,,-
+2021-01-19,expt1,a,1,1,1,2021-01-15,5,,,-
+2021-01-19,expt1,a,1,1,1,2021-01-15,2,,,-
+2021-01-19,expt1,a,1,1,1,2021-01-15,0.2,,,-
+2021-01-19,expt1,b,1,2,2,2021-01-15,20,,,-
+2021-01-19,expt1,b,1,2,2,2021-01-15,5,,,-
+2021-01-19,expt1,b,1,2,2,2021-01-15,2,,,-
+2021-01-19,expt1,b,1,2,2,2021-01-15,0.2,,,-
