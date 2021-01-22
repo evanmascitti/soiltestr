@@ -144,7 +144,6 @@ pipette_datasheets <- function(dir, date, experiment_name, sample_names,
   path_to_write <- paste0(
     new_folder,
     "/",
-    experiment_name,
     "_",
     names(all_datasheets),
     "_",
