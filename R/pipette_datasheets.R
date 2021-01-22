@@ -106,7 +106,7 @@ pipette_datasheets <- function(dir, date, experiment_name, sample_names,
     beaker_tare_set = beaker_tare_set,
     microns = rep(pipette_sizes, times = (length(sample_names)*n_reps)),
     beaker_number = sample_beaker_numbers,
-    beaker_w_sample_OD_mass = "",
+    beaker_mass_w_OD_sample = "",
     comments = "-"
   )
 
@@ -117,7 +117,7 @@ pipette_datasheets <- function(dir, date, experiment_name, sample_names,
     bouyoucous_cylinder_number = "",
     beaker_tare_set = beaker_tare_set,
     beaker_number = blank_beaker_numbers,
-    beaker_OD_mass_w_sample = "",
+    beaker_mass_w_OD_sample = "",
     comments = "-"
   )
 
