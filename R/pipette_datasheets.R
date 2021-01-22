@@ -61,14 +61,11 @@ pipette_datasheets <- function(dir, date, experiment_name, sample_names,
     stop("\n There is already a folder titled `pipette_w_sieves_data`. Call halted to prevent over-writing of the existing files.")
   }
 
-  new_folder <- paste0(dir, "pipette_w_sieves_data_", date)
-
-  dir.create(path = new_folder)
-
-  skeleton_psa_metadatasheet <- tibble::tibble(
+   skeleton_psa_metadatasheet <- tibble::tibble(
     date = date,
     experiment_name = experiment_name,
-    sample_name = sample_names,
+    sample_name = rep(sample_names, each= n_reps),
+    replication = rep(1:n_reps, times = length(sample_names)),
     comments = "-"
   )
 
@@ -100,9 +97,9 @@ pipette_datasheets <- function(dir, date, experiment_name, sample_names,
     date = date,
     experiment_name = experiment_name,
     sample_name = rep(sample_names, each = n_reps*length(pipette_sizes)),
-    replication = rep(1:n_reps, times = length(sample_names)*length(pipette_sizes)),
+    replication = rep(rep(1:n_reps, each = length(pipette_sizes), times = length(sample_names))),
     sample_number = rep(1:(length(sample_names)*n_reps), each = length(pipette_sizes)),
-    bouyoucous_cylinder_number = .data$sample_number,
+    bouyoucos_cylinder_number = .data$sample_number,
     beaker_tare_set = beaker_tare_set,
     microns = rep(pipette_sizes, times = (length(sample_names)*n_reps)),
     beaker_number = sample_beaker_numbers,
@@ -114,7 +111,7 @@ pipette_datasheets <- function(dir, date, experiment_name, sample_names,
     date = date,
     experiment_name = experiment_name,
     blank_replication = 1:length(pipette_sizes),
-    bouyoucous_cylinder_number = "",
+    bouyoucos_cylinder_number = "",
     beaker_tare_set = beaker_tare_set,
     beaker_number = blank_beaker_numbers,
     beaker_mass_w_OD_sample = "",
@@ -141,10 +138,13 @@ pipette_datasheets <- function(dir, date, experiment_name, sample_names,
     sieving_data = sieving_datasheet
   )
 
+  new_folder <- paste0(dir, "pipette_w_sieves_data_", date)
+
+  dir.create(path = new_folder)
+
   path_to_write <- paste0(
     new_folder,
     "/",
-    "_",
     names(all_datasheets),
     "_",
     date,
@@ -154,7 +154,6 @@ pipette_datasheets <- function(dir, date, experiment_name, sample_names,
     tibble::enframe(value = "x") %>%
     dplyr::select(-.data$name) %>%
     dplyr::mutate(file = path_to_write)
-
 
   purrr::pwalk(.l = files_to_write, .f = readr::write_csv)
 

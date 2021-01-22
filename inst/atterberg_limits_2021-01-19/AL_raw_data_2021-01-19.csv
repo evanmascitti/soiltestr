@@ -1,7 +1,0 @@
-test_type,date,experiment_name,sample_name,sample_number,replicaton,tin_number,tin_w_wet_sample,tin_w_OD_sample,tin_tare_set,comments
-AL,2021-01-19,expt1,a,1,1,,,,,-
-AL,2021-01-19,expt1,a,1,2,,,,,-
-AL,2021-01-19,expt1,a,1,3,,,,,-
-AL,2021-01-19,expt1,b,2,1,,,,,-
-AL,2021-01-19,expt1,b,2,2,,,,,-
-AL,2021-01-19,expt1,b,2,3,,,,,-
