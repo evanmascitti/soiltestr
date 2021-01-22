@@ -7,14 +7,14 @@ library(ggplot2)
 
 # one sample
 sample_3 <- example_LL_data[9:12, ] %>%
-  left_join(asi468_tin_tares$`2020-05-24`) %>%
+  left_join(example_tin_tares$`2020-05-24`) %>%
   add_w()
 ggflowcurve(sample_3)
 
 # three samples, faceted
 
 example_LL_data %>%
-  left_join(asi468_tin_tares$`2020-05-24`) %>%
+  left_join(example_tin_tares$`2020-05-24`) %>%
   add_w() %>%
   ggflowcurve()+
   facet_wrap(~expt_mix_num)
@@ -23,7 +23,7 @@ example_LL_data %>%
 # 25
 
 lines_data <- example_LL_data %>%
-  left_join(asi468_tin_tares$`2020-05-24`) %>%
+  left_join(example_tin_tares$`2020-05-24`) %>%
   add_w() %>%
   group_by(expt_mix_num) %>%
   nest() %>%
@@ -32,7 +32,7 @@ lines_data <- example_LL_data %>%
   ungroup()
 
 fulldata <- example_LL_data %>%
-  left_join(asi468_tin_tares$`2020-05-24`) %>%
+  left_join(example_tin_tares$`2020-05-24`) %>%
   add_w()
 
 ggflowcurve(fulldata, color = factor(expt_mix_num))+

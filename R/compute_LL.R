@@ -7,7 +7,7 @@
 #' @param df data frame containing colums named `water_content` and
 #'   `blow_count`. Water contents may be easily computed with [`add_w()`] once
 #'   the raw data is joined with the appropriate set of tin tares from
-#'   [`asi468_tin_tares`].
+#'   [`example_tin_tares`].
 #'
 #' @return numeric vector (length 1) containing the liquid limit as a decimal
 #' @export

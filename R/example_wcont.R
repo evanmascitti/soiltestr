@@ -2,7 +2,7 @@
 #'
 #' The observations include the tin with the wet sample, the tin with the
 #' oven-dry sample, and the tin tare. In typical usage the tin tare would be
-#' looked up using a `left_join` and a data frame contained in `asi468_tin_tares`.
+#' looked up using a `left_join` and a data frame contained in `example_tin_tares`.
 #'
 #'@format A tibble with 6 rows and 4 variables:
 #'
