@@ -5,18 +5,18 @@
 [![Project Status: Active – The project has reached a stable, usable
 state and is being actively
 developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
-[![packageversion](https://img.shields.io/badge/Package%20version-0.0.2.9004-orange.svg?style=flat-square)](commits/master)
-[![Last-changedate](https://img.shields.io/badge/last%20change-2021--01--18-yellowgreen.svg)](/commits/master)
+[![packageversion](https://img.shields.io/badge/Package%20version-0.0.2.9006-orange.svg?style=flat-square)](commits/master)
+[![Last-changedate](https://img.shields.io/badge/last%20change-2021--01--23-yellowgreen.svg)](/commits/master)
 
 <!-- badges: end -->
 
 ## Utility
 
-This package contains concise functions to analyze laboratory soil test
-data. I wrote this package for my own use but other soil scientists may
-find it of value. The code encompasses commonly performed tests:
-particle size analysis, Proctor maximum density, and Atterberg limits,
-and particle density (specific gravity).
+**soiltestr** is built to help collect and analyze laboratory soil test
+data. I wrote the functions for my own use, but other soil scientists
+may find them of value. The code streamlines commonly performed tests:
+particle size analysis, Atterberg limits, Proctor maximum density, and
+particle density (specific gravity).
 
 ## Installation
 
