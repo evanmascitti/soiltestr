@@ -3,7 +3,7 @@
 #' @description Generates several empty .csv files with the correct column names
 #'   and structure. Use for pipette method of particle size analysis.
 #'
-#' @param dir directory to write the skeleton file (with trailing slash)
+#' @param dir directory to write the skeleton file
 #' @param date date test was **begun** by weighing air-dry specimens, yyyy-mm-dd
 #'   format
 #' @param experiment_name experiment with which the samples are associated
@@ -49,16 +49,19 @@ pipette_datasheets <- function(dir, date, experiment_name, sample_names,
                                    tin_tare_set = "", beaker_tare_set = "",
                                    sample_beaker_numbers = "", blank_beaker_numbers = ""){
 
-  # error message to ensure directory contains trailing slash
+  # code to ensure directory contains trailing slash
 
-  if(stringr::str_sub(string = dir, start = -1) != "/"){
-    stop("\n `dir` argument must contain a trailing slash")
+  if(stringr::str_sub(string = dir, start = -1) == "/"){
+   directory <- dir} else{
+     directory <- paste0(dir, "/")
   }
+
+  ###
 
   #  error message to prevent over-writing existing data
 
   if(length(list.files(path = dir, pattern = "pipette_w_sieves_data")) != 0){
-    stop("\n There is already a folder titled `pipette_w_sieves_data`. Call halted to prevent over-writing of the existing files.")
+    stop("\n There is already a folder in this directory titled `pipette_w_sieves_data`. Call halted to prevent over-writing of the existing files.")
   }
 
    skeleton_psa_metadatasheet <- tibble::tibble(
@@ -138,7 +141,7 @@ pipette_datasheets <- function(dir, date, experiment_name, sample_names,
     sieving_data = sieving_datasheet
   )
 
-  new_folder <- paste0(dir, "pipette_w_sieves_data_", date)
+  new_folder <- paste0(directory, "pipette_w_sieves_data_", date)
 
   dir.create(path = new_folder)
 

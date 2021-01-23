@@ -19,7 +19,7 @@ pipette_datasheets(
 )
 }
 \arguments{
-\item{dir}{directory to write the skeleton file (with trailing slash)}
+\item{dir}{directory to write the skeleton file}
 
 \item{date}{date test was \strong{begun} by weighing air-dry specimens, yyyy-mm-dd
 format}
