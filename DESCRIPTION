@@ -1,6 +1,6 @@
 Package: soiltestr
 Title: Functions for Laboratory Soil Testing
-Version: 0.0.2.9006
+Version: 0.0.2.9007
 Authors@R: 
     person(given = "Evan",
            family = "Mascitti",
