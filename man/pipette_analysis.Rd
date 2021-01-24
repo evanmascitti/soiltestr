@@ -4,16 +4,10 @@
 \alias{pipette_analysis}
 \title{Analyze results of a particle size test with pipette and sieves}
 \usage{
-pipette_analysis(dir, tin_tares, psa_beaker_tares)
+pipette_analysis(dir)
 }
 \arguments{
 \item{dir}{Directory containing the raw data files}
-
-\item{tin_tares}{a character string corresponding to the set of tin tares
-used for water content correction (see \code{\link[asi468:tin_tares]{asi468::tin_tares}})}
-
-\item{psa_beaker_tares}{a character string corresponding to the set of beaker
-tares used for water content correction (see \code{\link[asi468:psa_beaker_tares]{asi468::psa_beaker_tares}})}
 }
 \value{
 a list with 3 elements: percent passing data, a breakdown into

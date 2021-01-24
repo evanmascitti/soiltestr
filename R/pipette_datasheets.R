@@ -64,6 +64,16 @@ pipette_datasheets <- function(dir, date, experiment_name, sample_names,
     stop("\n There is already a folder in this directory titled `pipette_w_sieves_data`. Call halted to prevent over-writing of the existing files.")
   }
 
+  #  error message to ensure tin tare set and beaker tare set arguments are included
+
+  if(missing(beaker_tare_set)){
+    stop("\n No beaker tare set specified; please indicate which set of beakers will be used for the test.")
+  }
+
+  if(missing(tin_tare_set)){
+    stop("\n No tin tare set specified; please indicate which set of water content tins will be used for the test.")
+  }
+
    skeleton_psa_metadatasheet <- tibble::tibble(
     date = date,
     experiment_name = experiment_name,
@@ -134,7 +144,7 @@ pipette_datasheets <- function(dir, date, experiment_name, sample_names,
 
   all_datasheets <- list(
     metadata = skeleton_psa_metadatasheet,
-    specimen_masses = skeleton_psa_specimen_masses_datasheet,
+    specimen_masses_data = skeleton_psa_specimen_masses_datasheet,
     hygroscopic_correction_data = skeleton_psa_w_cont_correction_datasheet,
     pipetting_data = skeleton_psa_pipetting_datasheet,
     blank_correction_data = skeleton_blank_correction_pipetting_datasheet,

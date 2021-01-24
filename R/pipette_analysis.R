@@ -1,16 +1,13 @@
 #' Analyze results of a particle size test with pipette and sieves
 #'
 #' @param dir Directory containing the raw data files
-#' @param tin_tares a character string corresponding to the set of tin tares
-#'   used for water content correction (see [`asi468::tin_tares`])
-#' @param psa_beaker_tares a character string corresponding to the set of beaker
-#'   tares used for water content correction (see [`asi468::psa_beaker_tares`])
 #'
 #' @return a list with 3 elements: percent passing data, a breakdown into
 #'   traditional size classes, and a list of ggplots (one per specimen)
 #' @export
 #'
-pipette_analysis <- function(dir, tin_tares, psa_beaker_tares){
+pipette_analysis <- function(dir){
+
   # read raw data files
 
   if(stringr::str_sub(string = dir, start = -1) == "/"){
@@ -34,19 +31,23 @@ pipette_analysis <- function(dir, tin_tares, psa_beaker_tares){
 
   # make tin tare lookup table from larger data object
 
+  tin_tare_date <-  unique(datafiles$hygroscopic_correction_data$tin_tare_set)
+
   tin_tares <- asi468::tin_tares %>%
     tibble::enframe(name= "date", value = "tin_tares_data") %>%
     tidyr::unnest(.data$tin_tares_data) %>%
-    dplyr::filter(date == tin_tares) %>%
+    dplyr::filter(date == tin_tare_date) %>%
     dplyr::select(-.data$date)
 
 
   # make beaker lookup table from larger data object
 
+  beaker_tare_date <- unique(datafiles$pipetting_data$beaker_tare_set)
+
   beaker_tares <- asi468::psa_beaker_tares %>%
     tibble::enframe(name= "date", value = "beaker_tares_data") %>%
     tidyr::unnest(.data$beaker_tares_data) %>%
-    dplyr::filter(date == psa_beaker_tares) %>%
+    dplyr::filter(date == beaker_tare_date) %>%
     dplyr::select(-.data$date)
 
 
@@ -159,20 +160,20 @@ pipette_analysis <- function(dir, tin_tares, psa_beaker_tares){
   # make a list containing a psd plot for each specimen
   psd_plots <- suppressMessages(
     total_percent_passing %>%
-    dplyr::group_by(.data$sample_number) %>%
-    tidyr::nest() %>%
-    dplyr::rename(psd_tibble = .data$data) %>%
-    dplyr::mutate(psd_plot = purrr::map(
-      .x = .data$psd_tibble, .f= ~soiltestr::ggpsd_single_sample(df = .) ) ) %>%
-    dplyr::select(-.data$psd_tibble) %>%
-    dplyr::ungroup() %>%
-    dplyr::left_join(datafiles$metadata) %>%
-    dplyr::select(.data$date,
-                  .data$experiment_name,
-                  .data$sample_name,
-                  .data$replication,
-                  .data$sample_number,
-                  .data$psd_plot)
+      dplyr::group_by(.data$sample_number) %>%
+      tidyr::nest() %>%
+      dplyr::rename(psd_tibble = .data$data) %>%
+      dplyr::mutate(psd_plot = purrr::map(
+        .x = .data$psd_tibble, .f= ~soiltestr::ggpsd_single_sample(df = .) ) ) %>%
+      dplyr::select(-.data$psd_tibble) %>%
+      dplyr::ungroup() %>%
+      dplyr::left_join(datafiles$metadata) %>%
+      dplyr::select(.data$date,
+                    .data$experiment_name,
+                    .data$sample_name,
+                    .data$replication,
+                    .data$sample_number,
+                    .data$psd_plot)
   )
 
 
