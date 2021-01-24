@@ -37,7 +37,8 @@ Imports:
     crayon,
     stringr,
     asi468,
-    latex2exp
+    latex2exp,
+    forcats
 Depends: 
     R (>= 2.10)
 RdMacros: 
