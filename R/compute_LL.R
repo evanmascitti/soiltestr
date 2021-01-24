@@ -18,7 +18,12 @@
 #'
 compute_LL <- function(df) {
 
-  curve <- stats::na.omit(stats::lm(data = df, formula = water_content ~ log(blow_count)) )
+  raw_data <- df %>%
+    dplyr::filter(
+      .data$blow_count != "NA",
+      .data$water_content != "NA")
+
+  curve <- stats::na.omit(stats::lm(data = raw_data, formula = water_content ~ log(blow_count)) )
 
   LL <- stats::predict.lm(object = curve, newdata = data.frame(blow_count= c(25)) )
 

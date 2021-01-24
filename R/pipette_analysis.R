@@ -13,7 +13,7 @@
 pipette_analysis <- function(dir, tin_tares, psa_beaker_tares){
   # read raw data files
 
-  if(stringr::str_sub(string = dir, start = -2) == "/"){
+  if(stringr::str_sub(string = dir, start = -1) == "/"){
     directory <- dir} else{
       directory <- paste0(dir, "/")
     }
