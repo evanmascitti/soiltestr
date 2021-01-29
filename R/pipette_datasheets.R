@@ -59,9 +59,10 @@ pipette_datasheets <- function(dir, date, experiment_name, sample_names,
   ###
 
   #  error message to prevent over-writing existing data
+new_directory_path <- paste0(directory, "pipette_w_sieves_data_", date)
 
-  if(length(list.files(path = dir, pattern = "pipette_w_sieves_data")) != 0){
-    stop("\n There is already a folder in this directory titled `pipette_w_sieves_data`. Call halted to prevent over-writing of the existing files.")
+  if(length(list.files(path = new_directory_path, ) != 0)){
+    stop(glue::glue("\n There is already a folder in this directory titled `{new_directory_path}`. Call halted to prevent over-writing of the existing files."))
   }
 
   #  error message to ensure tin tare set and beaker tare set arguments are included
