@@ -25,7 +25,7 @@ att_lims_datasheets <- function(dir, date, experiment_name, sample_names,
 
   new_folder <- paste0(dir, "/atterberg_limits_", date)
 
-  if(length(list.files(path = dir, pattern = "atterberg_limits")) != 0){
+  if(length(list.files(path = new_folder)) != 0){
     stop("\n There is already a folder titled `atterberg_limits`. Call halted to prevent over-writing of the existing files.")
   }
 

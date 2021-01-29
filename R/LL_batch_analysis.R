@@ -23,9 +23,21 @@ LL_batch_analysis <- function(dir){
 
   data_file_path <- list.files(path = directory, pattern = "LL_raw_data", full.names = T)
 
-  data_file <- suppressMessages(
-    readr::read_csv(data_file_path)
-    )
+  data_file <- readr::read_csv(data_file_path,
+                    col_types = readr::cols(
+                      test_type = readr::col_character(),
+                      date = readr::col_date(),
+                      experiment_name = readr::col_character(),
+                      sample_name = readr::col_character(),
+                      sample_number = readr::col_double(),
+                      tin_number = readr::col_double(),
+                      blow_count = readr::col_double(),
+                      tin_w_wet_sample = readr::col_double(),
+                      tin_w_OD_sample = readr::col_double(),
+                      tin_tare_set = readr::col_character(),
+                      comments = readr::col_double()
+                    )
+                    )
 
   specimen_index <- tibble::tibble(
     date = unique(data_file$date),
@@ -43,7 +55,21 @@ LL_batch_analysis <- function(dir){
     dplyr::select(-.data$date)
 
   LL_raw_data <- suppressMessages(
-    readr::read_csv(data_file_path) %>%
+    readr::read_csv(data_file_path,
+                    col_types = readr::cols(
+                      test_type = readr::col_character(),
+                      date = readr::col_date(),
+                      experiment_name = readr::col_character(),
+                      sample_name = readr::col_character(),
+                      sample_number = readr::col_double(),
+                      tin_number = readr::col_double(),
+                      blow_count = readr::col_double(),
+                      tin_w_wet_sample = readr::col_double(),
+                      tin_w_OD_sample = readr::col_double(),
+                      tin_tare_set = readr::col_character(),
+                      comments = readr::col_double()
+                    )
+    ) %>%
     dplyr::left_join(tin_tares) %>%
     soiltestr::add_w()
   )

@@ -30,7 +30,20 @@ PL_batch_analysis <- function(dir){
   }
 
   data_file <- suppressMessages(
-    readr::read_csv(data_file_path)
+    readr::read_csv(data_file_path,
+                    col_types = cols(
+                      test_type = col_character(),
+                      date = col_date(),
+                      experiment_name = col_character(),
+                      sample_name = col_character(),
+                      sample_number = col_integer(),
+                      replication = col_integer(),
+                      tin_number = col_double(),
+                      tin_w_wet_sample = col_double(),
+                      tin_w_OD_sample = col_double(),
+                      tin_tare_set = col_character(),
+                      comments = col_character()
+                    ))
   )
 
   n_reps <- length(unique(data_file$replication))
@@ -49,13 +62,25 @@ PL_batch_analysis <- function(dir){
     tibble::enframe(name= "date", value = "tin_tares_data") %>%
     tidyr::unnest(.data$tin_tares_data) %>%
     dplyr::filter(date == tin_tare_date) %>%
-    dplyr::select(-.data$date)
+    dplyr::select(-.data$date) %>%
+    dplyr::mutate(tin_number = as.numeric(.data$tin_number))
 
-  PL_raw_data <- suppressMessages(
-    readr::read_csv(data_file_path) %>%
+  PL_raw_data <- readr::read_csv(data_file_path,
+                    col_types = cols(
+                      test_type = col_character(),
+                      date = col_date(),
+                      experiment_name = col_character(),
+                      sample_name = col_character(),
+                      sample_number = col_integer(),
+                      replication = col_integer(),
+                      tin_number = col_double(),
+                      tin_w_wet_sample = col_double(),
+                      tin_w_OD_sample = col_double(),
+                      tin_tare_set = col_character(),
+                      comments = col_character()
+                    )) %>%
       dplyr::left_join(tin_tares) %>%
       soiltestr::add_w()
-  )
 
   PL_all_values <- PL_raw_data %>%
     dplyr::rename(PL = .data$water_content) %>%
