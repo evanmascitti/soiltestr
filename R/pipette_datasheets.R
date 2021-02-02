@@ -88,7 +88,7 @@ new_directory_path <- paste0(directory, "pipette_w_sieves_data_", date)
     experiment_name = experiment_name,
     sample_name = rep(sample_names, each = n_reps),
     replication = rep(1:n_reps, times = length(sample_names)),
-    sample_number = 1:(length(sample_names)*n_reps),
+    batch_sample_number = 1:(length(sample_names)*n_reps),
     air_dry_specimen_mass_for_test = "",
     comments = "-"
   )
@@ -98,7 +98,7 @@ new_directory_path <- paste0(directory, "pipette_w_sieves_data_", date)
     experiment_name = experiment_name,
     sample_name = rep(sample_names, each = n_reps),
     replication = rep(1:n_reps, times = length(sample_names)),
-    sample_number = 1:(length(sample_names)*n_reps),
+    batch_sample_number = 1:(length(sample_names)*n_reps),
     tin_tare_set = tin_tare_set,
     tin_number = "",
     tin_w_wet_sample = "",
@@ -112,8 +112,8 @@ new_directory_path <- paste0(directory, "pipette_w_sieves_data_", date)
     experiment_name = experiment_name,
     sample_name = rep(sample_names, each = n_reps*length(pipette_sizes)),
     replication = rep(rep(1:n_reps, each = length(pipette_sizes), times = length(sample_names))),
-    sample_number = rep(1:(length(sample_names)*n_reps), each = length(pipette_sizes)),
-    bouyoucos_cylinder_number = .data$sample_number,
+    batch_sample_number = rep(1:(length(sample_names)*n_reps), each = length(pipette_sizes)),
+    bouyoucos_cylinder_number = .data$batch_sample_number,
     beaker_tare_set = beaker_tare_set,
     microns = rep(pipette_sizes, times = (length(sample_names)*n_reps)),
     beaker_number = sample_beaker_numbers,
@@ -137,7 +137,7 @@ new_directory_path <- paste0(directory, "pipette_w_sieves_data_", date)
     experiment_name = experiment_name,
     sample_name = rep(sample_names, each = n_reps*length(sieves_um)),
     replication = rep(rep(1:n_reps, each = length(sieves_um)), length(sample_names)),
-    sample_number = rep(1:(length(sample_names)*n_reps), each = length(sieves_um)),
+    batch_sample_number = rep(1:(length(sample_names)*n_reps), each = length(sieves_um)),
     microns = rep(sieves_um, times = (length(sample_names)*n_reps)),
     cumulative_mass_g = "",
     comments = "-"

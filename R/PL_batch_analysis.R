@@ -36,7 +36,7 @@ PL_batch_analysis <- function(dir){
                       date = col_date(),
                       experiment_name = col_character(),
                       sample_name = col_character(),
-                      sample_number = col_integer(),
+                      batch_sample_number = col_integer(),
                       replication = col_integer(),
                       tin_number = col_double(),
                       tin_w_wet_sample = col_double(),
@@ -53,7 +53,7 @@ PL_batch_analysis <- function(dir){
     experiment_name = unique(data_file$experiment_name),
     sample_name = rep(unique(data_file$sample_name), each = n_reps),
     replication = rep(1:n_reps, times = length(unique(data_file$sample_name))),
-    sample_number = rep(unique(data_file$sample_number), each = n_reps)
+    batch_sample_number = rep(unique(data_file$batch_sample_number), each = n_reps)
   )
 
   tin_tare_date <- unique(data_file$tin_tare_set)
@@ -71,7 +71,7 @@ PL_batch_analysis <- function(dir){
                       date = col_date(),
                       experiment_name = col_character(),
                       sample_name = col_character(),
-                      sample_number = col_integer(),
+                      batch_sample_number = col_integer(),
                       replication = col_integer(),
                       tin_number = col_double(),
                       tin_w_wet_sample = col_double(),
@@ -86,19 +86,19 @@ PL_batch_analysis <- function(dir){
     dplyr::rename(PL = .data$water_content) %>%
     dplyr::select(.data$date, .data$experiment_name,
                   .data$sample_name, .data$replication,
-                  .data$sample_number, .data$PL)
+                  .data$batch_sample_number, .data$PL)
 
 
   PL_values <- PL_raw_data %>%
-    dplyr::group_by(.data$sample_number) %>%
+    dplyr::group_by(.data$batch_sample_number) %>%
     tidyr::nest() %>%
     dplyr::mutate(PL= purrr::map_dbl(.data$data, ~mean(.$water_content),
                                      sample_name = purrr::map_chr(.data$data, ~unique(.$sample_name)))
     )%>%
-    dplyr::select(.data$sample_number, .data$PL) %>%
+    dplyr::select(.data$batch_sample_number, .data$PL) %>%
     dplyr::ungroup() %>%
     dplyr::left_join(specimen_index) %>%
-    dplyr::relocate(.data$sample_number:.data$PL, .after = .data$sample_name)
+    dplyr::relocate(.data$batch_sample_number:.data$PL, .after = .data$sample_name)
 
 
   PL_plotting_data <- PL_raw_data %>%

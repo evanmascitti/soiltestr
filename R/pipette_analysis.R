@@ -94,7 +94,7 @@ pipette_analysis <- function(dir){
       dplyr::left_join(OD_specimen_masses) %>%
       dplyr::mutate(soil_solids_in_beaker = .data$beaker_mass_w_OD_sample - .data$beaker_empty_mass - blank_correction,
                     percent_passing = .data$soil_solids_in_beaker*40 / .data$OD_specimen_mass) %>%
-      dplyr::select(.data$sample_number, .data$microns, .data$percent_passing)
+      dplyr::select(.data$batch_sample_number, .data$microns, .data$percent_passing)
   )
 
   # calculate percent finer than each size for the sieve data
@@ -104,20 +104,20 @@ pipette_analysis <- function(dir){
       dplyr::left_join(OD_specimen_masses)%>%
       dplyr::mutate(cumulative_mass_finer = .data$OD_specimen_mass - .data$cumulative_mass_g,
                     percent_passing = .data$cumulative_mass_finer / .data$OD_specimen_mass) %>%
-      dplyr::select(.data$sample_number, .data$microns, .data$percent_passing)
+      dplyr::select(.data$batch_sample_number, .data$microns, .data$percent_passing)
   )
 
   # bind pipette and sieve data together to get a cumulative percent passing tibble
 
   total_percent_passing <- suppressMessages(
     rbind(pipette_pct_passing, sieve_pct_passing) %>%
-      dplyr::arrange(.data$sample_number, dplyr::desc(.data$microns)) %>%
+      dplyr::arrange(.data$batch_sample_number, dplyr::desc(.data$microns)) %>%
       dplyr::left_join(datafiles$metadata) %>%
       dplyr::select(.data$date,
                     .data$experiment_name,
                     .data$sample_name,
                     .data$replication,
-                    .data$sample_number,
+                    .data$batch_sample_number,
                     .data$microns,
                     .data$percent_passing)
   )
@@ -148,7 +148,7 @@ pipette_analysis <- function(dir){
                     .data$experiment_name,
                     .data$sample_name,
                     .data$replication,
-                    .data$sample_number,
+                    .data$batch_sample_number,
                     .data$gravel,
                     .data$sand,
                     .data$silt,
@@ -160,7 +160,7 @@ pipette_analysis <- function(dir){
   # make a list containing a psd plot for each specimen
   psd_plots <- suppressMessages(
     total_percent_passing %>%
-      dplyr::group_by(.data$sample_number) %>%
+      dplyr::group_by(.data$batch_sample_number) %>%
       tidyr::nest() %>%
       dplyr::rename(psd_tibble = .data$data) %>%
       dplyr::mutate(psd_plot = purrr::map(
@@ -172,7 +172,7 @@ pipette_analysis <- function(dir){
                     .data$experiment_name,
                     .data$sample_name,
                     .data$replication,
-                    .data$sample_number,
+                    .data$batch_sample_number,
                     .data$psd_plot)
   )
 

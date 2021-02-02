@@ -29,7 +29,7 @@ LL_batch_analysis <- function(dir){
                       date = readr::col_date(),
                       experiment_name = readr::col_character(),
                       sample_name = readr::col_character(),
-                      sample_number = readr::col_double(),
+                      batch_sample_number = readr::col_double(),
                       tin_number = readr::col_double(),
                       blow_count = readr::col_double(),
                       tin_w_wet_sample = readr::col_double(),
@@ -43,7 +43,7 @@ LL_batch_analysis <- function(dir){
     date = unique(data_file$date),
     experiment_name = unique(data_file$experiment_name),
     sample_name = unique(data_file$sample_name),
-    sample_number = unique(data_file$sample_number)
+    batch_sample_number = unique(data_file$batch_sample_number)
   )
 
   tin_tare_date <- unique(data_file$tin_tare_set)
@@ -61,7 +61,7 @@ LL_batch_analysis <- function(dir){
                       date = readr::col_date(),
                       experiment_name = readr::col_character(),
                       sample_name = readr::col_character(),
-                      sample_number = readr::col_double(),
+                      batch_sample_number = readr::col_double(),
                       tin_number = readr::col_double(),
                       blow_count = readr::col_double(),
                       tin_w_wet_sample = readr::col_double(),
@@ -75,7 +75,7 @@ LL_batch_analysis <- function(dir){
   )
 
   LL_values <- LL_raw_data %>%
-  dplyr::group_by(.data$sample_number) %>%
+  dplyr::group_by(.data$batch_sample_number) %>%
   tidyr::nest() %>%
   dplyr::mutate(LL= purrr::map(
     .x= .data$data,
@@ -85,10 +85,10 @@ LL_batch_analysis <- function(dir){
          LL = purrr::map_dbl(.data$LL, ~.[[1]]),
          sample_name = purrr::map_chr(.data$data, ~unique(.$sample_name))
     ) %>%
-  dplyr::select(.data$sample_number, .data$LL) %>%
+  dplyr::select(.data$batch_sample_number, .data$LL) %>%
   dplyr::ungroup() %>%
   dplyr::left_join(specimen_index) %>%
-  dplyr::relocate(.data$sample_number:.data$LL, .after = .data$sample_name)
+  dplyr::relocate(.data$batch_sample_number:.data$LL, .after = .data$sample_name)
 
   return(LL_values)
 
