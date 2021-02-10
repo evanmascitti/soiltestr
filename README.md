@@ -5,8 +5,8 @@
 [![Project Status: Active – The project has reached a stable, usable
 state and is being actively
 developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
-[![packageversion](https://img.shields.io/badge/Package%20version-0.0.2.9009-orange.svg?style=flat-square)](commits/master)
-[![Last-changedate](https://img.shields.io/badge/last%20change-2021--01--29-yellowgreen.svg)](/commits/master)
+[![packageversion](https://img.shields.io/badge/Package%20version-0.0.2.9010-orange.svg?style=flat-square)](commits/master)
+[![Last-changedate](https://img.shields.io/badge/last%20change-2021--02--10-yellowgreen.svg)](/commits/master)
 
 <!-- badges: end -->
 
@@ -52,8 +52,20 @@ data
 `w_opt()` Fit a compaction curve and compute the optimum water content
 only.
 
-`compute_LL()` calculate the liquid limit from water contents and blow
-counts
+[`compute_LL()`](R/compute_LL.R) calculate the liquid limit from water
+contents and blow counts
+
+[`LL_batch_analysis()`](R/LL_batch_analysis.R) calculate liquid limit of
+all specimens tested in a batch
+
+[`PL_batch_analysis()`](R/PL_batch_analysis.R) calculate plastic limit
+of all specimens tested in a batch
+
+[`AL_batch_analysis()`](R/AL_batch_analysis.R) calculate adhesion limit
+of all specimens tested in a batch
+
+[`pipette_analysis()`](R/pipette_analysis.R) analyze pipette and sieve
+data for one or more samples
 
 ### Visualization
 
@@ -64,6 +76,14 @@ counts
 `casagrande_chart()` display Atterberg limits on the traditional LL vs
 PI scatterplot, with U-line and A-line plotted
 
+[`ggpsd()`](R/ggpsd.R) plot one or more particle size distributions
+
+[`ggpsd_single_sample()`](ggpsd_single_sample.R.R) plot particle size
+distributions for a single specimen
+
+[`ggphase_diagram()`](R/gg_phase_diargam.R) plot solid, liquid, and
+gaseous phases of a sand-clay mix
+
 ### Data managmement and reference sheets
 
 `mix_calcs()`: Precise calculations for sand-clay soil mixtures
@@ -72,12 +92,11 @@ PI scatterplot, with U-line and A-line plotted
 
 `generate_proctor_datasheet()`
 
-`new_PL_datasheet()`
+[`pipette_datasheets()`](R/pipette_datasheets.R) creates .csv data
+sheets for the different types of data required in this analysis
 
-`new_LL_datasheet()`
-
-`new_pipette_datasheets()` \*creates multiple sheets for the different
-types of data required in this analysis
+[`att_lims_datasheets()`](R/att_lims_datasheets.R) creates .csv data
+sheets for liquid, adhesion, and plastic limit tests
 
 ## Standard method references
 

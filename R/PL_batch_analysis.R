@@ -31,18 +31,18 @@ PL_batch_analysis <- function(dir){
 
   data_file <- suppressMessages(
     readr::read_csv(data_file_path,
-                    col_types = cols(
-                      test_type = col_character(),
-                      date = col_date(),
-                      experiment_name = col_character(),
-                      sample_name = col_character(),
-                      batch_sample_number = col_integer(),
-                      replication = col_integer(),
-                      tin_number = col_double(),
-                      tin_w_wet_sample = col_double(),
-                      tin_w_OD_sample = col_double(),
-                      tin_tare_set = col_character(),
-                      comments = col_character()
+                    col_types = readr::cols(
+                      test_type = readr::col_character(),
+                      date = readr::col_date(),
+                      experiment_name = readr::col_character(),
+                      sample_name = readr::col_character(),
+                      batch_sample_number = readr::col_integer(),
+                      replication = readr::col_integer(),
+                      tin_number = readr::col_double(),
+                      tin_w_wet_sample = readr::col_double(),
+                      tin_w_OD_sample = readr::col_double(),
+                      tin_tare_set = readr::col_character(),
+                      comments = readr::col_character()
                     ))
   )
 
@@ -66,18 +66,18 @@ PL_batch_analysis <- function(dir){
     dplyr::mutate(tin_number = as.numeric(.data$tin_number))
 
   PL_raw_data <- readr::read_csv(data_file_path,
-                    col_types = cols(
-                      test_type = col_character(),
-                      date = col_date(),
-                      experiment_name = col_character(),
-                      sample_name = col_character(),
-                      batch_sample_number = col_integer(),
-                      replication = col_integer(),
-                      tin_number = col_double(),
-                      tin_w_wet_sample = col_double(),
-                      tin_w_OD_sample = col_double(),
-                      tin_tare_set = col_character(),
-                      comments = col_character()
+                    col_types = readr::cols(
+                      test_type = readr::col_character(),
+                      date = readr::col_date(),
+                      experiment_name = readr::col_character(),
+                      sample_name = readr::col_character(),
+                      batch_sample_number = readr::col_integer(),
+                      replication = readr::col_integer(),
+                      tin_number = readr::col_double(),
+                      tin_w_wet_sample = readr::col_double(),
+                      tin_w_OD_sample = readr::col_double(),
+                      tin_tare_set = readr::col_character(),
+                      comments = readr::col_character()
                     )) %>%
       dplyr::left_join(tin_tares) %>%
       soiltestr::add_w()
