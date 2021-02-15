@@ -28,6 +28,11 @@ pipette_analysis <- function(dir){
       purrr::map(~dplyr::select(., -comments))
   )
 
+  # change column types to double to account for empty cells containing
+  # a dash, which would make them read as character columns
+
+  datafiles$pipetting_data$beaker_mass_w_OD_sample <- as.double(datafiles$pipetting_data$beaker_mass_w_OD_sample)
+  datafiles$pipetting_data$beaker_number <- as.integer(datafiles$pipetting_data$beaker_number)
 
   # make tin tare lookup table from larger data object
 

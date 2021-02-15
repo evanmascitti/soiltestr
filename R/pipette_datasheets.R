@@ -80,6 +80,7 @@ new_directory_path <- paste0(directory, "pipette_w_sieves_data_", date)
     experiment_name = experiment_name,
     sample_name = rep(sample_names, each= n_reps),
     replication = rep(1:n_reps, times = length(sample_names)),
+    batch_sample_number = 1:(length(sample_names)*n_reps),
     comments = "-"
   )
 

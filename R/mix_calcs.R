@@ -56,10 +56,14 @@
 #'water contents of each soil are known), the final mixture will contain the
 #'desired % sand on an oven-dry mass basis.
 #'
-#'The equation for the air-dry mass of sandy soil is  \mjdeqn{
-#'m_{sandy~(air-dry)}~=~\frac{S_f~-~S_{clayey}}{S_{sandy}~-~S_{clayey}}~\cdot~
-#'(1+w_{sandy})~\cdot~m_{~total~mixture~(oven-dry)} }{} and the equation for the
-#'air-dry mass of clayey soil is \mjdeqn{
+#'The equation for the air-dry mass of sandy soil is
+#'
+#' \mjdeqn{$m_{sandy~(air-dry)}~=~\frac{S_f~-~S_{clayey}}{S_{sandy}~-~S_{clayey}}~\cdot~(1+w_{sandy})~\cdot~m_{~total~mixture}$}{}
+#'
+#'and the equation for the
+#'air-dry mass of clayey soil is
+#'
+#'\mjdeqn{
 #'m_{clayey~(air-dry)}~=~\left\lbrack(1~-~\left(\frac{S_f~-~S_{clayey}}
 #'{S_{sandy}~-~S_{clayey}}\right)\right\rbrack~\cdot~
 #'(1~+~w_{clayey})~\cdot~m_{~total~mixture~(oven-dry)} }{}
