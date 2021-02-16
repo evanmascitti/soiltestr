@@ -26,7 +26,7 @@ AL_batch_analysis <- function(dir){
   # error message if file does not exist
 
   if(length(data_file_path) == 0) {
-    stop("\nNo plastic limit data file found in this directory.")
+    stop("\nNo adhesion limit data file found in this directory.")
   }
 
   data_file <- suppressMessages(
@@ -35,9 +35,9 @@ AL_batch_analysis <- function(dir){
                       test_type = readr::col_character(),
                       date = readr::col_date(),
                       experiment_name = readr::col_character(),
-                      sample_name = readr::col_character(),
-                      batch_sample_number = readr::col_integer(),
-                      replication = readr::col_integer(),
+                      sample_name = readr::col_factor(),
+                      batch_sample_number = readr::col_double(),
+                      replication = readr::col_double(),
                       tin_number = readr::col_double(),
                       tin_w_wet_sample = readr::col_double(),
                       tin_w_OD_sample = readr::col_double(),
@@ -66,45 +66,39 @@ AL_batch_analysis <- function(dir){
     dplyr::mutate(tin_number = as.numeric(.data$tin_number))
 
   AL_raw_data <- readr::read_csv(data_file_path,
-                    col_types = readr::cols(
-                      test_type = readr::col_character(),
-                      date = readr::col_date(),
-                      experiment_name = readr::col_character(),
-                      sample_name = readr::col_character(),
-                      batch_sample_number = readr::col_integer(),
-                      replication = readr::col_integer(),
-                      tin_number = readr::col_double(),
-                      tin_w_wet_sample = readr::col_double(),
-                      tin_w_OD_sample = readr::col_double(),
-                      tin_tare_set = readr::col_character(),
-                      comments = readr::col_character()
-                    )) %>%
-      dplyr::left_join(tin_tares) %>%
-      soiltestr::add_w()
-
+                                 col_types = readr::cols(
+                                   test_type = readr::col_character(),
+                                   date = readr::col_date(),
+                                   experiment_name = readr::col_character(),
+                                   sample_name = readr::col_factor(),
+                                   batch_sample_number = readr::col_double(),
+                                   replication = readr::col_double(),
+                                   tin_number = readr::col_double(),
+                                   tin_w_wet_sample = readr::col_double(),
+                                   tin_w_OD_sample = readr::col_double(),
+                                   tin_tare_set = readr::col_character(),
+                                   comments = readr::col_character()
+                                 )) %>%
+    dplyr::left_join(tin_tares) %>%
+    soiltestr::add_w()
 
   AL_all_values <- AL_raw_data %>%
-    dplyr::rename(AL = .data$water_content) %>%
+    dplyr::mutate(test_type = "AL") %>%
     dplyr::select(.data$date, .data$experiment_name,
                   .data$sample_name, .data$replication,
-                  .data$batch_sample_number, .data$AL)
+                  .data$batch_sample_number, .data$test_type,
+                  .data$water_content)
 
 
-  AL_values <- AL_raw_data %>%
-    dplyr::group_by(.data$batch_sample_number) %>%
-    tidyr::nest() %>%
-    dplyr::mutate(AL= purrr::map_dbl(.data$data, ~mean(.$water_content),
-                                     sample_name = purrr::map_chr(.data$data, ~unique(.$sample_name)))
-    )%>%
-    dplyr::select(.data$batch_sample_number, .data$AL) %>%
+  AL_avg_values <- AL_all_values %>%
+    dplyr::group_by(dplyr::across(-c(.data$replication, .data$water_content))) %>%
+    dplyr::summarize(water_content = mean(.data$water_content, na.rm = TRUE)) %>%
     dplyr::ungroup() %>%
-    dplyr::left_join(specimen_index) %>%
-    dplyr::relocate(.data$batch_sample_number:.data$AL, .after = .data$sample_name)
-
+    dplyr::arrange(.data$batch_sample_number)
 
   AL_plotting_data <- AL_raw_data %>%
     tidyr::drop_na() %>%
-    dplyr::mutate(sample_name = forcats::fct_reorder(.f = .data$sample_name, .x = .data$water_content))
+    dplyr::mutate(sample_name = forcats::fct_reorder(.data$sample_name, .data$water_content))
 
   AL_variation_plot <- ggplot2::ggplot(data= AL_plotting_data,
                                        mapping = ggplot2::aes(x= .data$water_content,
@@ -118,17 +112,17 @@ AL_batch_analysis <- function(dir){
                                 labels = scales::label_percent(accuracy = 1, suffix = ""),
                                 breaks = scales::breaks_width(width = 0.01, offset = 0))+
     ggplot2::scale_color_brewer(palette = "Dark2")+
-    ggplot2::labs(title = "Adhesion limit variability across replicate specimens",
-                  subtitle = "- Error bars represent standard error of the mean.\n- Small dots represent individual tests; large dot represents mean value.",
-                  caption = "Adhesion limit represents the water content where soil will no longer stick to a 40d steel nail.")+
+    ggplot2::labs(title = "Adhesion limit variability across replicate threads",
+                  subtitle = "- Error bars represent standard error of the mean.\n- Small dots represent individual threads; large dot represents mean value.")+
     cowplot::theme_cowplot()+
     ggplot2::theme(axis.line.y= ggplot2::element_blank(),
                    legend.position = 'none')
 
-  return(list(
-    AL_values = AL_values,
+  AL_results <- list(
+    AL_avg_values = AL_avg_values,
     AL_all_values = AL_all_values,
     AL_variation_plot = AL_variation_plot)
-  )
+
+  return(AL_results)
 
 }

@@ -28,14 +28,14 @@ LL_batch_analysis <- function(dir){
                       test_type = readr::col_character(),
                       date = readr::col_date(),
                       experiment_name = readr::col_character(),
-                      sample_name = readr::col_character(),
+                      sample_name = readr::col_factor(),
                       batch_sample_number = readr::col_double(),
                       tin_number = readr::col_double(),
                       blow_count = readr::col_double(),
                       tin_w_wet_sample = readr::col_double(),
                       tin_w_OD_sample = readr::col_double(),
                       tin_tare_set = readr::col_character(),
-                      comments = readr::col_double()
+                      comments = readr::col_character()
                     )
                     )
 
@@ -60,14 +60,14 @@ LL_batch_analysis <- function(dir){
                       test_type = readr::col_character(),
                       date = readr::col_date(),
                       experiment_name = readr::col_character(),
-                      sample_name = readr::col_character(),
+                      sample_name = readr::col_factor(),
                       batch_sample_number = readr::col_double(),
                       tin_number = readr::col_double(),
                       blow_count = readr::col_double(),
                       tin_w_wet_sample = readr::col_double(),
                       tin_w_OD_sample = readr::col_double(),
                       tin_tare_set = readr::col_character(),
-                      comments = readr::col_double()
+                      comments = readr::col_character()
                     )
     ) %>%
     dplyr::left_join(tin_tares) %>%
@@ -77,20 +77,22 @@ LL_batch_analysis <- function(dir){
   LL_values <- LL_raw_data %>%
   dplyr::group_by(.data$batch_sample_number) %>%
   tidyr::nest() %>%
-  dplyr::mutate(LL= purrr::map(
+  dplyr::mutate(
+    test_type = "LL",
+    LL= purrr::map(
     .x= .data$data,
     .f= purrr::possibly(.f = ~purrr::map(.x= data,
                                          .f = soiltestr::compute_LL),
                         otherwise = NA_real_)),
-         LL = purrr::map_dbl(.data$LL, ~.[[1]]),
+         water_content = purrr::map_dbl(.data$LL, ~.[[1]]),
          sample_name = purrr::map_chr(.data$data, ~unique(.$sample_name))
     ) %>%
-  dplyr::select(.data$batch_sample_number, .data$LL) %>%
+  dplyr::select(.data$batch_sample_number, .data$test_type, .data$water_content) %>%
   dplyr::ungroup() %>%
   dplyr::left_join(specimen_index) %>%
-  dplyr::relocate(.data$batch_sample_number:.data$LL, .after = .data$sample_name)
+  dplyr::relocate(.data$batch_sample_number:.data$water_content, .after = .data$sample_name)
 
-  return(LL_values)
+  return(list(LL_results = LL_values))
 
   }
 

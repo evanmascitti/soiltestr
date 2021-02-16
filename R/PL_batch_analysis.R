@@ -35,9 +35,9 @@ PL_batch_analysis <- function(dir){
                       test_type = readr::col_character(),
                       date = readr::col_date(),
                       experiment_name = readr::col_character(),
-                      sample_name = readr::col_character(),
-                      batch_sample_number = readr::col_integer(),
-                      replication = readr::col_integer(),
+                      sample_name = readr::col_factor(),
+                      batch_sample_number = readr::col_double(),
+                      replication = readr::col_double(),
                       tin_number = readr::col_double(),
                       tin_w_wet_sample = readr::col_double(),
                       tin_w_OD_sample = readr::col_double(),
@@ -70,9 +70,9 @@ PL_batch_analysis <- function(dir){
                       test_type = readr::col_character(),
                       date = readr::col_date(),
                       experiment_name = readr::col_character(),
-                      sample_name = readr::col_character(),
-                      batch_sample_number = readr::col_integer(),
-                      replication = readr::col_integer(),
+                      sample_name = readr::col_factor(),
+                      batch_sample_number = readr::col_double(),
+                      replication = readr::col_double(),
                       tin_number = readr::col_double(),
                       tin_w_wet_sample = readr::col_double(),
                       tin_w_OD_sample = readr::col_double(),
@@ -83,22 +83,29 @@ PL_batch_analysis <- function(dir){
       soiltestr::add_w()
 
   PL_all_values <- PL_raw_data %>%
-    dplyr::rename(PL = .data$water_content) %>%
+    dplyr::mutate(test_type = "PL") %>%
     dplyr::select(.data$date, .data$experiment_name,
                   .data$sample_name, .data$replication,
-                  .data$batch_sample_number, .data$PL)
+                  .data$batch_sample_number, .data$test_type,
+                  .data$water_content)
 
 
-  PL_values <- PL_raw_data %>%
-    dplyr::group_by(.data$batch_sample_number) %>%
-    tidyr::nest() %>%
-    dplyr::mutate(PL= purrr::map_dbl(.data$data, ~mean(.$water_content),
-                                     sample_name = purrr::map_chr(.data$data, ~unique(.$sample_name)))
-    )%>%
-    dplyr::select(.data$batch_sample_number, .data$PL) %>%
+  PL_avg_values <- PL_all_values %>%
+    dplyr::group_by(dplyr::across(-c(.data$replication, .data$water_content))) %>%
+    dplyr::summarize(water_content = mean(.data$water_content, na.rm = TRUE)) %>%
     dplyr::ungroup() %>%
-    dplyr::left_join(specimen_index) %>%
-    dplyr::relocate(.data$batch_sample_number:.data$PL, .after = .data$sample_name)
+    dplyr::arrange(.data$batch_sample_number)
+
+  # %>%
+  #   tidyr::nest() %>%
+  #   dplyr::mutate(water_content = purrr::map_dbl(.data$data, ~mean(.$water_content),
+  #                                    sample_name = purrr::map_chr(.data$data, ~unique(.$sample_name))),
+  #                 test_type = "PL"
+  #   )%>%
+  #   dplyr::select(.data$batch_sample_number, .data$test_type, .data$water_content) %>%
+  #   dplyr::ungroup() %>%
+  #   dplyr::left_join(specimen_index) %>%
+  #   dplyr::relocate(.data$batch_sample_number:.data$water_content, .after = .data$sample_name)
 
 
   PL_plotting_data <- PL_raw_data %>%
@@ -123,10 +130,11 @@ PL_batch_analysis <- function(dir){
     ggplot2::theme(axis.line.y= ggplot2::element_blank(),
                    legend.position = 'none')
 
-  return(list(
-    PL_values = PL_values,
+  PL_results <- list(
+    PL_avg_values = PL_avg_values,
     PL_all_values = PL_all_values,
     PL_variation_plot = PL_variation_plot)
-  )
+
+  return(PL_results)
 
 }
