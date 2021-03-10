@@ -66,7 +66,7 @@ an air-dry condition to produce a final mixture having a particular \%
 sand-size particles. See \strong{Details} for more info on the calculations.
 }
 \details{
-\ifelse{html}{\out{<a href='https://www.tidyverse.org/lifecycle/#maturing'><img src='figures/lifecycle-maturing.svg' alt='Maturing lifecycle'></a>}}{\strong{Maturing}}
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#maturing}{\figure{lifecycle-maturing.svg}{options: alt='[Maturing]'}}}{\strong{[Maturing]}}
 
 This function solves a 2-member system of equations, accounting for the
 hygroscopic water content of each soil and their respective \% sand-size
@@ -76,7 +76,7 @@ desired \% sand on an oven-dry mass basis.
 
 The equation for the air-dry mass of sandy soil is
 
-\mjdeqn{m_{sandy~(air-dry)}~=~\frac{S_f~-~S_{clayey}}{S_{sandy}~-~S_{clayey}}~\cdot~(1+w_{sandy})~\cdot~m_{~total~mixture}}{}
+\mjdeqn{$m_{sandy~(air-dry)}~=~\frac{S_f~-~S_{clayey}}{S_{sandy}~-~S_{clayey}}~\cdot~(1+w_{sandy})~\cdot~m_{~total~mixture}$}{}
 
 and the equation for the
 air-dry mass of clayey soil is

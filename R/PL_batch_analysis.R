@@ -43,7 +43,8 @@ PL_batch_analysis <- function(dir){
                       tin_w_OD_sample = readr::col_double(),
                       tin_tare_set = readr::col_character(),
                       comments = readr::col_character()
-                    ))
+                    )) %>%
+      janitor::remove_empty(which = "rows")
   )
 
   n_reps <- length(unique(data_file$replication))
@@ -78,9 +79,11 @@ PL_batch_analysis <- function(dir){
                       tin_w_OD_sample = readr::col_double(),
                       tin_tare_set = readr::col_character(),
                       comments = readr::col_character()
-                    )) %>%
-      dplyr::left_join(tin_tares) %>%
-      soiltestr::add_w()
+                    ),
+                    na = "-") %>%
+    janitor::remove_empty(which = "rows") %>%
+    dplyr::left_join(tin_tares) %>%
+    soiltestr::add_w()
 
   PL_all_values <- PL_raw_data %>%
     dplyr::mutate(test_type = "PL") %>%

@@ -10,6 +10,7 @@ pipette_datasheets(
   experiment_name,
   sample_names,
   n_reps = 1,
+  protocol,
   pipette_sizes = c(20, 5, 2, 0.2),
   sieves_um = c(4000, 2000, 1000, 500, 250, 150, 53),
   tin_tare_set = "",

@@ -4,11 +4,13 @@
 \alias{ggpsd}
 \title{Plot one or more particle size distributions}
 \usage{
-ggpsd(df, ...)
+ggpsd(df, points = TRUE, ...)
 }
 \arguments{
 \item{df}{Data frame containing columns titled \code{microns} and
 \code{percent_passing}}
+
+\item{points}{Whether to include points on the plot (default is TRUE, set to FALSE for lines only)}
 
 \item{...}{Other arguments passed on to \code{aes()} in the initial call to
 \code{ggplot()} (affects both points and lines)}

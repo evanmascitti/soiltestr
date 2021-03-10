@@ -43,7 +43,8 @@ AL_batch_analysis <- function(dir){
                       tin_w_OD_sample = readr::col_double(),
                       tin_tare_set = readr::col_character(),
                       comments = readr::col_character()
-                    ))
+                    )) %>%
+      janitor::remove_empty(dat, which = "rows")
   )
 
   n_reps <- length(unique(data_file$replication))
@@ -79,6 +80,7 @@ AL_batch_analysis <- function(dir){
                                    tin_tare_set = readr::col_character(),
                                    comments = readr::col_character()
                                  )) %>%
+    janitor::remove_empty(dat, which = "rows")
     dplyr::left_join(tin_tares) %>%
     soiltestr::add_w()
 

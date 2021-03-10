@@ -5,6 +5,7 @@
 #'
 #' @param df Data frame containing columns titled `microns` and
 #'   `percent_passing`
+#'@param points Whether to include points on the plot (default is TRUE, set to FALSE for lines only)
 #' @details This function is designed for plotting multiple specimens via the
 #'   `(...)` argument passed internally to `aes()`. See
 #'   [`ggpsd_single_sample()`] for plotting only a single sample. That function
@@ -16,7 +17,12 @@
 #' @return a ggplot object
 #' @export
 #'
-ggpsd <- function(df, ...){
+#'
+
+
+# main function (see `gg_psdpts()` for helper function)
+
+ggpsd <- function(df, points = TRUE, ...){
 
 
   log_lines <- c(seq(0.1, 1, 0.1),
@@ -38,10 +44,13 @@ ggpsd <- function(df, ...){
                                  limits = c(0, 1),
                                  breaks = seq(0, 1, 0.2),
                                  labels = scales::label_percent(suffix = ""))+
-    ggplot2::geom_vline(xintercept = log_lines, color = 'grey80', linetype = 'dotted')+
-    ggplot2::geom_vline(xintercept = bold_log_lines, color= 'grey80')+
-    ggplot2::geom_hline(yintercept = seq(0, 1, 0.2), color = 'grey80', linetype = 'dotted')+
-    ggplot2::geom_point()+
+    ggplot2::geom_vline(xintercept = log_lines, color = 'grey95', linetype = 'dotted',
+                        size = 0.25)+
+    ggplot2::geom_vline(xintercept = bold_log_lines, color= 'grey95',
+                        size = 0.4)+
+    ggplot2::geom_hline(yintercept = seq(0, 1, 0.2), color = 'grey80',
+                        size = 0.25)+
+    soiltestr::gg_psdpts()+
     ggplot2::geom_line()+
     ggplot2::ggtitle("Cumulative particle size distribution")+
     cowplot::theme_cowplot()+

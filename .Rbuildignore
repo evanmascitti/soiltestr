@@ -2,4 +2,16 @@
 ^\.Rproj\.user$
 ^LICENSE\.md$
 ^README\.Rmd$
+data-raw
+inst/extdata
+
+^ignore-this//psa-functions-development/conceptual-ideas\.html$
+^ignore-this//psa-functions-development/conceptual-ideas\.Rmd$
+^ignore-this//psa-functions-development/OM-removal-corrected/pipette_w_sieves_data_2021-03-04/blank_correction_data_2021-03-04\.csv$
+^ignore-this//psa-functions-development/OM-removal-corrected/pipette_w_sieves_data_2021-03-04/hygroscopic_correction_data_2021-03-04\.csv$
+^ignore-this//psa-functions-development/OM-removal-corrected/pipette_w_sieves_data_2021-03-04/metadata_2021-03-04\.csv$
+^ignore-this//psa-functions-development/OM-removal-corrected/pipette_w_sieves_data_2021-03-04/OM_loss_correction_data_2021-03-04\.csv$
+^ignore-this//psa-functions-development/OM-removal-corrected/pipette_w_sieves_data_2021-03-04/pipetting_data_2021-03-04\.csv$
+^ignore-this//psa-functions-development/OM-removal-corrected/pipette_w_sieves_data_2021-03-04/sieving_data_2021-03-04\.csv$
+^ignore-this//psa-functions-development/OM-removal-corrected/pipette_w_sieves_data_2021-03-04/specimen_masses_data_2021-03-04\.csv$
 ^data-raw$

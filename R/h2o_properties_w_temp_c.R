@@ -5,7 +5,8 @@
 #' internal functions in **soiltestr** or for the user's own computations.
 #'
 #' @source [ASTM D854 - 14](https://www.astm.org/Standards/D854),
-#' [Engineer's edge](https://www.engineersedge.com/physics/water__density_viscosity_specific_weight_13146.htm)
+#' [Engineer's edge](https://www.engineersedge.com/physics/water__density_viscosity_specific_weight_13146.htm),
+#' [The Physics Hypertextbook](https://physics.info/viscosity/)
 #'
 #' @format A data frame with 5 columns (temperature in &deg;^C^ and Kelvin; absolute
 #'   viscosity, and density in two units (Mg m^-3^ and kg m^-3^; the former is

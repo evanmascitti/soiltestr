@@ -37,7 +37,8 @@ LL_batch_analysis <- function(dir){
                       tin_tare_set = readr::col_character(),
                       comments = readr::col_character()
                     )
-                    )
+                    ) %>%
+    janitor::remove_empty(dat, which = "rows")
 
   specimen_index <- tibble::tibble(
     date = unique(data_file$date),
@@ -70,9 +71,10 @@ LL_batch_analysis <- function(dir){
                       comments = readr::col_character()
                     )
     ) %>%
-    dplyr::left_join(tin_tares) %>%
-    soiltestr::add_w()
-  )
+      janitor::remove_empty(dat, which = "rows") %>%
+      dplyr::left_join(tin_tares) %>%
+      soiltestr::add_w()
+    )
 
   LL_values <- LL_raw_data %>%
   dplyr::group_by(.data$batch_sample_number) %>%

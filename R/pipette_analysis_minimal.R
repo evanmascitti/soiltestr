@@ -27,10 +27,10 @@ pipette_analysis_minimial <- function(dir){
 
   datafiles <- suppressMessages(
     list.files(directory, full.names = T) %>%
-      purrr::map(readr::read_csv) %>%
+      purrr::map(readr::read_csv, na = "-") %>%
       purrr::set_names(paths) %>%
-      purrr::map(~dplyr::select(., -comments))
-  )
+      purrr::map(~janitor::remove_empty(., which = "rows"))
+    )
 
   # change column types to double to account for empty cells containing
   # a dash, which would make them read as character columns

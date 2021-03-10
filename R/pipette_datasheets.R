@@ -44,7 +44,7 @@
 #'
 
 pipette_datasheets <- function(dir, date, experiment_name, sample_names,
-                                  n_reps = 1, pipette_sizes = c(20, 5, 2, 0.2),
+                                  n_reps = 1, protocol, pipette_sizes = c(20, 5, 2, 0.2),
                                    sieves_um = c(4000, 2000, 1000, 500, 250, 150, 53),
                                    tin_tare_set = "", beaker_tare_set = "",
                                    sample_beaker_numbers = "", blank_beaker_numbers = ""){
@@ -81,6 +81,7 @@ new_directory_path <- paste0(directory, "pipette_w_sieves_data_", date)
     sample_name = rep(sample_names, each= n_reps),
     replication = rep(1:n_reps, times = length(sample_names)),
     batch_sample_number = 1:(length(sample_names)*n_reps),
+    protocol = "",
     comments = "-"
   )
 
