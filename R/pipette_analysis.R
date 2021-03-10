@@ -23,10 +23,10 @@ pipette_analysis <- function(dir){
 
   datafiles <- suppressMessages(
     list.files(directory, full.names = T) %>%
-      purrr::map(readr::read_csv) %>%
+      purrr::map(readr::read_csv, na = "-") %>%
       purrr::set_names(paths) %>%
-      purrr::map(~dplyr::select(., -comments))
-  )
+      purrr::map(~janitor::remove_empty(., which = "rows"))
+      )
 
   # change column types to double to account for empty cells containing
   # a dash, which would make them read as character columns
@@ -34,26 +34,20 @@ pipette_analysis <- function(dir){
   datafiles$pipetting_data$beaker_mass_w_OD_sample <- as.double(datafiles$pipetting_data$beaker_mass_w_OD_sample)
   datafiles$pipetting_data$beaker_number <- as.integer(datafiles$pipetting_data$beaker_number)
 
+
   # make tin tare lookup table from larger data object
 
-  tin_tare_date <-  unique(datafiles$hygroscopic_correction_data$tin_tare_set)
+  tin_tare_date <-  as.character(unique(datafiles$hygroscopic_correction_data$tin_tare_set))
 
-  tin_tares <- asi468::tin_tares %>%
-    tibble::enframe(name= "date", value = "tin_tares_data") %>%
-    tidyr::unnest(.data$tin_tares_data) %>%
-    dplyr::filter(date == tin_tare_date) %>%
-    dplyr::select(-.data$date)
+  tin_tares <- asi468::tin_tares[[tin_tare_date]]
 
 
   # make beaker lookup table from larger data object
 
-  beaker_tare_date <- unique(datafiles$pipetting_data$beaker_tare_set)
+  beaker_tare_date <- as.character(unique(datafiles$pipetting_data$beaker_tare_set))
 
-  beaker_tares <- asi468::psa_beaker_tares %>%
-    tibble::enframe(name= "date", value = "beaker_tares_data") %>%
-    tidyr::unnest(.data$beaker_tares_data) %>%
-    dplyr::filter(date == beaker_tare_date) %>%
-    dplyr::select(-.data$date)
+
+  beaker_tares <- asi468::psa_beaker_tares[["2021-01-15"]]
 
 
   # calculate air-dry water contents

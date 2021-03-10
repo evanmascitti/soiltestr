@@ -1,0 +1,42 @@
+---
+title: "Object-oriented programming for particle size analysis"
+date: "ideas first articulated March 2021. Document last compiled `r ecmfuns::ecm_timestamp()`"
+---
+
+Set object class to "psa" Determine sub-classes based on structure of files in
+the directory; there are two sub-classes assigned....one for the measurement
+method and one for the pre-treatment method. This makes the psa class easily
+extensible with new methods as I develop them! The only thing that must stay
+constant is the output of the method, and actually this doesn't really NEED to
+stay constant but it will make it much much easier when analyzing actual data
+to compare the methods. For example, I can always return the same 4-item list:
+
+- A data frame containing the percent passing for all samples (with arbitrary
+particle diameters)
+- Data frame containing the % falling into each traditionally defined size class
+- Data frame containing a plot of the psd
+- Data frame or named character vector providing information about the pre-treatment
+ and analysis methods used
+- this list could also be extensible to include additional items.....as long as 
+the order is kept constant when new methods are created, any object with class "psa"
+can still be computed on iteratively without breaking existing methods.
+
+
+____
+
+# 2021-03-09
+
+I have decided against using classes and object-oriented programming because it is not really meant for working with data frames. Instead I am going to use the 
+`switch()` function which still allows this function to be extensible via new 
+helper functions as the PSA methods (in the physical sense) are created.
+
+Some pseudocode:
+
+1. Determine which method was used based on a file inside the directory
+2. Calculate the oven-dry specimen mass used in the particle size analysis - this might require a correction due to pretreatements which reduce the initial mass of the specimen
+3. Compute the "% finer than x " for an arbitrary number of bins - this is the most complex part of the program. It requires a different method for hydrometer vs pipette, and a way of handling the pipette data for an arbitrary number of input particle sizes (for example, 2 microns only vs 2 and 5 vs 0.2, 2, and 20, etc.). I am sure this can be achieved with `across()` or something similar, perhaps based on the column positions. 
+4. Compute the "% finer than x % for all diameters > 53 microns. This too requires a method which can take an arbitrary number of sieves, although this is relatively straightforward. I can use `lag()`.....probably can do that for the above problem too, instead of messing with pivoting wider and then re-pivoting longer again. 
+5. At this point any following steps will be identical regardless of the method, with the exception of the final list item whose _structure_ will differ based on the method. The _contents_ of the other list items might be different, for example a simple pipette analysis with no sieving will have some NA fields because sub-classes can't be determined. Anyway, at this step, bind the "% finer than" data for the coarse and fine fractions.
+6. Calculate other information, like the % of the sample falling into each traditional size class.
+7. Build a list to output
+8. Return the list

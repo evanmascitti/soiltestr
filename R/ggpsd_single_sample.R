@@ -24,19 +24,19 @@ ggpsd_single_sample <- function(df, ...){
 
   df %>%
     ggplot2::ggplot(ggplot2::aes(x = .data$microns, y = .data$percent_passing, ...))+
-    ggplot2::scale_x_continuous(latex2exp::TeX("Particle diameter, $\\mu$m"),
+    ggplot2::scale_x_continuous("Particle diameter, \u03bcm",
                                 limits = c(0.1, 10000),
                                 trans = "log10",
                                 breaks = c(0.1, 1, 10, 100, 1000, 10000),
                                 labels = c(0.1, 1, 10, 100, 1000, 10000))+
-    ggplot2:: scale_y_continuous("% passing",
+    ggplot2:: scale_y_continuous(bquote("% passing, g g"^-1),
                                  limits = c(0, 1),
                                  breaks = seq(0, 1, 0.2),
                                  labels = scales::label_percent(suffix = ""))+
     ggplot2::geom_vline(xintercept = log_lines, color = 'grey80', linetype = 'dotted')+
     ggplot2::geom_vline(xintercept = bold_log_lines, color= 'grey80')+
     ggplot2::geom_hline(yintercept = seq(0, 1, 0.2), color = 'grey80', linetype = 'dotted')+
-    ggplot2::geom_point()+
+    ggplot2::geom_point(alpha = 2/3, size = 2)+
     ggplot2::geom_line()+
     ggplot2::ggtitle("Cumulative particle size distribution",
                      subtitle = paste("Sample name:",
