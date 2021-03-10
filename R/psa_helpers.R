@@ -93,7 +93,7 @@ compute_pipette_fines_pct_passing <- function(datafiles, OD_specimen_masses){
 
   blanks_df <- datafiles$blank_correction_data %>%
     dplyr::left_join(asi468::psa_beaker_tares[[beaker_tare_set]], by = "beaker_number") %>%
-    mutate(calgon_in_beaker = .data$beaker_mass_w_OD_sample - .data$beaker_empty_mass)
+    dplyr::mutate(calgon_in_beaker = .data$beaker_mass_w_OD_sample - .data$beaker_empty_mass)
 
   blank_correction <- mean(blanks_df$calgon_in_beaker, na.rm = TRUE)
 

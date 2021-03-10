@@ -220,9 +220,9 @@ fines_percent_passing <- switch (protocol_number,
   #browser()
 
   method_metadata <-switch (protocol_number,
-    "1" = psa_protocols[["1"]],
+    "1" = soiltestr::psa_protocols[["1"]],
     # "2" = psa_protocols[["2"]],
-     "3" = psa_protocols[["3"]],
+     "3" = soiltestr::psa_protocols[["3"]],
     # "4" = psa_protocols[["4"]],
    #  "5" = psa_protocols[["5"]],
     stop("Could not find any info for psa_protocol number", protocol_number, call. = T))
