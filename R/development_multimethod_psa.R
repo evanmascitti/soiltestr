@@ -162,6 +162,8 @@ fines_percent_passing <- switch (protocol_number,
   # if the particular sizes were measured. Leaving in for now with the understanding
   # that it will thrown an error if the micron values are not found
 
+# UPDATE  see conceptual ideas.md file for an idea
+
   size_bins <- cumulative_percent_passing %>%
       tidyr::pivot_wider(names_from = .data$microns, values_from = .data$percent_passing) %>%
       dplyr::mutate(
