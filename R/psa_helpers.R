@@ -113,12 +113,24 @@ compute_pipette_fines_pct_passing <- function(datafiles, OD_specimen_masses){
 
 # will obviously need to come back to this one; it should also return a data frame
 # called `fines_percent_passing()` with an arbitrary number of particle diameters:
+
+
 # compute_hydrometer_fines_pct_passing <- function(){
 #
 # }
 
 
 
+#' Calculate % finer for arbitrary number of sieves
+#'
+#' @param datafiles List of input data; constructed by initial call to [`psa()`]
+#' @param OD_specimen_masses Data frame of oven-dry specimen masses; also
+#'   contstructed by initial call to [`psa()`]
+#'
+#' @return
+#' @export
+#'
+#' @examples
   compute_sieves_percent_passing <- function(datafiles, OD_specimen_masses){
 
     sieves_percent_passing <- datafiles$sieving_data %>%

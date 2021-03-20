@@ -4,19 +4,20 @@
 #'
 #' @param dir Folder containing the pertinent files
 #'
-#' @return List of length 4 containing:
+#' @return List of length 5 containing:
 #'
-#' 1. Data frame of cumulative percent passing data in tidy format
+#' 1. Data frame of cumulative percent passing data (tidy/long format)
 #' 2. Data frame with breakdown into traditional size classes (wide format)
-#' 3. List of ggplots (one per specimen)
+#' 3. List of ggplot objects (one per specimen)
 #' 4. Metadata about the test protocol
-#' 5. If pretreatment was performed, the loss on pretreatment for each specimen
+#' 5. If pretreatment was performed, the loss on pre-treatment for each specimen;
+#' otherwise `NULL`
 #'
 #' @export
 #'
 psa <- function(dir){
 
-  # append dir argumnt if no trailing slash was provided
+  # append dir argument if no trailing slash was provided
 
   if(stringr::str_sub(string = dir, start = -1) == "/"){
     directory <- dir} else{
