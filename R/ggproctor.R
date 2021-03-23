@@ -25,6 +25,11 @@ ggproctor <- function(df, identifier = sample_ID,
                        annotate = TRUE, sat_100 = TRUE,
                        sat_90 = TRUE, ...){
 
+
+  # stop if any packages are missing
+  ecmfuns::pkg_check(c("mosaic", "splines"))
+
+
   # error if plotting soils with different Gs values and not using faceting
 
 

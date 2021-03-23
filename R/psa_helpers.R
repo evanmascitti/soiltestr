@@ -130,8 +130,7 @@ compute_pipette_fines_pct_passing <- function(datafiles, OD_specimen_masses){
 #' @return
 #' @export
 #'
-#' @examples
-  compute_sieves_percent_passing <- function(datafiles, OD_specimen_masses){
+compute_sieves_percent_passing <- function(datafiles, OD_specimen_masses){
 
     sieves_percent_passing <- datafiles$sieving_data %>%
       dplyr::left_join(OD_specimen_masses, by = c("date", "experiment_name", "sample_name", "replication", "batch_sample_number"))%>%

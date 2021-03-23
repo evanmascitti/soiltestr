@@ -49,6 +49,7 @@ pipette_datasheets <- function(dir, date, experiment_name, sample_names,
                                    tin_tare_set = "", beaker_tare_set = "",
                                    sample_beaker_numbers = "", blank_beaker_numbers = ""){
 
+
   # code to ensure directory contains trailing slash
 
   if(stringr::str_sub(string = dir, start = -1) == "/"){
