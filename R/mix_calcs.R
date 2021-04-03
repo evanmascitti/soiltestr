@@ -98,11 +98,12 @@ mix_calcs <- function(mix_date, expt_mix_nums, sand_name, clay_name,
     sec_to_spray_w_backpack = (.data$kg_water_to_add*1000) / backpack_flo_rate_g_per_sec ) %>%
     dplyr::select(mix_date, expt_mix_nums, sand_name, clay_name, .data$sand_pct,
                   .data$kg_air_dry_sand_component, .data$kg_air_dry_clay_component,
+                  .data$kg_water_to_add,
                   .data$sec_to_spray_w_backpack ) %>%
-    dplyr::mutate(sand_pct= round(100*.data$sand_pct, 2),
-                  kg_air_dry_sand_component= round(.data$kg_air_dry_sand_component, 1),
-                  kg_air_dry_clay_component = round(.data$kg_air_dry_clay_component, 1),
-                  sec_to_spray_w_backpack= round(.data$sec_to_spray_w_backpack, 1) ) %>%
+    dplyr::mutate(sand_pct= 100*.data$sand_pct,
+                  kg_air_dry_sand_component= .data$kg_air_dry_sand_component,
+                  kg_air_dry_clay_component = .data$kg_air_dry_clay_component,
+                  sec_to_spray_w_backpack= .data$sec_to_spray_w_backpack)  %>%
     dplyr::rename(`Mix Date`=  mix_date,
                   `Mix number` = expt_mix_nums,
                   `Sand name` = sand_name,
@@ -110,6 +111,7 @@ mix_calcs <- function(mix_date, expt_mix_nums, sand_name, clay_name,
                   `Final % sand-size` = .data$sand_pct,
                   `kg sand component`= .data$kg_air_dry_sand_component,
                   `kg clay component`= .data$kg_air_dry_clay_component,
+                  `kg water to add `= .data$kg_water_to_add,
                   `seconds to spray`= .data$sec_to_spray_w_backpack)
   return(mix_ref)
 }
