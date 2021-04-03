@@ -1,10 +1,17 @@
-#' A list of particle size-analysis protocols
+#' Particle size-analysis protocols
 #'
-#' Each list item contains details about how the test was performed. Called
+#' Detailed information about specimen pretreatement, dispersion,
+#' and measurements.
+#'
+#' @details Each list item contains details about how the test was performed. Called
 #' internally by [`psa()`] and useful for reference during data analysis and for
-#' reproducibility.
+#' reproducibility of results by different operators.
 #'
-#' @format Nested list
+#' This list can be easily extended because each protocol has a unique ID.
+#' Each ID (i.e. object name) is a number enclosed in backticks. This allows
+#' unlimited expansion (letters could conceivably be exhausted).
+#'
+#' @format If using the tidyverse, a tibble with two list-columns (`extra_pretreatement` and `references`). Otherwise, a recursive list.
 #'
 #'
 "psa_protocols"

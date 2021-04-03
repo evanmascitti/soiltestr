@@ -23,9 +23,14 @@ pipette_sample_depth <- function(particle_diameter, duration_hr,
     .$water_density_kg_m3 %>%
     .[1]
 
+  # need to double check the calculation. I think the poises
+  # is used more commonly but it is NOT an SI unit....
+  # the derived unit would be pascal-seconds, which I think
+  # is what's reflected below due to the /10 transformation
+
   water_viscosity <- soiltestr::h2o_properties_w_temp_c %>%
     dplyr::filter(.data$water_temp_c == round(ambient_temp_c, 1)) %>%
-    .$water_absolute_viscosity_poises %>%
+    .$water_absolute_viscosity_poises/10 %>%
     .[1]
 
   gravity <- 9.80665
