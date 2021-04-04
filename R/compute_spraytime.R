@@ -3,7 +3,7 @@
 #' @description Once the optimum water content is determined, the bulk mixture must be brought to this water content. `compute_spraytime()` allows the user to pass a data frame of existing water contents (`w_target`) and target water contents; the return value is the existing data frame with water masses and spray times added. This makes the water addition process accurate and precise while keeping the workflow simple.
 #'
 #'
-#' @param df Data fram containing columns for the unique identifier (typically `sample_ID`) and the `w_extant` and `w_target` values (the latter two being gravimetric water contents as decimals)
+#' @param df Data fram containing columns for the unique identifier (typically `sample_name`) and the `w_extant` and `w_target` values (the latter two being gravimetric water contents as decimals)
 #' @param OD_soil_mass_g the mass of soil to prepare, in terms of oven-dry mass. Defaults to 8000 g (enough to pack three chunk cylinders to a depth of 2", including 0.17" of over-packed soil, and a few hundred g remaining for daily repairs)
 #' @param spray_flo_rate_cm3_sec flow rate of electric spray bottle, in cm3 per second.
 #' @return Data frame containing the original columns, with columns added for the total water quantity and a spray time.

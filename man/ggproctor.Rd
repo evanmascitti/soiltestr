@@ -6,7 +6,7 @@
 \usage{
 ggproctor(
   df,
-  identifier = sample_ID,
+  identifier = sample_name,
   annotate = TRUE,
   sat_100 = TRUE,
   sat_90 = TRUE,
@@ -15,7 +15,7 @@ ggproctor(
 
 ggproctor(
   df,
-  identifier = sample_ID,
+  identifier = sample_name,
   annotate = TRUE,
   sat_100 = TRUE,
   sat_90 = TRUE,
@@ -25,7 +25,7 @@ ggproctor(
 \arguments{
 \item{df}{data frame containing water contents and dry densities}
 
-\item{identifier}{unquoted column name which distinguishes the samples from each other, defaults to \code{sample_ID}}
+\item{identifier}{unquoted column name which distinguishes the samples from each other, defaults to \code{sample_name}}
 
 \item{annotate}{whether to print the values of maximum density and optimum water content on the plot}
 

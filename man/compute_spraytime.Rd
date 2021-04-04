@@ -7,7 +7,7 @@
 compute_spraytime(df, OD_soil_mass_g = 8000, spray_flo_rate_cm3_sec = 2.4)
 }
 \arguments{
-\item{df}{Data fram containing columns for the unique identifier (typically \code{sample_ID}) and the \code{w_extant} and \code{w_target} values (the latter two being gravimetric water contents as decimals)}
+\item{df}{Data fram containing columns for the unique identifier (typically \code{sample_name}) and the \code{w_extant} and \code{w_target} values (the latter two being gravimetric water contents as decimals)}
 
 \item{OD_soil_mass_g}{the mass of soil to prepare, in terms of oven-dry mass. Defaults to 8000 g (enough to pack three chunk cylinders to a depth of 2", including 0.17" of over-packed soil, and a few hundred g remaining for daily repairs)}
 

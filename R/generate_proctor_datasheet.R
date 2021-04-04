@@ -56,7 +56,7 @@ generate_proctor_datasheet <- function(prep_sheet,
   # Make tibble
 
     datasheet <- prep_sheet %>%
-      dplyr::select(c(.data$sample_ID, .data$effort, .data$date, .data$cylinder_number, .data$w_target)) %>%
+      dplyr::select(c(.data$sample_name, .data$effort, .data$date, .data$cylinder_number, .data$w_target)) %>%
       dplyr::mutate(
         cylinder_vol_cm3 = cylinder_vol_cm3,
         empty_cylinder_mass_g = empty_cylinder_mass_g,
@@ -73,7 +73,7 @@ generate_proctor_datasheet <- function(prep_sheet,
         comments = ""
       ) %>%
       dplyr::select(
-        .data$sample_ID,
+        .data$sample_name,
         .data$date,
         .data$effort,
         .data$cylinder_vol_cm3,
@@ -92,7 +92,7 @@ generate_proctor_datasheet <- function(prep_sheet,
         .data$comments) %>%
       dplyr::arrange(
         dplyr::desc(.data$effort),
-        .data$sample_ID,
+        .data$sample_name,
         .data$cylinder_number)
 
 

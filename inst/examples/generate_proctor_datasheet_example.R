@@ -6,11 +6,11 @@ library(dplyr)
 library(tidyr)
 
 w_extant_values <- tibble(
-  sample_ID = paste0("mix_0", 1:3),
+  sample_name = paste0("mix_0", 1:3),
   w_extant = c(0.048, 0.057, 0.062))
 
 PL_values <- tibble(
-  sample_ID = paste0("mix_0", 1:3),
+  sample_name = paste0("mix_0", 1:3),
   PL= c(0.095, 0.10, 0.14),
   standard = 0.9*PL,
   modified= standard - 0.03)
@@ -21,7 +21,7 @@ prep_sheet <- w_extant_values %>%
   pivot_longer(cols= c(standard:modified),
                names_to =  'effort',
                values_to = 'est_w_opt')%>%
-  select(sample_ID, effort, everything()) %>%
+  select(sample_name, effort, everything()) %>%
   arrange(desc(effort)) %>%
   proctor_prep(date = Sys.Date())
 

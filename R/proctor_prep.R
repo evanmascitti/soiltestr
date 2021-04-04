@@ -21,7 +21,7 @@
 #'
 #'  - `effort`: a character string specifying the type of compactive effort,
 #'  i.e. "standard", "modified", or "reduced"
-#'  - `sample_ID` a unique identifier
+#'  - `sample_name` a unique identifier
 #'  between the samples tested, i.e. mix number or name - `w_extant` the current
 #'  water content of the soil (g/g)
 #'  - `est_w_opt` the estimated optimum water
@@ -35,7 +35,7 @@
 #'  The data frame passed to `df` can be easily prepared using
 #'  [`dplyr::left_join()`] if the data are already in R, as demonstrated in
 #'  the examples, or by using [`tidyr::crossing()`] to generate all combinations
-#'  of `effort` and `sample_ID`, then adding a data frame column containing the
+#'  of `effort` and `sample_name`, then adding a data frame column containing the
 #'  water contents. The standard `w_opt` can be estimated in one of two ways:
 #'
 #'  - Gradually add water to a ~ 25 mL soil specimen until it appears close to
@@ -104,8 +104,8 @@ proctor_prep <- function(df, date, w_int = 0.015, assumed_d_max = 2.20,
     stop('\n\nNo `effort` column present in `df`.')
   }
 
-  if(! "sample_ID" %in% names(df)){
-    stop('\n\nNo `sample_ID` column present in `df`.')
+  if(! "sample_name" %in% names(df)){
+    stop('\n\nNo `sample_name` column present in `df`.')
   }
 
   if(! "w_extant" %in% names(df)){
@@ -119,7 +119,7 @@ proctor_prep <- function(df, date, w_int = 0.015, assumed_d_max = 2.20,
   # generate new data frame
 
   newdf <- df %>%
-    dplyr::group_by(.data$sample_ID, .data$effort) %>%
+    dplyr::group_by(.data$sample_name, .data$effort) %>%
     dplyr::mutate(aliquots =
                     purrr::pmap(
                       .l= list(w_extant = .data$w_extant, est_w_opt = .data$est_w_opt),
@@ -145,7 +145,7 @@ proctor_prep <- function(df, date, w_int = 0.015, assumed_d_max = 2.20,
     tidyr::unnest(.data$aliquots) %>%
     dplyr::ungroup() %>%
     dplyr::select(
-      .data$effort, .data$sample_ID, .data$date, .data$moist_soil_to_use_g, .data$w_to_add_g, .data$cylinder_number, .data$w_target, .data$time_to_spray )
+      .data$effort, .data$sample_name, .data$date, .data$moist_soil_to_use_g, .data$w_to_add_g, .data$cylinder_number, .data$w_target, .data$time_to_spray )
 
   return(newdf)
 }

@@ -61,7 +61,7 @@ compaction efforts. For this reason, the data frame passed to
 \itemize{
 \item \code{effort}: a character string specifying the type of compactive effort,
 i.e. "standard", "modified", or "reduced"
-\item \code{sample_ID} a unique identifier
+\item \code{sample_name} a unique identifier
 between the samples tested, i.e. mix number or name - \code{w_extant} the current
 water content of the soil (g/g)
 \item \code{est_w_opt} the estimated optimum water
@@ -75,7 +75,7 @@ standard effort.
 The data frame passed to \code{df} can be easily prepared using
 \code{\link[dplyr:mutate-joins]{dplyr::left_join()}} if the data are already in R, as demonstrated in
 the examples, or by using \code{\link[tidyr:expand]{tidyr::crossing()}} to generate all combinations
-of \code{effort} and \code{sample_ID}, then adding a data frame column containing the
+of \code{effort} and \code{sample_name}, then adding a data frame column containing the
 water contents. The standard \code{w_opt} can be estimated in one of two ways:
 \itemize{
 \item Gradually add water to a ~ 25 mL soil specimen until it appears close to
@@ -103,11 +103,11 @@ library(dplyr)
 library(tidyr)
 
 w_extant_values <- tibble(
-  sample_ID = paste0("mix_0", 1:3),
+  sample_name = paste0("mix_0", 1:3),
   w_extant = c(0.048, 0.057, 0.062))
 
 PL_values <- tibble(
-  sample_ID = paste0("mix_0", 1:3),
+  sample_name = paste0("mix_0", 1:3),
   PL= c(0.095, 0.10, 0.14),
   standard = 0.9*PL,
   modified= standard - 0.03)
@@ -118,7 +118,7 @@ w_info <- w_extant_values \%>\%
   pivot_longer(cols= c(standard:modified),
                names_to =  'effort',
                values_to = 'est_w_opt')\%>\%
-  select(sample_ID, effort, everything()) \%>\%
+  select(sample_name, effort, everything()) \%>\%
   arrange(desc(effort))
 
 # generate the reference table
@@ -126,7 +126,7 @@ proctor_prep(df= w_info, date= Sys.Date())
 
 # widen the interval for a clayey soil
 mix_03 <- w_info \%>\%
-  filter(sample_ID == 'mix_03')
+  filter(sample_name == 'mix_03')
 proctor_prep(df= mix_03, date= Sys.Date(), w_int = 0.025)
 
 # the function works fine with only one compaction effort but be sure this is
