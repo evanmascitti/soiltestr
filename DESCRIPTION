@@ -14,15 +14,15 @@ LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
 Suggests: 
-    testthat
+    testthat,
+    mosaic,
+    splines
 Imports: 
     dplyr,
     magrittr,
     tibble,
     purrr,
     readr,
-    mosaic,
-    splines,
     stats,
     rlang,
     utils,

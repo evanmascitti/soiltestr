@@ -3,16 +3,24 @@
 \docType{data}
 \name{psa_protocols}
 \alias{psa_protocols}
-\title{A list of particle size-analysis protocols}
+\title{Particle size-analysis protocols}
 \format{
-Nested list
+If using the tidyverse, a tibble with two list-columns (\code{extra_pretreatement} and \code{references}). Otherwise, a recursive list.
 }
 \usage{
 psa_protocols
 }
 \description{
+Detailed information about specimen pretreatement, dispersion,
+and measurements.
+}
+\details{
 Each list item contains details about how the test was performed. Called
 internally by \code{\link[=psa]{psa()}} and useful for reference during data analysis and for
-reproducibility.
+reproducibility of results by different operators.
+
+This list can be easily extended because each protocol has a unique ID.
+Each ID (i.e. object name) is a number enclosed in backticks. This allows
+unlimited expansion (letters could conceivably be exhausted).
 }
 \keyword{datasets}

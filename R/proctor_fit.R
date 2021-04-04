@@ -52,6 +52,9 @@
 proctor_fit <- function(df,
            spline_degree = 3) {
 
+  # stop if any packages are missing
+  ecmfuns::pkg_check(c("mosaic", "splines"))
+
   physical_props <- df %>%
     dplyr::select(.data$cylinder_number,
                   .data$water_content,
