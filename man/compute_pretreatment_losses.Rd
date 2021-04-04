@@ -4,7 +4,11 @@
 \alias{compute_pretreatment_losses}
 \title{Determine loss of mass during specimen pretreatment}
 \usage{
-compute_pretreatment_losses(dir, hygroscopic_water_contents)
+compute_pretreatment_losses(
+  dir,
+  hygroscopic_water_contents,
+  method_specific_datafiles
+)
 }
 \arguments{
 \item{dir}{directory containing the data files}

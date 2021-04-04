@@ -4,7 +4,10 @@
 \alias{compute_pipette_fines_pct_passing}
 \title{Calculate \% finer than an arbitrary number of pipette sizes}
 \usage{
-compute_pipette_fines_pct_passing(datafiles, OD_specimen_masses)
+compute_pipette_fines_pct_passing(
+  method_specific_datafiles,
+  OD_specimen_masses
+)
 }
 \value{
 data frame named \code{fines_pct_passing}

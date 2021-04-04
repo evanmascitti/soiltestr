@@ -12,6 +12,10 @@ psa_datasheets(
   n_reps = 1,
   protocol_ID,
   tin_tare_set = "",
+  beaker_tare_set,
+  pipette_microns,
+  sample_beaker_numbers = "",
+  sieves_microns,
   ...
 )
 }

@@ -16,20 +16,20 @@ simple_bins <- function(){
 
 
 
-   size_bins <- cumulative_percent_passing %>%
+  size_bins <- cumulative_percent_passing %>%
     tidyr::pivot_wider(names_from = .data$microns,
                        values_from = .data$percent_passing) %>%
-     dplyr::mutate(
-       gravel = .data$`4000` - .data$`2000`,
-       sand = .data$`2000` - .data$`53`,
-       silt = .data$`53` - .data$`2`,
-       clay = .data$`2`) %>%
-     dplyr::select(.data$date:.data$batch_sample_number,
-                   .data$gravel:.data$clay) %>%
-     dplyr::mutate(
-       dplyr::across(
-         .cols = .data$gravel:.data$clay,
-         .fns = ~.*100))
+    dplyr::mutate(
+      gravel = .data$`4000` - .data$`2000`,
+      sand = .data$`2000` - .data$`53`,
+      silt = .data$`53` - .data$`2`,
+      clay = .data$`2`) %>%
+    dplyr::select(.data$date:.data$batch_sample_number,
+                  .data$gravel:.data$clay) %>%
+    dplyr::mutate(
+      dplyr::across(
+        .cols = .data$gravel:.data$clay,
+        .fns = ~.*100))
 
 }
 

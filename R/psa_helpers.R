@@ -6,16 +6,27 @@
 #'
 #' @return Numeric vector of length 1
 #'
-find_protocol <- function(dir){
+find_protocol_ID <- function(dir){
 
   # note that in this function the protocol is being read as a character column
   # to facilitate easy use of `switch()` later on
 
-  metadata_file <- readr::read_csv(list.files(path = dir, pattern = "metadata", full.names = T),
-                                   col_types = "Dcciicc")
+  metadata_file <- readr::read_csv(file = list.files(path = dir, pattern = "metadata", full.names = T),
+                                   col_types = readr::cols(
+                                     protocol_ID = readr::col_character(),
+                                     sample_name = readr::col_character(),
+                                     experiment_name = readr::col_character()
+                                   ))
 
-  protocol_number <- unique(metadata_file$protocol)
+  protocol_ID <- unique(metadata_file$protocol_ID)
 
+}
+
+clean_psa_file_name <- function(x){
+  basename(x) %>%
+    stringr::str_remove(string = ., '_\\d{4}-\\d{2}-\\d{2}[.]csv$') %>%
+    stringr::str_remove(., 'psa[_-]') %>%
+    stringr::str_replace_all(pattern = "-", replacement = "_")
 }
 
 
@@ -35,40 +46,56 @@ find_protocol <- function(dir){
 #' @param dir directory containing the data files
 #' @return tibble of sample info plus % of OD sample mass lost
 #'
-compute_pretreatment_losses <- function(dir, hygroscopic_water_contents){
+compute_pretreatment_losses <-
+  function(dir, hygroscopic_water_contents, method_specific_datafiles) {
 
-  hygroscopic_water_contents <- hygroscopic_water_contents
+    # the bottleneck is in this function..... it is not joining correctly....
+    # also seems not to be recognizing the method specific datafiles object ??
 
-  pretreatment_loss_data <-
-    readr::read_csv(file = list.files(path = dir, pattern = "pretreatment_loss_data", full.names = T),
-                    col_types = "Dcciiddd") %>%
-    dplyr::left_join(hygroscopic_water_contents, by = c("date", "experiment_name",
-                                                        "sample_name", "replication", "batch_sample_number"))
+    # hygroscopic_water_contents <- hygroscopic_water_contents
+
+    # method_specific_datafiles <- method_specific_datafiles
+
+    # instead of typing all the column names out in quotes, use
+    # subsetting to define the vector by which to join
+
+    names_match <- names(method_specific_datafiles$pretreatment_loss_data)[names(method_specific_datafiles$pretreatment_loss_data) %in% names(hygroscopic_water_contents)]
+
+    pretreatment_loss_data <-
+      method_specific_datafiles$pretreatment_loss_data %>%
+      dplyr::left_join(
+        y = hygroscopic_water_contents, by = names_match)
 
 
- pretreatment_loss_pcts <- pretreatment_loss_data %>%
-    mutate(OD_soil_mass_before_pretreatment = .data$air_dry_specimen_mass_before_pretreatment / (1 + .data$hygroscopic_water_content),
-           OD_soil_mass_after_pretreatment = .data$container_w_OD_specimen_mass_after_pretreatment - .data$container_tare,
-           pretreatment_loss_mass = .data$OD_soil_mass_before_pretreatment - .data$OD_soil_mass_after_pretreatment,
-           pretreatment_loss_pct = .data$pretreatment_loss_mass / .data$OD_soil_mass_before_pretreatment) %>%
-    dplyr::select(.data$date:.data$batch_sample_number, .data$pretreatment_loss_pct)
 
-  return(pretreatment_loss_pcts)
-}
+    pretreatment_loss_pcts <- pretreatment_loss_data %>%
+      dplyr::mutate(
+        OD_soil_mass_before_pretreatment = .data$air_dry_specimen_mass_before_pretreatment / (1 + .data$hygroscopic_water_content),
+        OD_soil_mass_after_pretreatment = .data$container_w_OD_specimen_mass_after_pretreatment - .data$container_tare,
+        pretreatment_loss_mass = .data$OD_soil_mass_before_pretreatment - .data$OD_soil_mass_after_pretreatment,
+        pretreatment_loss_pct = .data$pretreatment_loss_mass / .data$OD_soil_mass_before_pretreatment
+      )
+    # %>%
+    #   dplyr::select(.data$date:.data$batch_sample_number,
+    #                 .data$pretreatment_loss_pct)
+
+    return(pretreatment_loss_pcts)
+  }
 
 
 
 #' Checks protocol list to see if OD specimen mass must be adjusted
 #'
-#' @param protocol the numbered PSA protocol specified in the list of methods
+#' @param protocol_ID the numbered PSA protocol specified in the list of methods
 #'
 #' @return Logical value of length 1
 #'
-check_pretreatment_correction <- function(protocol){
+check_pretreatment_correction <- function(protocol_ID){
 
-dplyr::if_else(protocol %in% c(3, 6),
-               TRUE,
-               FALSE)
+
+  dplyr::if_else(protocol_ID %in% internal_data$pretreatment_invoking_protocol_IDs,
+                 TRUE,
+                 FALSE)
 }
 
 
@@ -81,17 +108,18 @@ dplyr::if_else(protocol %in% c(3, 6),
 #'
 #' @return data frame named `fines_pct_passing`
 #'
-compute_pipette_fines_pct_passing <- function(datafiles, OD_specimen_masses){
+compute_pipette_fines_pct_passing <- function(method_specific_datafiles, OD_specimen_masses){
 
 
 
   # locate beaker tare set from data file
 
-  beaker_tare_set <- unique(datafiles$pipetting_data$beaker_tare_set)
+  beaker_tare_set <- unique(
+    as.character(method_specific_datafiles$pipetting_data$beaker_tare_set))
 
   # compute blank correction
 
-  blanks_df <- datafiles$blank_correction_data %>%
+  blanks_df <- method_specific_datafiles$blank_correction_data %>%
     dplyr::left_join(asi468::psa_beaker_tares[[beaker_tare_set]], by = "beaker_number") %>%
     dplyr::mutate(calgon_in_beaker = .data$beaker_mass_w_OD_sample - .data$beaker_empty_mass)
 
@@ -99,7 +127,7 @@ compute_pipette_fines_pct_passing <- function(datafiles, OD_specimen_masses){
 
   # calculate % passing for each size
 
-  fines_percent_passing <- datafiles$pipetting_data %>%
+  fines_percent_passing <- method_specific_datafiles$pipetting_data %>%
     dplyr::left_join(asi468::psa_beaker_tares[[beaker_tare_set]], by = "beaker_number") %>%
     dplyr::left_join(OD_specimen_masses, by = c("date", "experiment_name", "sample_name", "replication", "batch_sample_number")) %>%
     dplyr::mutate(total_g_in_beaker = .data$beaker_mass_w_OD_sample - .data$beaker_empty_mass,
@@ -123,20 +151,20 @@ compute_pipette_fines_pct_passing <- function(datafiles, OD_specimen_masses){
 
 #' Calculate % finer for arbitrary number of sieves
 #'
-#' @param datafiles List of input data; constructed by initial call to [`psa()`]
+#' @param method_specific_datafiles List of input data; constructed by initial call to [`psa()`]
 #' @param OD_specimen_masses Data frame of oven-dry specimen masses; also
 #'   contstructed by initial call to [`psa()`]
-
+#'
 #' @return
 #' @export
 #'
-compute_sieves_percent_passing <- function(datafiles, OD_specimen_masses){
+compute_sieves_percent_passing <- function(method_specific_datafiles, OD_specimen_masses){
 
-    sieves_percent_passing <- datafiles$sieving_data %>%
-      dplyr::left_join(OD_specimen_masses, by = c("date", "experiment_name", "sample_name", "replication", "batch_sample_number"))%>%
-      dplyr::mutate(cumulative_mass_finer = .data$OD_specimen_mass - .data$cumulative_mass_g,
-                    percent_passing = .data$cumulative_mass_finer / .data$OD_specimen_mass) %>%
+  sieves_percent_passing <- method_specific_datafiles$sieving_data %>%
+    dplyr::left_join(OD_specimen_masses, by = c("date", "experiment_name", "sample_name", "replication", "batch_sample_number"))%>%
+    dplyr::mutate(cumulative_mass_finer = .data$OD_specimen_mass - .data$cumulative_mass_g,
+                  percent_passing = .data$cumulative_mass_finer / .data$OD_specimen_mass) %>%
     dplyr::select(.data$date:.data$batch_sample_number, .data$microns, percent_passing)
 
-    return(sieves_percent_passing)
-  }
+  return(sieves_percent_passing)
+}

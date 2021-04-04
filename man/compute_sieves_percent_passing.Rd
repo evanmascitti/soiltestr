@@ -4,10 +4,10 @@
 \alias{compute_sieves_percent_passing}
 \title{Calculate \% finer for arbitrary number of sieves}
 \usage{
-compute_sieves_percent_passing(datafiles, OD_specimen_masses)
+compute_sieves_percent_passing(method_specific_datafiles, OD_specimen_masses)
 }
 \arguments{
-\item{datafiles}{List of input data; constructed by initial call to \code{\link[=psa]{psa()}}}
+\item{method_specific_datafiles}{List of input data; constructed by initial call to \code{\link[=psa]{psa()}}}
 
 \item{OD_specimen_masses}{Data frame of oven-dry specimen masses; also
 contstructed by initial call to \code{\link[=psa]{psa()}}}
