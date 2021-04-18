@@ -83,9 +83,16 @@ dplyr::if_else(protocol %in% c(3, 6),
 #'
 compute_pipette_fines_pct_passing <- function(datafiles, OD_specimen_masses){
 
+# inherit the datafiles and OD_specimen masses from the parent function environment
+
+needed_objs <- mget(ls(envir = rlang::caller_env(), pattern = "datafiles|OD_specimen_masses"))
+
+# make them available in the current function call
+list2env(needed_objs,envir = rlang::current_env())
 
 
-  # locate beaker tare set from data file
+
+  # locate beaker tare set from data files
 
   beaker_tare_set <- unique(datafiles$pipetting_data$beaker_tare_set)
 

@@ -127,15 +127,18 @@ psa <- function(dir){
 
 
 fines_percent_passing <- switch (protocol_number,
-    "1" = compute_pipette_fines_pct_passing(datafiles = datafiles, OD_specimen_masses = OD_specimen_masses),
+    "1" = compute_pipette_fines_pct_passing(),
     "2" = compute_hydrometer_fines_pct_passing(),
-    "3" = compute_pipette_fines_pct_passing(datafiles = datafiles, OD_specimen_masses = OD_specimen_masses),
-    "4" = compute_pipette_fines_pct_passing(datafiles = datafiles, OD_specimen_masses = OD_specimen_masses),
+    "3" = compute_pipette_fines_pct_passing(),
+    "4" = compute_pipette_fines_pct_passing(),
     "5" = compute_hydrometer_fines_pct_passing(),
     stop("Can't find the protocol - unable to compute % fines", protocol_number, call. = T)
   )
 
 # next compute the coarse particles % passing
+# above, I have changed the code to use mget to inherit the value of the needed objects
+# rather than needing to specify them as arguments
+# see if it works and if it does, do the same here
 
   coarse_percent_passing <- switch (protocol_number,
     "1" = compute_sieves_percent_passing(datafiles = datafiles, OD_specimen_masses = OD_specimen_masses),

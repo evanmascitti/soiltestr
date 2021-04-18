@@ -34,6 +34,22 @@ add_physical_properties <- function(df){
     .$water_density_Mg_m3 %>%
     .[1]
 
+  # add a line to re-name the columns from a chunk cylinder test
+  # into names compatible with this function. They mean the same thing,
+  # but the names in the chunk cyl dims object are different to reflect
+  # the fact that they also account for the mass and volume of the
+  # resin plug in the bottom
+
+  if("cyl_w_plug_mass" %in% names(df) && "cyl_w_plug_volume" %in% names(df)){
+
+  df <- df %>%
+    dplyr::rename(empty_cylinder_mass_g = cyl_w_plug_mass,
+                  cylinder_vol_cm3 = cyl_w_plug_volume)
+  }
+
+
+  # perform calculations on the data frame
+
   newdf <- df %>%
     dplyr::mutate(
       moist_soil_g =.data$filled_cylinder_mass_g - .data$empty_cylinder_mass_g,

@@ -45,3 +45,5 @@ Some pseudocode:
 IT WORKS 
 
 Later at night, thought of a way to deal with the variable number of pipette samples...start with percent passing tibble, pivot wider across all column names having only digits....then conditionally mutate the table based on the protocol number and `switch()` to compute the extra size classes only for the protocols that measure them. Actually what would be even better is to make this strucure no matter what but to input NA values if that bin was not measurable. 
+
+For now, I am going to only compute the columns gravel, sand, silt and clay as the default action....then if the protocol includes any extra size classes, I can append the table based on the detected protocol ID. This flows with the 'start simple but leave room for extension' philosophy of the psa functions. 
