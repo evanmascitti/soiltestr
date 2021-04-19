@@ -14,8 +14,10 @@ library(tidyverse, quietly = T)
 # because object names cannot be numeric type.
 
 psa_protocols_summary <- readr::read_csv(here::here("inst/lab_protocols/particle_size_analysis/psa-methods-terse.csv"),
-                                      col_types = cols(.default = "c", g_sample = col_integer()), na= "-")
-
+                                      col_types = readr::cols(.default = "c"), na= "-") %>%
+  select(protocol_ID, fines_method, coarse_method, g_sample, mechanical_dispersion,
+         wash_thru_270_time, chemical_dispersion, carbonate_removal, OM_removal, iron_oxide_removal,
+         dplyr::everything())
 
 # export as a data object
 

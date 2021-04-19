@@ -26,7 +26,7 @@ psa <- function(dir){
 
   # determine which protocol was used and assign to a local variable
 
-  protocol_number <- find_protocol(dir = directory)
+  protocol_ID <- find_protocol_ID(dir = directory)
 
   # read all raw data files and put into a list
 
@@ -58,7 +58,7 @@ psa <- function(dir){
   # add pipette data and blank correction data if the protocol uses
   # the pipette method
 
-  if(protocol_number %in% as.character(c(1, 3, 4, 6))) {
+  if(protocol_ID %in% as.character(c(1, 3, 4, 6))) {
 
     datafiles$pipetting_data <- readr::read_csv(file = list.files(
       path = dir, pattern = "pipetting_data", full.names = T),
@@ -104,7 +104,7 @@ psa <- function(dir){
 
 # determine whether pretreatment correction should be applied
 
-  use_pretreatment_correction <- check_pretreatment_correction(protocol = protocol_number)
+  use_pretreatment_correction <- check_pretreatment_correction(protocol = protocol_ID)
 
   # if it should be, calculate the corrections and then apply them, altering the existing copy of the
   # OD specimen masses data frame
@@ -126,13 +126,13 @@ psa <- function(dir){
 
 
 
-fines_percent_passing <- switch (protocol_number,
+fines_percent_passing <- switch (protocol_ID,
     "1" = compute_pipette_fines_pct_passing(),
     "2" = compute_hydrometer_fines_pct_passing(),
     "3" = compute_pipette_fines_pct_passing(),
     "4" = compute_pipette_fines_pct_passing(),
     "5" = compute_hydrometer_fines_pct_passing(),
-    stop("Can't find the protocol - unable to compute % fines", protocol_number, call. = T)
+    stop("Can't find the protocol - unable to compute % fines", protocol_ID, call. = T)
   )
 
 # next compute the coarse particles % passing
@@ -140,7 +140,7 @@ fines_percent_passing <- switch (protocol_number,
 # rather than needing to specify them as arguments
 # see if it works and if it does, do the same here
 
-  coarse_percent_passing <- switch (protocol_number,
+  coarse_percent_passing <- switch (protocol_ID,
     "1" = compute_sieves_percent_passing(datafiles = datafiles, OD_specimen_masses = OD_specimen_masses),
     "2" = compute_sieves_percent_passing(datafiles = datafiles, OD_specimen_masses = OD_specimen_masses),
     "3" = compute_sieves_percent_passing(datafiles = datafiles, OD_specimen_masses = OD_specimen_masses),
@@ -148,7 +148,7 @@ fines_percent_passing <- switch (protocol_number,
     "5" = compute_sieves_percent_passing(datafiles = datafiles, OD_specimen_masses = OD_specimen_masses),
     stop(
       "Can't find the protocol - unable to compute % coarse particles",
-      protocol_number,
+      protocol_ID,
       call. = T
     )
   )
@@ -225,13 +225,13 @@ fines_percent_passing <- switch (protocol_number,
 
   #browser()
 
-  method_metadata <-switch (protocol_number,
+  method_metadata <-switch (protocol_ID,
     "1" = soiltestr::psa_protocols[["1"]],
     # "2" = psa_protocols[["2"]],
      "3" = soiltestr::psa_protocols[["3"]],
     # "4" = psa_protocols[["4"]],
    #  "5" = psa_protocols[["5"]],
-    stop("Could not find any info for psa_protocol number", protocol_number, call. = T))
+    stop("Could not find any info for psa_protocol number", protocol_ID, call. = T))
 
 
   # construct list to return

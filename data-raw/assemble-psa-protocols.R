@@ -4,7 +4,10 @@ library(tidyverse, quietly = T)
 # make a tibble containing the summaries of each protocol
 # note that protocl_ID is a character type even though I am using numbers
 # this is to allow the protocols to each be named list objects
-# because object names cannot be numeric type.
+# because object names cannot be numeric type. I guess ultimately
+# it actually doesn't matter because you have to use backticks anyway,
+# but R takes care of this when bringing them into a lists
+# Anyway, I think it is too late to change this now, and not that important.
 
 protocol_summaries <- readr::read_csv(here::here("inst/lab_protocols/particle_size_analysis/psa-methods-terse.csv"),
                 col_types = cols(.default = "c"), na= "-")
@@ -83,6 +86,42 @@ protocol_details <- reduce(details_list, left_join, .init = protocol_summaries) 
   nest(extra_pretreatments = c(OM_removal:iron_oxide_removal)) %>%
   ungroup()
 
+# Break the sieve sizes and fines sizes into a list-column of numeric vectors
+# this will allow the datasheets function to
+# look up what the particle diameters should be for the given protocol ID.
+
+# I can't figure out how to do this with mutate and across so just
+# going old-school and modifying in place
+
+
+# was trying to make a function to do it
+# make_diameters_listcol <- function(x){
+#   stringr::str_split(x, pattern = "-") %>%
+#   as.numeric()
+# }
+
+
+protocol_details$fines_diameters_sampled <-  map(protocol_details$fines_sizes_sampled, stringr::str_split, pattern = "-") %>%
+  flatten() %>%
+  map(as.numeric)
+
+
+protocol_details$coarse_diameters_sampled <-  map(protocol_details$coarse_sizes_sampled, stringr::str_split, pattern = "-") %>%
+  flatten() %>%
+  map(as.numeric)
+
+# now over-write the columns that contain the number of sizes sampled; I want them to stay in the
+# order that they already are but to use the data from the actual microns rather than having
+# to manually type it each time I adda new protocol....basically this makes the column with the number
+# in the csv file moot but that's OK for now
+
+protocol_details$n_coarse_diameters_sampled <- map_dbl(protocol_details$coarse_sizes_sampled, length)
+
+protocol_details$n_fines_diameters_sampled <- map_dbl(protocol_details$fines_sizes_sampled, length)
+
+
+# put all into one condensed list and name with the protocol ID
+
 psa_protocols <- protocol_details %>%
   group_by(protocol_ID) %>%
   nest() %>%
@@ -90,7 +129,7 @@ psa_protocols <- protocol_details %>%
   set_names(protocol_details$protocol_ID)
 
 
-# I was going to separately include the abbreviated protocl info
+# I was going to separately include the abbreviated protocol info
 # and the details in a list, but I think the abbreviations are only useful
 # for building this data object, and not to a user of the package....
 # therefore this data object only exports the polished tibble,

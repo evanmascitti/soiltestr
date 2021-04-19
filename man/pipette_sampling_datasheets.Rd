@@ -5,44 +5,35 @@
 \title{Datasheets for pipette analysis}
 \usage{
 pipette_sampling_datasheets(
-  dir,
   date,
   experiment_name,
   sample_names,
   n_reps,
-  protocol_ID,
-  pipette_sizes,
-  tin_tare_set,
-  beaker_tare_set = "",
-  sample_beaker_numbers = "",
-  blank_beaker_numbers = "",
+  fines_diameters_sampled,
+  beaker_tare_set,
+  sample_beaker_numbers,
   ...
 )
 }
 \arguments{
-\item{dir}{directory to write the skeleton files}
+\item{date}{Character. Date test was \strong{begun} by weighing air-dry specimens,
+ISO YYYY-MM-DD format}
 
-\item{date}{date test was \strong{begun} by weighing air-dry specimens, ISO YYYY-MM-DD
-format}
+\item{experiment_name}{Character, length 1. Experiment with which the samples
+are associated.}
 
-\item{experiment_name}{experiment with which the samples are associated}
+\item{sample_names}{Character. Unique identifiers for the samples tested (for
+example, "EPK kaolin").}
 
-\item{sample_names}{a character vector of unique identifiers for the samples
-tested (for example, "EPK kaolin").}
+\item{n_reps}{Integer, length 1. Number of replicate specimens tested per
+sample}
 
-\item{n_reps}{number of replicate specimens tested per sample}
-
-\item{pipette_sizes}{numeric vector of particle diameters which will be sampled}
-
-\item{tin_tare_set}{a character string referencing a set of tin masses for
-water content determination}
+\item{fines_diameters_sampled}{numeric vector of particle diameters which will be sampled}
 
 \item{beaker_tare_set}{unique identifier to write into sheets;
 used by \code{\link[=psa]{psa()}}}
 
 \item{sample_beaker_numbers}{integer vector of beaker numbers from relevant set}
-
-\item{blank_beaker_numbers}{integer vector of beaker numbers from relevant set}
 
 \item{...}{arguments passed via call to \code{\link[=psa_datasheets]{psa_datasheets()}}}
 }

@@ -7,32 +7,51 @@
 psa_datasheets(
   dir,
   date,
+  protocol_ID,
   experiment_name,
   sample_names,
   n_reps = 1,
-  protocol_ID,
   tin_tare_set = "",
+  beaker_tare_set = NULL,
+  pipette_beaker_numbers = NULL,
+  bouyoucos_cylinder_numbers = NULL,
   ...
 )
 }
 \arguments{
-\item{dir}{directory to write the skeleton files}
+\item{dir}{Character. Directory to write the empty data files.}
 
-\item{date}{date test was \strong{begun} by weighing air-dry specimens, ISO YYYY-MM-DD
-format}
+\item{date}{Character. Date test was \strong{begun} by weighing air-dry specimens,
+ISO YYYY-MM-DD format}
 
-\item{experiment_name}{experiment with which the samples are associated}
+\item{protocol_ID}{Character (integers will be coerced), length 1. Unique
+identifier for the method employed; see \code{\link{psa_protocols}}}
 
-\item{sample_names}{a character vector of unique identifiers for the samples
-tested (for example, "EPK kaolin").}
+\item{experiment_name}{Character, length 1. Experiment with which the samples
+are associated.}
 
-\item{n_reps}{number of replicate specimens tested per sample}
+\item{sample_names}{Character. Unique identifiers for the samples tested (for
+example, "EPK kaolin").}
 
-\item{tin_tare_set}{a character string referencing a set of tin masses for
-water content determination}
+\item{n_reps}{Integer, length 1. Number of replicate specimens tested per
+sample}
 
-\item{...}{other arguments passed internally to \code{\link[=pipette_sampling_datasheets]{pipette_sampling_datasheets()}},
-\verb{[hydrometer_sampling_datasheets()}], or \code{\link[=sieving_datasheets]{sieving_datasheets()}}}
+\item{tin_tare_set}{Character, length 1. Set of tin masses for water content
+determination.}
+
+\item{beaker_tare_set}{Character, length 1. Set of beaker masses for
+pipetting}
+
+\item{pipette_beaker_numbers}{Integer (optional). Vector of the beakers used
+for pipette weighing.}
+
+\item{bouyoucos_cylinder_numbers}{Integer (optional). Vector of the test
+cylinders used for pipette weighing. Important for hydrometer analysis due
+to width correction.}
+
+\item{...}{other arguments passed to internal functions
+\code{\link[=pipette_sampling_datasheets]{pipette_sampling_datasheets()}}, \verb{[hydrometer_sampling_datasheets()}], or
+\code{\link[=sieving_datasheets]{sieving_datasheets()}}}
 }
 \value{
 Files are written to disk and a message is printed.
@@ -42,8 +61,8 @@ Generates several empty .csv files with the correct column names
 and structure. Use for pipette method of particle size analysis.
 }
 \details{
-Calls various internals based on \code{protocol_ID} argument to
-determine required structure of sheets.
+Calls various internals based on \code{protocol_ID} argument to determine
+required structure of sheets.
 
 The date refers to the date the first step of the test was begun. As
 most soil tests span multiple days, this convention avoids any ambiguity
