@@ -1,7 +1,7 @@
 #' Datasheets for pipette analysis
 #'
 #' @inheritParams psa_datasheets
-#' @param pipette_microns numeric vector of particle diameters which will be sampled
+#' @param fines_diameters_sampled numeric vector of particle diameters which will be sampled
 #' @param beaker_tare_set unique identifier to write into sheets;
 #' used by [`psa()`]
 #' @param sample_beaker_numbers integer vector of beaker numbers from relevant set
@@ -23,7 +23,7 @@
 #' @export
 #'
 pipette_sampling_datasheets <- function(date, experiment_name, sample_names,
-                                        n_reps, pipette_microns, beaker_tare_set,
+                                        n_reps, fines_diameters_sampled, beaker_tare_set,
                                         sample_beaker_numbers,
                                         ...){
 
@@ -31,12 +31,12 @@ pipette_sampling_datasheets <- function(date, experiment_name, sample_names,
   skeleton_psa_pipetting_datasheet <- tibble::tibble(
     date = date,
     experiment_name = experiment_name,
-    sample_name = rep(sample_names, each = n_reps*length(pipette_microns)),
-    replication = rep(rep(1:n_reps, each = length(pipette_microns), times = length(sample_names))),
-    batch_sample_number = rep(1:(length(sample_names)*n_reps), each = length(pipette_microns)),
+    sample_name = rep(sample_names, each = n_reps*length(fines_diameters_sampled)),
+    replication = rep(rep(1:n_reps, each = length(fines_diameters_sampled), times = length(sample_names))),
+    batch_sample_number = rep(1:(length(sample_names)*n_reps), each = length(fines_diameters_sampled)),
     bouyoucos_cylinder_number = .data$batch_sample_number,
     beaker_tare_set = beaker_tare_set,
-    microns = rep(pipette_microns, times = (length(sample_names)*n_reps)),
+    microns = rep(fines_diameters_sampled, times = (length(sample_names)*n_reps)),
     beaker_number = sample_beaker_numbers,
     beaker_mass_w_OD_sample = "",
     comments = "-"
@@ -47,9 +47,9 @@ pipette_sampling_datasheets <- function(date, experiment_name, sample_names,
     date = date,
     experiment_name = experiment_name,
     blank_replication = 1:dplyr::if_else(
-      length(pipette_microns) == 1,
+      length(fines_diameters_sampled) == 1,
       as.integer(1),
-      length(pipette_microns)),
+      length(fines_diameters_sampled)),
     bouyoucos_cylinder_number = "",
     beaker_tare_set = beaker_tare_set,
     beaker_number = "",

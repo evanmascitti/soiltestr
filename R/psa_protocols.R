@@ -11,7 +11,9 @@
 #' Each ID (i.e. object name) is a number enclosed in backticks. This allows
 #' unlimited expansion (letters could conceivably be exhausted).
 #'
-#' @format If using the tidyverse, a tibble with two list-columns (`extra_pretreatement` and `references`). Otherwise, a recursive list.
+#' @format If **tibble** or **dplyr** is loaded, a tibble with two list-columns
+#'   (`extra_pretreatement` and `references`). Otherwise, a data frame with
+#'   list-columns.
 #'
 #'
 "psa_protocols"

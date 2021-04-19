@@ -6,7 +6,7 @@
 #'
 #' @return Numeric vector of length 1
 #'
-find_protocol <- function(dir){
+find_protocol_ID <- function(dir){
 
   # note that in this function the protocol is being read as a character column
   # to facilitate easy use of `switch()` later on
@@ -14,7 +14,7 @@ find_protocol <- function(dir){
   metadata_file <- readr::read_csv(list.files(path = dir, pattern = "metadata", full.names = T),
                                    col_types = "Dcciicc")
 
-  protocol_number <- unique(metadata_file$protocol)
+  protocol_ID <- unique(metadata_file$protocol_ID)
 
 }
 

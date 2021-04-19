@@ -6,11 +6,11 @@
 # but this is what Hadley recommends so I am going with it
 
 
-rm(list = ls())
-
 library(tidyverse)
 
 # clear workspace of global variables (targeted at my saved values for color hex codes)
+
+rm(list = ls())
 
 
 # create tibble object containing terse versions of fines methods
@@ -22,14 +22,14 @@ psa_fines_methods <- tibble::enframe(soiltestr::psa_protocols,
   dplyr::mutate(fines_method = c(stringr::str_match(fines_method, "pipette|hydrometer|laser[\\s_-]diffraction"))) %>%
   dplyr::select(-protocol_info)
 
-# create vectors which select the correct protocol number
+# create vectors which select the correct protocol ID
 # based on which fines method they use
 
-pipette_invoking_method_IDs <- psa_fines_methods[psa_fines_methods$fines_method == "pipette", ]$protocol_ID
+pipette_invoking_protocol_IDs <- psa_fines_methods[psa_fines_methods$fines_method == "pipette", ]$protocol_ID
 
-hydrometer_invoking_method_IDs <- psa_fines_methods[psa_fines_methods$fines_method == "hydrometer", ]$protocol_ID
+hydrometer_invoking_protocol_IDs <- psa_fines_methods[psa_fines_methods$fines_method == "hydrometer", ]$protocol_ID
 
-fines_laser_diffraction_invoking_method_IDs <- psa_fines_methods[psa_fines_methods$fines_method == "laser diffraction", ]$protocol_ID
+fines_laser_diffraction_invoking_protocol_IDs <- psa_fines_methods[psa_fines_methods$fines_method == "laser diffraction", ]$protocol_ID
 
 # create tibble object containing terse versions of coarse methods --------
 
@@ -42,9 +42,9 @@ psa_coarse_methods <- tibble::enframe(soiltestr::psa_protocols,
   dplyr::mutate(coarse_method = stringr::str_to_lower(coarse_method)) %>%
   dplyr::select(-protocol_info)
 
-sieve_invoking_method_IDs <- psa_coarse_methods[psa_coarse_methods$coarse_method == "shaken", ]$protocol_ID
+sieve_invoking_protocol_IDs <- psa_coarse_methods[psa_coarse_methods$coarse_method == "shaken", ]$protocol_ID
 
-coarse_laser_diffraction_invoking_method_IDs <- psa_fines_methods[psa_fines_methods$fines_method == "mastersizer", ]$protocol_ID
+coarse_laser_diffraction_invoking_protocol_IDs <- psa_fines_methods[psa_fines_methods$fines_method == "mastersizer", ]$protocol_ID
 
 internal_data <- mget(x = ls())
 
