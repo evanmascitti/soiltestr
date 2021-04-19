@@ -4,10 +4,7 @@
 \alias{check_pretreatment_correction}
 \title{Checks protocol list to see if OD specimen mass must be adjusted}
 \usage{
-check_pretreatment_correction(protocol)
-}
-\arguments{
-\item{protocol}{the numbered PSA protocol specified in the list of methods}
+check_pretreatment_correction()
 }
 \value{
 Logical value of length 1

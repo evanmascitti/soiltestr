@@ -4,16 +4,13 @@
 \alias{divide_psa_datafiles}
 \title{Divide a character vector of file paths}
 \usage{
-divide_psa_datafiles(directory)
-}
-\arguments{
-\item{directory}{directory holding the files. Inherited from parent call.}
+divide_psa_datafiles()
 }
 \value{
 List of length 2
 }
 \description{
-Helper function for \code{\link[=psa]{psa()}}. Returns a list of two character vectors is
-returned - one for the files common to all psa_protocols and one which has
+Helper function for \code{\link[=psa]{psa()}}. Returns a list of two character vectors - one
+for the files common to all psa_protocols and one which has
 the files unique to the protocol in use for this test
 }

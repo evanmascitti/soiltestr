@@ -4,10 +4,7 @@
 \alias{compute_pretreatment_losses}
 \title{Determine loss of mass during specimen pretreatment}
 \usage{
-compute_pretreatment_losses(dir, hygroscopic_water_contents)
-}
-\arguments{
-\item{dir}{directory containing the data files}
+compute_pretreatment_losses()
 }
 \value{
 tibble of sample info plus \% of OD sample mass lost

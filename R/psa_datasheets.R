@@ -55,19 +55,14 @@ psa_datasheets <- function(
 
   protocol_ID <- as.character(protocol_ID)
 
-  # code to ensure directory contains trailing slash
-  # actually don't think this is a good idea if using the here package
 
-  # if(stringr::str_sub(string = dir, start = -1) == "/"){
-  #  dir <- dir} else{
-  #    dir <- paste0(dir, "/")
-  #  }
-
+  # create path to new folder and check if it already exists
 
   new_folder <- here::here(dir, paste0("psa-data_", date))
 
   if (dir.exists(new_folder)) {
-    stop("The directory ", new_folder, " already exists. Halting call to prevent over-write.",
+    stop("The directory ",
+         new_folder, " already exists. Halting call to prevent over-write.",
          call. = F)
 
   }

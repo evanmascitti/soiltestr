@@ -4,89 +4,56 @@
 #'
 #' @param dir Folder containing the pertinent files
 #'
-#' @return List of length 5 containing:
+#' @return List of length 6 containing:
 #'
 #' 1. Data frame of cumulative percent passing data (tidy/long format)
-#' 2. Data frame with breakdown into traditional size classes (wide format)
-#' 3. List of ggplot objects (one per specimen)
-#' 4. Metadata about the test protocol
-#' 5. If pretreatment was performed, the loss on pre-treatment for each specimen;
+#' 2. Data frame with breakdown into traditional SSSA size classes (wide format)
+#' 3. Data frame with breakdown into size sub classes, if measured
+#' (wide format); if not possible due to limited number of particle diameters,
+#' this element is `NULL`; various breakdowns are available based on the chosen
+#' protocol (see [`psa_protocols()`])
+#' 4. List of ggplot objects (one per specimen)
+#' 5. Metadata about the test protocol
+#' 6. If pre-treatment was performed, the loss on pre-treatment for each specimen;
 #' otherwise `NULL`
 #'
 #' @export
 #'
 psa <- function(dir){
 
-  # append dir argument if no trailing slash was provided
-
-  if(stringr::str_sub(string = dir, start = -1) == "/"){
-    directory <- dir} else{
-      directory <- paste0(dir, "/")
-    }
-
   # determine which protocol was used and assign to a local variable
 
-  protocol_ID <- find_protocol_ID(dir = directory)
+  protocol_ID <- find_protocol_ID()
 
-  # read all raw data files and put into a list
+  # read all raw data files and put into a list, then divide into common
+  # and method-specific lists and clean up any empty rows from each
 
+  test_date <- stringr::str_extract(string = dir, pattern = "\\d{4}-\\d{2}-\\d{2}")
 
+  all_datafile_paths <- divide_psa_datafiles()
 
-  test_date <- stringr::str_extract(string = directory, pattern = "\\d{4}-\\d{2}-\\d{2}")
+ common_datafiles <- all_datafile_paths$common_datafile_paths %>%
+   map(readr::read_csv) %>%
+   purrr::map(janitor::remove_empty, which = 'rows')
 
-  # I would prefer to read all the files in with purrr::map() but since the column names
-  # and types are all different, I will still keep them inside a list but they will be imported
-  # with individual calls to readr::read_csv(). At first only import the files common
-  # to all methods, then append the list conditionally if other files are required for the
-  # particular method
-
-  datafiles <- list(
-    hygroscopic_correction_data = readr::read_csv(file = list.files(
-      path = dir, pattern = "hygroscopic_correction_data", full.names = T),
-      col_types = "Dcciiciddc", na = c("-", "")),
-    metadata= readr::read_csv(file = list.files(
-      path = dir, pattern = "metadata", full.names = T),
-      col_types = "Dcciiic", na = c("-", "")),
-    sieving_data = readr::read_csv(file = list.files(
-      path = dir, pattern = "sieving_data", full.names = T),
-      col_types = "Dcciiddc", na = c("-", "")),
-    specimen_masses_data = readr::read_csv(file = list.files(
-      path = dir, pattern = "specimen_masses_data", full.names = T),
-      col_types = "Dcciidc", na = c("-", ""))
-  )
-
-  # add pipette data and blank correction data if the protocol uses
-  # the pipette method
-
-  if(protocol_ID %in% as.character(c(1, 3, 4, 6))) {
-
-    datafiles$pipetting_data <- readr::read_csv(file = list.files(
-      path = dir, pattern = "pipetting_data", full.names = T),
-      col_types = "Dcciiicdidc", na = c("-", ""))
-
-    datafiles$ blank_correction_data <- readr::read_csv(file = list.files(
-      path = dir, pattern = "blank_correction_data", full.names = T),
-      col_types = "Dciicidc", na = c("-", ""))
+  method_specific_datafiles <- all_datafile_paths$method_specific_datafile_paths %>%
+    map(readr::read_csv) %>%
+    purrr::map(janitor::remove_empty, which = 'rows')
 
 
-  }
 
-  # clean up any empty rows
-
-  datafiles <- purrr::map(datafiles, janitor::remove_empty, which = 'rows')
-
-# compute hygroscopic water contents --------------------------------------
+  # compute hygroscopic water contents --------------------------------------
 
   # first need to pair data with correct set of tin tares
 
-  tin_tare_date <- unique(datafiles$hygroscopic_correction_data$tin_tare_set)
+  tin_tare_date <- unique(common_datafiles$hygroscopic_correction_data$tin_tare_set)
 
   tin_tares <- asi468::tin_tares[[tin_tare_date]]
 
 
   # calculate air-dry water contents
 
-  hygroscopic_water_contents <- datafiles$hygroscopic_correction_data %>%
+  hygroscopic_water_contents <- common_datafiles$hygroscopic_correction_data %>%
       dplyr::left_join(tin_tares, by = "tin_number")%>%
       soiltestr::add_w() %>%
     dplyr::rename(hygroscopic_water_content = .data$water_content) %>%
@@ -104,7 +71,7 @@ psa <- function(dir){
 
 # determine whether pretreatment correction should be applied
 
-  use_pretreatment_correction <- check_pretreatment_correction(protocol = protocol_ID)
+  use_pretreatment_correction <- check_pretreatment_correction()
 
   # if it should be, calculate the corrections and then apply them, altering the existing copy of the
   # OD specimen masses data frame
@@ -132,20 +99,23 @@ fines_percent_passing <- switch (protocol_ID,
     "3" = compute_pipette_fines_pct_passing(),
     "4" = compute_pipette_fines_pct_passing(),
     "5" = compute_hydrometer_fines_pct_passing(),
+    "6" = compute_pipette_fines_pct_passing(),
+    "7" = compute_pipette_fines_pct_passing(),
+    "8" = compute_hydrometer_fines_pct_passing(),
     stop("Can't find the protocol - unable to compute % fines", protocol_ID, call. = T)
   )
 
 # next compute the coarse particles % passing
-# above, I have changed the code to use mget to inherit the value of the needed objects
-# rather than needing to specify them as arguments
-# see if it works and if it does, do the same here
 
   coarse_percent_passing <- switch (protocol_ID,
-    "1" = compute_sieves_percent_passing(datafiles = datafiles, OD_specimen_masses = OD_specimen_masses),
-    "2" = compute_sieves_percent_passing(datafiles = datafiles, OD_specimen_masses = OD_specimen_masses),
-    "3" = compute_sieves_percent_passing(datafiles = datafiles, OD_specimen_masses = OD_specimen_masses),
-    "4" = compute_sieves_percent_passing(datafiles = datafiles, OD_specimen_masses = OD_specimen_masses),
-    "5" = compute_sieves_percent_passing(datafiles = datafiles, OD_specimen_masses = OD_specimen_masses),
+    "1" = compute_sieves_percent_passing(),
+    "2" = compute_sieves_percent_passing(),
+    "3" = compute_sieves_percent_passing(),
+    "4" = compute_sieves_percent_passing(),
+    "5" = compute_sieves_percent_passing(),
+    "6" = compute_sieves_percent_passing(),
+    "7" = compute_sieves_percent_passing(),
+    "8" = compute_sieves_percent_passing(),
     stop(
       "Can't find the protocol - unable to compute % coarse particles",
       protocol_ID,
@@ -160,61 +130,92 @@ fines_percent_passing <- switch (protocol_ID,
     dplyr::arrange(.data$batch_sample_number,
                    dplyr::desc(.data$microns))
 
+  # create data frame of standard bin sizes
 
-  # calculate the percent of the sample in each traditional size class
-  # need to come up with some conditional logic to only perform these computations
-  # if the particular sizes were measured. Leaving in for now with the understanding
-  # that it will thrown an error if the micron values are not found
+ simple_bins <- simple_bins()
 
-# UPDATE  see conceptual ideas.md file for an idea
 
-  size_bins <- cumulative_percent_passing %>%
-      tidyr::pivot_wider(names_from = .data$microns, values_from = .data$percent_passing) %>%
-      dplyr::mutate(
-        gravel = .data$`4000` - .data$`2000`,
-        very_coarse_sand = .data$`2000` - .data$`1000`,
-        coarse_sand = .data$`1000` - .data$`500`,
-        medium_sand = .data$`500` - .data$`250`,
-        fine_sand = .data$`250` - .data$`150`,
-        very_fine_sand = .data$`150` - .data$`53`,
-        coarse_silt = .data$`53` - .data$`20`,
-        medium_silt = .data$`20` - .data$`5`,
-        fine_silt = .data$`5` - .data$`2`,
-        coarse_clay = .data$`2` - .data$`0.2`,
-        fine_clay = .data$`0.2`,
-        sand = .data$very_coarse_sand + .data$coarse_sand + .data$medium_sand + .data$fine_sand + .data$very_fine_sand,
-        silt = .data$coarse_silt + .data$medium_silt + .data$fine_silt,
-        clay = .data$coarse_clay + .data$fine_clay) %>%
-      dplyr::select(.data$date,
-                    .data$experiment_name,
-                    .data$sample_name,
-                    .data$replication,
-                    .data$batch_sample_number,
-                    .data$gravel,
-                    .data$sand,
-                    .data$silt,
-                    .data$clay,
-                    .data$very_coarse_sand:.data$fine_clay) %>%
-      dplyr::mutate(dplyr::across(.cols = .data$gravel:.data$fine_clay, .fns = ~.*100))
 
-  # make a list containing a psd plot for each specimen
-  psd_plots_tibble <- cumulative_percent_passing %>%
-    dplyr::arrange(.data$batch_sample_number) %>%
-    dplyr::group_by(.data$batch_sample_number) %>%
-    tidyr::nest() %>%
-    dplyr::rename(psd_tibble = .data$data) %>%
-    dplyr::mutate(
-      psd_plot = purrr::map(
-        .x = .data$psd_tibble,
-        .f = ~ soiltestr::ggpsd_single_sample(df = .)
-      )) %>%
-    dplyr::left_join(datafiles$metadata, by = "batch_sample_number") %>%
-      dplyr::mutate(plot_name = paste0(.data$sample_name, " | ", "replication ", .data$replication)
-      ) %>%
-    dplyr::ungroup()
+ # check if the protocol permits more complex bin sizes to be computed for
+ # the fines method
+ # if it does, create a new tibble with the fine-grained sub bins
 
-  psd_plots <- psd_plots_tibble$psd_plot %>%
-    purrr::set_names(psd_plots_tibble$plot_name)
+ if(check_for_fines_complex_bins()){
+
+   # shouldn't need this to ever be called because the logic doesn't allow
+   # the protocols to opt into this switch statement but putting in just
+   # in case; by assigning as a function I can reduce  duplication
+
+   insufficient_fine <- function() {
+     stop("Only total clay can be computed for this protocol (not enough samples collected)",
+          call. = F)
+   }
+
+
+fines_sub_bins <- switch (protocol_ID,
+  "1" = SSSA_pipette_bins(),
+  "2" = insufficient_fine(),
+  "3" = SSSA_pipette_bins(),
+  "4" = insufficient_fine(),
+  "5" = insufficient_fine(),
+  "6" = SSSA_pipette_bins(),
+  "7" = insufficient_fine(),
+  "8" = insufficient_fine(),
+  stop("Could not find any info for psa_protocol ID ", protocol_ID, call. = T)
+)
+
+
+  }
+
+
+
+
+ # check if the protocol permits more complex bin sizes to be computed for
+ # the coarse method
+ # if it does, create a new tibble with the coarse-grained sub bins
+
+ if(check_for_coarse_complex_bins()){
+
+   # as for the fines, this function should never be called due to
+   # logic above but putting here to help with debugging in case
+   # something was coded wrong
+
+   insufficient_coarse <- function() {
+     stop("Only total sand and gravel can be computed for this protocol (not enough samples collected)",
+          call. = F)
+   }
+
+   coarse_sub_bins <- switch(
+     protocol_ID,
+     "1" = USGA_bins(),
+     "2" = USGA_bins(),
+     "3" = USGA_bins(),
+     "4" = USGA_bins(),
+     "5" = USGA_bins(),
+     "6" = USGA_bins(),
+     "7" = insufficient_coarse(),
+     "8" = insufficient_coarse(),
+     stop("Could not find any info for psa_protocol ID ", protocol_ID, call. = T)
+   )
+
+   }
+
+sub_bins <- mget(x = c("fines_sub_bins", "coarse_sub_bins"),
+                  ifnotfound = NULL) %>%
+   purrr::reduce(rbind) %>%
+   dplyr::arrange(.data$batch_sample_number,
+                  dplyr::desc(.data$microns))
+
+
+ # make the ggplots for each sample and replication
+
+# don't know where the code to do this went ??
+
+# setting to NULL for now so  I can test other parts of the function
+  psd_plots <- NULL
+
+  # psd_plots <- psd_plots_tibble$psd_plot %>%
+  #   purrr::set_names(psd_plots_tibble$plot_name)
 
 
   # make an extra list containing info about the method and
@@ -235,15 +236,21 @@ fines_percent_passing <- switch (protocol_ID,
 
 
   # construct list to return
+  # though I have used in mget many places
+  # I will just explicitly construct this one for
+  # extra safety
 
   psa <- list(
     cumulative_percent_passing = cumulative_percent_passing,
-    size_bins = size_bins,
+    simple_bins = simple_bins,
+    sub_bins = sub_bins,
     psd_plots = psd_plots,
     method_metadata = method_metadata,
     pretreatment_losses = if(use_pretreatment_correction){pretreatment_losses} else{
       NULL
     }
     )
+
+  return(psa)
 
   }

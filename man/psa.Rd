@@ -10,13 +10,17 @@ psa(dir)
 \item{dir}{Folder containing the pertinent files}
 }
 \value{
-List of length 5 containing:
+List of length 6 containing:
 \enumerate{
 \item Data frame of cumulative percent passing data (tidy/long format)
-\item Data frame with breakdown into traditional size classes (wide format)
+\item Data frame with breakdown into traditional SSSA size classes (wide format)
+\item Data frame with breakdown into size sub classes, if measured
+(wide format); if not possible due to limited number of particle diameters,
+this element is \code{NULL}; various breakdowns are available based on the chosen
+protocol (see \code{\link[=psa_protocols]{psa_protocols()}})
 \item List of ggplot objects (one per specimen)
 \item Metadata about the test protocol
-\item If pretreatment was performed, the loss on pre-treatment for each specimen;
+\item If pre-treatment was performed, the loss on pre-treatment for each specimen;
 otherwise \code{NULL}
 }
 }

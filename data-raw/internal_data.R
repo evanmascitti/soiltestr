@@ -42,10 +42,43 @@ psa_coarse_methods <- tibble::enframe(soiltestr::psa_protocols,
   dplyr::mutate(coarse_method = stringr::str_to_lower(coarse_method)) %>%
   dplyr::select(-protocol_info)
 
+
+# make a few other character vectors based on conditions
+
 sieve_invoking_protocol_IDs <- psa_coarse_methods[psa_coarse_methods$coarse_method == "shaken", ]$protocol_ID
 
 coarse_laser_diffraction_invoking_protocol_IDs <- psa_fines_methods[psa_fines_methods$fines_method == "mastersizer", ]$protocol_ID
 
+pretreatment_invoking_protocol_IDs <- psa_protocols_summary %>%
+  dplyr::select(c(protocol_ID, dplyr::contains('removal'))) %>%
+  dplyr::filter(dplyr::if_any(.cols = contains('removal'),
+                .fns = ~!is.na(.))) %>%
+  purrr::pluck('protocol_ID')
+
+
+# the ones that can the **fines** broken out into sub-classes
+# must have at least 3 measurements of the fines diameters
+
+(fines_sub_bin_invoking_protocol_IDS <-psa_protocols %>%
+  map("fines_diameters_sampled") %>%
+  flatten() %>%
+  keep(~length(.) >= 3)  %>%
+    names())
+
+# for the coarse measurements, same concept except there must be **more**
+# than 3 because 3 is just gravel and the upper and lower limits to be considered
+# sand
+
+(coarse_sub_bin_invoking_protocol_IDS <-psa_protocols %>%
+    map("coarse_diameters_sampled") %>%
+    flatten() %>%
+    keep(~length(.) > 3)  %>%
+    names())
+
+
+# collect all objects in this environment into a list
 internal_data <- mget(x = ls())
+
+# write the list to the internal data file
 
 usethis::use_data(internal_data, overwrite = TRUE, internal = TRUE)

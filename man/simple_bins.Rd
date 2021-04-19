@@ -2,10 +2,14 @@
 % Please edit documentation in R/psa-size-bins-helpers.R
 \name{simple_bins}
 \alias{simple_bins}
-\title{Title only gravel (<4000 microns), sand, silt, and clay reported}
+\title{Only gravel (<4000 microns), sand, silt, and clay reported}
 \usage{
 simple_bins()
 }
+\value{
+a tibble
+}
 \description{
-Title only gravel (<4000 microns), sand, silt, and clay reported
+Use for every sample; when no complex bins are reported this
+is still run for the simple bins list element
 }
