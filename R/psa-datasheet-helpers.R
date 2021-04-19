@@ -119,20 +119,25 @@ sieving_datasheet <- function() {
 #' @return
 #' @export
 #'
-pretreatment_datasheet <- function(date, experiment_name, sample_names,
-                                   n_reps, protocol_ID, ...){
+pretreatment_datasheet <- function(){
+
+  needed_objs <- mget(x = c("date", "experiment_name", "sample_names",
+                            "n_reps", "protocol_ID"),
+                      envir = rlang::caller_env())
+
+  list2env(needed_objs, envir = rlang::current_env())
 
   psa_pretreatment_datasheet <- tibble::tibble(
     date = date,
     experiment_name = experiment_name,
-    protocol_ID = protocol_ID,
     sample_name = rep(sample_names, each = n_reps),
     replication = rep(1:n_reps),
     batch_sample_number = 1:(length(sample_names)*n_reps),
+    protocol_ID = protocol_ID,
+    air_dry_specimen_mass_before_pretreatment = "",
     container_tare = "",
-    beaker_mass_w_OD_sample = "",
-    container_w_OD_specimen_mass_after_pretreatment = "-"
-  )
+    container_mass_w_OD_sample = ""
+   )
 
   return(psa_pretreatment_datasheet)
 }

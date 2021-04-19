@@ -8,10 +8,10 @@
 #'
 divide_psa_datafiles <- function(){
 
-
+#  browser()
 
   # inherit the dir argument from parent call
-  dir <- get(x = "dir", envir = rlang::caller_env())
+dir <- get(x = "dir", envir = rlang::caller_env())
 
 all_datafile_paths <-list.files(
   path = dir,
@@ -21,7 +21,7 @@ all_datafile_paths <-list.files(
 datafile_names <- stringr::str_remove(
   string = basename(all_datafile_paths),
   pattern = "_\\d{4}-\\d{2}-\\d{2}\\.csv$") %>%
-  stringr::str_remove("psa_")
+  stringr::str_remove_all("psa-")
 
 purrr::set_names(all_datafile_paths, datafile_names)
 
@@ -31,33 +31,23 @@ purrr::set_names(all_datafile_paths, datafile_names)
 # can't waste any more time on it
 
 common_patterns <- tibble::tibble(
-  pattern1 = "hygroscopic_corrections",
+  pattern1 = "hygroscopic-corrections",
   pattern2 = "metadata",
-  pattern3 = "specimen_masses",
+  pattern3 = "specimen-masses",
   all_datafile_paths = all_datafile_paths
 )
 
 
-# Leaving off late at night 2021-04-19
-# this is the current problem to solve;
-# the subsetting is not working corretly to identify which files are
-# common to all protocols
-
-common_datafile_paths <- common_patterns %>%
+common_datafiles <- common_patterns %>%
   dplyr::filter(
     stringr::str_detect(all_datafile_paths, pattern = pattern1) |
       stringr::str_detect(all_datafile_paths, pattern = pattern2) |
       stringr::str_detect(all_datafile_paths, pattern = pattern3))%>%
   purrr::pluck("all_datafile_paths")
 
-method_specific_datafile_paths <- all_datafile_paths[!all_datafile_paths %in% common_datafile_paths]
+method_specific_datafiles <- all_datafile_paths[!all_datafile_paths %in% common_datafiles]
 
-browser()
-
-return_list <- list(
-  common_datafile_paths = common_datafile_paths,
-  method_specific_datafile_paths = method_specific_datafile_paths
-)
+return_list <- mget(ls(pattern = "_datafiles"), envir = rlang::current_env())
 
 return(return_list)
 

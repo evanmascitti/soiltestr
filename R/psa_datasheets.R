@@ -230,6 +230,17 @@ pipette_sheets <- pipetting_datasheets()
 
     }
 
+
+use_pretreatment <- protocol_ID %in% c(internal_data$pretreatment_invoking_protocol_IDs)
+
+if(use_pretreatment){
+
+  psa_pretreatment_loss_data <- pretreatment_datasheet()
+
+}
+
+
+
   # an elegant solution from the tidyverse and base r combined.....
   # compare to the long BS below.
 
@@ -281,7 +292,9 @@ pipette_sheets <- pipetting_datasheets()
 
   # build paths to the new files to create
 
-  basenames <- paste0(stringr::str_replace(names(all_datasheets), "_", "-"), "_", date, ".csv")
+#   browser()
+
+  basenames <- paste0(stringr::str_replace_all(names(all_datasheets), "_", "-"), "_", date, ".csv")
 
   file_paths_to_write <- here::here(
     new_folder,

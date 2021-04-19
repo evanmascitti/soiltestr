@@ -1,0 +1,13 @@
+date,experiment_name,protocol_ID,sample_name,replication,batch_sample_number,bouyoucos_cylinder_number,beaker_tare_set,microns,beaker_number,beaker_mass_w_OD_sample,comments
+2021-04-13,SelectingClaysJan2021,3,leecom-promound-jan-2018,1,1,1,2021-01-15,20,1,,-
+2021-04-13,SelectingClaysJan2021,3,leecom-promound-jan-2018,1,1,1,2021-01-15,5,2,,-
+2021-04-13,SelectingClaysJan2021,3,leecom-promound-jan-2018,1,1,1,2021-01-15,2,3,,-
+2021-04-13,SelectingClaysJan2021,3,leecom-promound-jan-2018,1,1,1,2021-01-15,0.2,4,,-
+2021-04-13,SelectingClaysJan2021,3,leecom-promound-jan-2018,2,2,2,2021-01-15,20,5,,-
+2021-04-13,SelectingClaysJan2021,3,leecom-promound-jan-2018,2,2,2,2021-01-15,5,6,,-
+2021-04-13,SelectingClaysJan2021,3,leecom-promound-jan-2018,2,2,2,2021-01-15,2,7,,-
+2021-04-13,SelectingClaysJan2021,3,leecom-promound-jan-2018,2,2,2,2021-01-15,0.2,8,,-
+2021-04-13,SelectingClaysJan2021,3,leecom-promound-jan-2018,3,3,3,2021-01-15,20,9,,-
+2021-04-13,SelectingClaysJan2021,3,leecom-promound-jan-2018,3,3,3,2021-01-15,5,10,,-
+2021-04-13,SelectingClaysJan2021,3,leecom-promound-jan-2018,3,3,3,2021-01-15,2,11,,-
+2021-04-13,SelectingClaysJan2021,3,leecom-promound-jan-2018,3,3,3,2021-01-15,0.2,12,,-

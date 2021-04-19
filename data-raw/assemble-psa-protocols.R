@@ -30,7 +30,7 @@ references_file <- list.files(
   pattern = "expanded-details[.]csv$", full.names = T) %>%
   str_subset(pattern = "references", negate = F)
 
-clean_file_name <- function(x){
+clean_psa_details_file_name <- function(x){
   basename(x) %>%
     stringr::str_remove(string = ., '_expanded-details[.]csv$') %>%
     stringr::str_remove(., 'psa[_-]') %>%
@@ -47,7 +47,7 @@ references_table <- references_file %>%
 
 
 details_list <- details_files %>%
-  purrr::set_names(clean_file_name(.)) %>%
+  purrr::set_names(clean_psa_details_file_name(.)) %>%
   purrr::map(readr::read_csv, col_types = readr::cols(.default = 'c'))
 
 

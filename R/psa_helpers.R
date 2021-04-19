@@ -22,6 +22,51 @@ find_protocol_ID <- function(){
   }
 
 
+#' Clean up a vector of file paths and then import each one as a tibble
+#' and assign the name while also making sure the protocol ID is imported
+#' # as a character type
+#'
+#' @param x character vector of file paths
+#'
+#' @return list of data frames
+#'
+import_psa_datafile <- function(x){
+
+  nm <- stringr::str_remove(basename(x), pattern = c("\\.csv$")) %>%
+    stringr::str_remove(pattern = c("^psa-") ) %>%
+    stringr::str_remove(pattern = c("_\\d{4}-\\d{2}-\\d{2}") ) %>%
+    stringr::str_remove(pattern = c("-data$") ) %>%
+    stringr::str_replace_all("-", "_")
+
+  # this is a little complex and maybe I could have found a better way to do
+  # it, but I finally succeeded in using modify_if.....for each list element
+  # (in this particular case there are only 2 but it would generalize),
+  # this checks if the data frame has a column named "protocol_ID" and then
+  # if it does it applies my anaonymous function to mutate that column
+  # into a charcter type. In this way the rest of the data frames are "shielded"
+  # from that function; i.e. they will never see it which allows me to use the
+  # normal NSE syntax for the mutate call
+
+  # This is a very useful technique and one I should return to for other similar
+  # problems.
+  # For example, I use the same method to easily modify any data frames that contain
+  # the tin tare set or beaker tare set as a character type
+  # to have a character type, because this will otherwise mess up joining
+  # later in the process. Yea, this is DOPE!
+
+  x %>%
+    purrr::set_names(nm) %>%
+    purrr::map(readr::read_csv, col_types = readr::cols(), na = "-") %>%
+    purrr::map(janitor::remove_empty, which = 'rows') %>%
+    purrr::modify_if(.p = ~any(names(.) %in% "protocol_ID"),
+                     .f = ~dplyr::mutate(. , protocol_ID = as.character(protocol_ID))) %>%
+    purrr::modify_if(.p = ~any(names(.) %in% "beaker_tare_set"),
+                     .f = ~dplyr::mutate(. , beaker_tare_set = as.character(beaker_tare_set))) %>%
+    purrr::modify_if(.p = ~any(names(.) %in% "tin_tare_set"),
+                     .f = ~dplyr::mutate(. , tin_tare_set = as.character(tin_tare_set)))
+
+
+  }
 
 
 
@@ -37,37 +82,22 @@ find_protocol_ID <- function(){
 #'
 #' @return tibble of sample info plus % of OD sample mass lost
 #'
-compute_pretreatment_losses <- function(){
+compute_pretreatment_loss <- function(){
 
 # assign the required objects to the current function environment from the parent caller
 
-  list2env(mget(x = c("dir", "hygroscopic_water_contents"), envir = rlang::caller_env()))
+  required_objs <- mget(x = c("dir", "hygroscopic_water_contents", "method_specific_datafiles"),
+       envir = rlang::caller_env())
 
+  list2env(required_objs, envir = rlang::current_env())
 
-pretreatment_loss_data <-
-    readr::read_csv(
-      file = list.files(
-        path = dir,
-        pattern = "pretreatment_loss_data",
-        full.names = T
-      ),
-      col_types = "Dcciiddd"
-    ) %>%
-    dplyr::left_join(
-      hygroscopic_water_contents,
-      by = c(
-        "date",
-        "experiment_name",
-        "sample_name",
-        "replication",
-        "batch_sample_number"
-      )
-    )
+  # browser()
 
-
- pretreatment_loss_pcts <- pretreatment_loss_data %>%
-    mutate(OD_soil_mass_before_pretreatment = .data$air_dry_specimen_mass_before_pretreatment / (1 + .data$hygroscopic_water_content),
-           OD_soil_mass_after_pretreatment = .data$container_w_OD_specimen_mass_after_pretreatment - .data$container_tare,
+pretreatment_loss_pcts <- method_specific_datafiles$pretreatment_loss %>%
+  dplyr::left_join(hygroscopic_water_contents,
+                   by = c("date", "experiment_name", "sample_name", "replication", "batch_sample_number")) %>%
+    dplyr::mutate(OD_soil_mass_before_pretreatment = .data$air_dry_specimen_mass_before_pretreatment / (1 + .data$hygroscopic_water_content),
+           OD_soil_mass_after_pretreatment = .data$container_mass_w_OD_sample - .data$container_tare,
            pretreatment_loss_mass = .data$OD_soil_mass_before_pretreatment - .data$OD_soil_mass_after_pretreatment,
            pretreatment_loss_pct = .data$pretreatment_loss_mass / .data$OD_soil_mass_before_pretreatment) %>%
     dplyr::select(.data$date:.data$batch_sample_number, .data$pretreatment_loss_pct)
@@ -102,34 +132,43 @@ check_pretreatment_correction <- function(){
 #'
 #' @return data frame named `fines_pct_passing`
 #'
-compute_pipette_fines_pct_passing <- function(datafiles, OD_specimen_masses){
+compute_pipette_fines_pct_passing <- function(){
 
 # inherit the datafiles and OD_specimen masses from the parent function environment
 
-needed_objs <- mget(ls(envir = rlang::caller_env(), pattern = "method_specific_datafiles|OD_specimen_masses"))
+
+
+needed_objs <- mget(x = c("method_specific_datafiles", "OD_specimen_masses"),
+                    envir = rlang::caller_env())
 
 # make them available in the current function call
 list2env(needed_objs,envir = rlang::current_env())
 
+# locate beaker tare set from data files
 
+  beaker_tare_set <- unique(method_specific_datafiles$pipetting$beaker_tare_set)
 
-  # locate beaker tare set from data files
-
-  beaker_tare_set <- unique(method_specific_datafiles$pipetting_data$beaker_tare_set)
+  beaker_tares <- asi468::psa_beaker_tares[[beaker_tare_set]]
 
   # compute blank correction
 
-  blanks_df <- method_specific_datafiles$blank_correction_data %>%
-    dplyr::left_join(asi468::psa_beaker_tares[[beaker_tare_set]], by = "beaker_number") %>%
+blanks_df <- method_specific_datafiles$blank_correction %>%
+    dplyr::left_join(beaker_tares, by = c("beaker_number", "beaker_tare_set")) %>%
     dplyr::mutate(calgon_in_beaker = .data$beaker_mass_w_OD_sample - .data$beaker_empty_mass)
 
-  blank_correction <- mean(blanks_df$calgon_in_beaker, na.rm = TRUE)
+blank_correction <- mean(blanks_df$calgon_in_beaker, na.rm = TRUE)
 
   # calculate % passing for each size
 
-  fines_percent_passing <- method_specific_datafiles$pipetting_data %>%
-    dplyr::left_join(asi468::psa_beaker_tares[[beaker_tare_set]], by = "beaker_number") %>%
-    dplyr::left_join(OD_specimen_masses, by = c("date", "experiment_name", "sample_name", "replication", "batch_sample_number")) %>%
+# browser()
+  fines_percent_passing <- method_specific_datafiles$pipetting %>%
+    dplyr::left_join(
+      beaker_tares,
+      by = c("beaker_number", "beaker_tare_set")) %>%
+    dplyr::left_join(
+      OD_specimen_masses,
+      by = c("date", "experiment_name",
+             "sample_name", "replication", "batch_sample_number")) %>%
     dplyr::mutate(total_g_in_beaker = .data$beaker_mass_w_OD_sample - .data$beaker_empty_mass,
                   soil_in_beaker = .data$total_g_in_beaker - blank_correction,
                   percent_passing = 40 * .data$soil_in_beaker / .data$OD_specimen_mass) %>%
@@ -158,11 +197,18 @@ compute_sieves_percent_passing <- function(){
 
   # find required objects from calling environment
 
-  needed_objs <- mget(ls(envir = rlang::caller_env(), pattern = "method_specific_datafiles|OD_specimen_masses"))
+
+  needed_objs <- mget(x = c("method_specific_datafiles", "OD_specimen_masses"),
+                      envir = rlang::caller_env())
+
+  # make them available in the current function call
+  list2env(needed_objs,envir = rlang::current_env())
 
 
-    sieves_percent_passing <- method_specific_datafiles$sieving_data %>%
-      dplyr::left_join(OD_specimen_masses, by = c("date", "experiment_name", "sample_name", "replication", "batch_sample_number"))%>%
+    sieves_percent_passing <- method_specific_datafiles$sieving %>%
+      dplyr::left_join(
+        OD_specimen_masses,
+        by = c("date", "experiment_name", "sample_name", "replication", "batch_sample_number"))%>%
       dplyr::mutate(cumulative_mass_finer = .data$OD_specimen_mass - .data$cumulative_mass_g,
                     percent_passing = .data$cumulative_mass_finer / .data$OD_specimen_mass) %>%
     dplyr::select(.data$date:.data$batch_sample_number, .data$microns, percent_passing)

@@ -25,6 +25,40 @@ check_for_coarse_complex_bins <- function(){
 }
 
 
+# helpers for generating/cleaning the data frames created by the o --------
+
+#' Helper for generating whole number from decimals
+#' when computing size bins
+#'
+#' @param df data frame
+#'
+#' @return same data frame with any columns whose names begin with a
+#' number multiplied by 100
+#'
+psa_decimal_to_pct <- function(df){
+
+  df %>%
+    dplyr::mutate(
+      dplyr::across(
+        .cols = dplyr::matches("^\\d+"),
+        .fns = ~.*100))
+
+}
+
+
+#' Helper for selecting all columns that don't have names beginning with a number
+#'
+#' @param df data frame
+#'
+#' @return same data frame with relevant columns removed
+#'
+psa_remove_number_bins <- function(df){
+
+  df %>%
+    dplyr::select(-c(dplyr::matches("^\\d+")))
+
+}
+
 # methods for coarse size bns ---------------------------------------------
 
 #' Size bins for USGA sieves
@@ -34,13 +68,16 @@ check_for_coarse_complex_bins <- function(){
 #'
 USGA_bins <- function(){
 
+ #  browser()
+
   # assign cumulative percent passing to local variable based on its value in global environment
 
   cumulative_percent_passing <- get("cumulative_percent_passing", envir = rlang::caller_env() )
 
   usga_bins <- cumulative_percent_passing %>%
-    filter(.data$microns >= 53) %>%
+    dplyr::filter(.data$microns >= 53) %>%
     tidyr::pivot_wider(names_from = .data$microns, values_from = .data$percent_passing) %>%
+    psa_decimal_to_pct() %>%
     dplyr::mutate(
       gravel = .data$`4000` - .data$`2000`,
       very_coarse_sand = .data$`2000` - .data$`1000`,
@@ -48,17 +85,15 @@ USGA_bins <- function(){
       medium_sand = .data$`500` - .data$`250`,
       fine_sand = .data$`250` - .data$`150`,
       very_fine_sand = .data$`150` - .data$`53`) %>%
-    dplyr::select(.data$date:.data$batch_sample_number,
-                  .data$gravel:.data$very_fine_sand,
-                  dplyr::everything()) %>%
-    dplyr::mutate(
-      dplyr::across(
-        .cols = .data$gravel:.data$very_fine_sand,
-        .fns = ~.*100))
+    psa_remove_number_bins()
+
 
   return(usga_bins)
 
 }
+
+
+
 
 #' Size bins for USCS breakdown
 #'
@@ -68,21 +103,23 @@ USCS_bins <- function(){
 
   cumulative_percent_passing <- get("cumulative_percent_passing", envir = rlang::caller_env() )
 
+
+  # applies the 100x transformation across any columns whose
+  # names begin with a number, then does the subtraction and finally removes
+  # the columns whose names begin with a number
+
   uscs_bins <- cumulative_percent_passing %>%
-    filter(.data$microns >= 53) %>%
+    dplyr::filter(.data$microns >= 53) %>%
     tidyr::pivot_wider(names_from = .data$microns, values_from = .data$percent_passing) %>%
+    psa_decimal_to_pct() %>%
     dplyr::mutate(
       uscs_gravel = .data$`4750` - .data$`4000`,
       uscs_coarse_sand = .data$`4000` - .data$`2000`,
       uscs_med_sand = .data$`2000` - .data$`425`,
       uscs_fine_sand = .data$`425` - .data$`53`) %>%
-    dplyr::select(.data$date:.data$batch_sample_number,
-                  .data$uscs_gravel:.data$uscs_fine_sand,
-                  dplyr::everything()) %>%
-    dplyr::mutate(
-      dplyr::across(
-        .cols = .data$uscs_gravel:.data$uscs_fine_sand,
-        .fns = ~.*100))
+    psa_remove_number_bins()
+
+
 
   return(uscs_bins)
 
@@ -99,26 +136,22 @@ SSSA_pipette_bins <- function(){
 
   cumulative_percent_passing <- get("cumulative_percent_passing", envir = rlang::caller_env() )
 
-
+# this pivots wider, computes the differences, then removes any columns whose names
+# begins with a number
 
   sssa_pipette_bins <- cumulative_percent_passing %>%
     dplyr::filter(.data$microns <= 53) %>%
     tidyr::pivot_wider(names_from = .data$microns, values_from = .data$percent_passing) %>%
+    psa_decimal_to_pct() %>%
     dplyr::mutate(
      coarse_silt = .data$`53` - .data$`20`,
       medium_silt = .data$`20` - .data$`5`,
       fine_silt = .data$`5` - .data$`2`,
       coarse_clay = .data$`2` - .data$`0.2`,
       fine_clay = .data$`0.2`) %>%
-    dplyr::select(.data$date:.data$batch_sample_number,
-                  .data$coarse_silt:.data$fine_clay,
-                  dplyr::everything()) %>%
-    dplyr::mutate(
-      dplyr::across(
-        .cols = .data$coarse_silt:.data$fine_clay,
-        .fns = ~.*100))
+    psa_remove_number_bins()
 
-  return(all_size_bins)
+  return(sssa_pipette_bins)
 
 }
 
@@ -139,17 +172,12 @@ pipette_clay_2_to_0.2_only <- function(){
   clay_bins <- cumulative_percent_passing %>%
     dplyr::filter(.data$microns <= 53) %>%
     tidyr::pivot_wider(names_from = .data$microns, values_from = .data$percent_passing) %>%
+    psa_decimal_to_pct() %>%
     dplyr::mutate(
       silt = .data$`53` - .data$`2`,
       coarse_clay = .data$`2` - .data$`0.2`,
       fine_clay = .data$`0.2`) %>%
-    dplyr::select(.data$date:.data$batch_sample_number,
-                  .data$silt:.data$fine_clay,
-                  dplyr::everything()) %>%
-    dplyr::mutate(
-      dplyr::across(
-        .cols = .data$silt:.data$fine_clay,
-        .fns = ~.*100))
+    psa_remove_number_bins()
 
   return(clay_bins)
 
@@ -173,15 +201,11 @@ simple_bins <- function(){
   # assign the needed object from parent frame instead of
   # passing them as arguments
 
+  # browser()
+
   cumulative_percent_passing <- get("cumulative_percent_passing", envir = rlang::caller_env() )
 
-  # This call should inherit the object from its parent frame; i.e. the psa() environment. One can also look recursively upward by setting inherits= TRUE as below although in this case it did not work for me ...? I guess it is best to explicitly specify the environment to look in anyway,
-  # in case any varible names are duplicated
-
-
-  # cumulative_percent_passing <- get("cumulative_percent_passing", inherits = T )
-
-  simple_size_bins <- cumulative_percent_passing %>%
+simple_size_bins <- cumulative_percent_passing %>%
     tidyr::pivot_wider(names_from = .data$microns,
                        values_from = .data$percent_passing) %>%
     dplyr::mutate(

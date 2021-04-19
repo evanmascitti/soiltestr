@@ -32,68 +32,76 @@ psa <- function(dir){
 
   all_datafile_paths <- divide_psa_datafiles()
 
- common_datafiles <- all_datafile_paths$common_datafile_paths %>%
-   map(readr::read_csv) %>%
-   purrr::map(janitor::remove_empty, which = 'rows')
+# read all the files in; this returns a list of length 2; each element
+# is also a list containing the appropriate data frames (tibbles)
 
-  method_specific_datafiles <- all_datafile_paths$method_specific_datafile_paths %>%
-    map(readr::read_csv) %>%
-    purrr::map(janitor::remove_empty, which = 'rows')
+datafiles <- purrr::map(all_datafile_paths, import_psa_datafile)
+
+# assign the contents of the datafiles list to the current environment
+
+list2env(datafiles, envir = rlang::current_env())
+
+# for safety, remove the datafiles object since its contents are now dumped
+# into the current environment
+
+rm(datafiles)
 
 
-
-  # compute hygroscopic water contents --------------------------------------
+# compute hygroscopic water contents --------------------------------------
 
   # first need to pair data with correct set of tin tares
 
-  tin_tare_date <- unique(common_datafiles$hygroscopic_correction_data$tin_tare_set)
+# browser()
 
-  tin_tares <- asi468::tin_tares[[tin_tare_date]]
+  tin_tare_set <- as.character(unique(common_datafiles$hygroscopic_corrections$tin_tare_set))
+
+  tin_tares <- asi468::tin_tares[[tin_tare_set]]
 
 
   # calculate air-dry water contents
 
-  hygroscopic_water_contents <- common_datafiles$hygroscopic_correction_data %>%
+  hygroscopic_water_contents <- common_datafiles$hygroscopic_corrections %>%
       dplyr::left_join(tin_tares, by = "tin_number")%>%
       soiltestr::add_w() %>%
     dplyr::rename(hygroscopic_water_content = .data$water_content) %>%
     dplyr::select(.data$date:.data$batch_sample_number, .data$hygroscopic_water_content)
 
-
   # compute oven-dry specimen masses used in actual PSA tests
 
-  OD_specimen_masses <- datafiles$specimen_masses %>%
+  OD_specimen_masses <- common_datafiles$specimen_masses %>%
     dplyr::left_join(hygroscopic_water_contents,
-                     by = c("date", "experiment_name", "sample_name", "replication", "batch_sample_number")) %>%
+                     by = c("date", "experiment_name", "sample_name",
+                            "replication", "batch_sample_number")) %>%
     dplyr::mutate(OD_specimen_mass = .data$air_dry_specimen_mass_for_test / (1 + .data$hygroscopic_water_content)) %>%
   dplyr::select(.data$date:.data$batch_sample_number, .data$OD_specimen_mass)
 
 
 # determine whether pretreatment correction should be applied
+# if it should, apply it; otherwise assign this variable a value of NULL
 
   use_pretreatment_correction <- check_pretreatment_correction()
 
   # if it should be, calculate the corrections and then apply them, altering the existing copy of the
   # OD specimen masses data frame
 
+
   if(use_pretreatment_correction){
 
-    pretreatment_losses <- compute_pretreatment_losses(dir = directory,
-                                                       hygroscopic_water_contents = hygroscopic_water_contents)
+    pretreatment_loss <- compute_pretreatment_loss()
 
-    OD_specimen_mases <- OD_specimen_masses %>%
-      dplyr::left_join(pretreatment_losses, by = c("date", "experiment_name",
-                                                   "sample_name", "replication",
-                                                   "batch_sample_number")) %>%
+    OD_specimen_masses <- OD_specimen_masses %>%
+      dplyr::left_join(
+        pretreatment_loss, by = c(
+          "date", "experiment_name", "sample_name", "replication",
+          "batch_sample_number")) %>%
       dplyr::mutate(OD_specimen_mass = .data$OD_specimen_mass * (1 - .data$pretreatment_loss_pct))
-  }
+  } else
+    pretreatment_loss <- NULL
 
 
   # now that the correct specimen mass is known, compute the fines % passing
 
-
-
-fines_percent_passing <- switch (protocol_ID,
+  fines_percent_passing <- switch (protocol_ID,
     "1" = compute_pipette_fines_pct_passing(),
     "2" = compute_hydrometer_fines_pct_passing(),
     "3" = compute_pipette_fines_pct_passing(),
@@ -105,6 +113,7 @@ fines_percent_passing <- switch (protocol_ID,
     stop("Can't find the protocol - unable to compute % fines", protocol_ID, call. = T)
   )
 
+  # browser()
 # next compute the coarse particles % passing
 
   coarse_percent_passing <- switch (protocol_ID,
@@ -140,27 +149,27 @@ fines_percent_passing <- switch (protocol_ID,
  # the fines method
  # if it does, create a new tibble with the fine-grained sub bins
 
+
  if(check_for_fines_complex_bins()){
 
    # shouldn't need this to ever be called because the logic doesn't allow
    # the protocols to opt into this switch statement but putting in just
    # in case; by assigning as a function I can reduce  duplication
 
-   insufficient_fine <- function() {
-     stop("Only total clay can be computed for this protocol (not enough samples collected)",
+   insufficient_fines_sampling <- function() {
+     stop("Only total clay can be computed for this protocol (not enough samples collected).",
           call. = F)
    }
 
-
-fines_sub_bins <- switch (protocol_ID,
+   fines_sub_bins <- switch (protocol_ID,
   "1" = SSSA_pipette_bins(),
-  "2" = insufficient_fine(),
+  "2" = insufficient_fines_sampling(),
   "3" = SSSA_pipette_bins(),
-  "4" = insufficient_fine(),
-  "5" = insufficient_fine(),
+  "4" = insufficient_fines_sampling(),
+  "5" = insufficient_fines_sampling(),
   "6" = SSSA_pipette_bins(),
-  "7" = insufficient_fine(),
-  "8" = insufficient_fine(),
+  "7" = insufficient_fines_sampling(),
+  "8" = insufficient_fines_sampling(),
   stop("Could not find any info for psa_protocol ID ", protocol_ID, call. = T)
 )
 
@@ -180,10 +189,12 @@ fines_sub_bins <- switch (protocol_ID,
    # logic above but putting here to help with debugging in case
    # something was coded wrong
 
-   insufficient_coarse <- function() {
+   insufficient_coarse_sampling <- function() {
      stop("Only total sand and gravel can be computed for this protocol (not enough samples collected)",
           call. = F)
    }
+
+   # browser()
 
    coarse_sub_bins <- switch(
      protocol_ID,
@@ -193,18 +204,22 @@ fines_sub_bins <- switch (protocol_ID,
      "4" = USGA_bins(),
      "5" = USGA_bins(),
      "6" = USGA_bins(),
-     "7" = insufficient_coarse(),
-     "8" = insufficient_coarse(),
+     "7" = insufficient_coarse_sampling(),
+     "8" = insufficient_coarse_sampling(),
      stop("Could not find any info for psa_protocol ID ", protocol_ID, call. = T)
    )
 
    }
 
-sub_bins <- mget(x = c("fines_sub_bins", "coarse_sub_bins"),
-                  ifnotfound = NULL) %>%
-   purrr::reduce(rbind) %>%
-   dplyr::arrange(.data$batch_sample_number,
-                  dplyr::desc(.data$microns))
+ # browser()
+
+sub_bins <- mget(ls(pattern = "sub_bins")) %>%
+  purrr::reduce(
+    dplyr::left_join,
+    by = c("date", "experiment_name", "protocol_ID", "sample_name",
+           "replication", "batch_sample_number")) %>%
+  dplyr::arrange(.data$batch_sample_number,
+                   .data$replication)
 
 
  # make the ggplots for each sample and replication
@@ -227,9 +242,9 @@ sub_bins <- mget(x = c("fines_sub_bins", "coarse_sub_bins"),
   #browser()
 
   method_metadata <-switch (protocol_ID,
-    "1" = soiltestr::psa_protocols[["1"]],
+    "1" = psa_protocols[["1"]],
     # "2" = psa_protocols[["2"]],
-     "3" = soiltestr::psa_protocols[["3"]],
+     "3" = psa_protocols[["3"]],
     # "4" = psa_protocols[["4"]],
    #  "5" = psa_protocols[["5"]],
     stop("Could not find any info for psa_protocol number", protocol_ID, call. = T))
@@ -240,16 +255,20 @@ sub_bins <- mget(x = c("fines_sub_bins", "coarse_sub_bins"),
   # I will just explicitly construct this one for
   # extra safety
 
-  psa <- list(
-    cumulative_percent_passing = cumulative_percent_passing,
-    simple_bins = simple_bins,
-    sub_bins = sub_bins,
-    psd_plots = psd_plots,
-    method_metadata = method_metadata,
-    pretreatment_losses = if(use_pretreatment_correction){pretreatment_losses} else{
-      NULL
-    }
-    )
+
+  # create a variable to append the list for pretreatment;
+  # if it was not performed this value is NULL
+
+
+psa <- mget(
+    c("cumulative_percent_passing",
+    "simple_bins",
+    "sub_bins",
+    "psd_plots",
+    "method_metadata",
+    "pretreatment_loss"))
+
+
 
   return(psa)
 
