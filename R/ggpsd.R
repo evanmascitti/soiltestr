@@ -29,35 +29,43 @@ ggpsd <- function(df, points = TRUE, ...){
                  seq(1, 10, 1),
                  seq(10, 100, 10),
                  seq(100, 1000, 100),
-                 seq(1000, 10000, 1000))
+                 seq(2000, 4000, 1000))
 
-  bold_log_lines <- c(0.1, 1, 10, 100, 1000, 10000)
+  bold_log_lines <- c(0.1, 1, 10, 100, 1000)
 
   df %>%
     ggplot2::ggplot(ggplot2::aes(x = .data$microns, y = .data$percent_passing, ...))+
-    ggplot2::scale_x_continuous(latex2exp::TeX("Particle diameter, $\\mu$m"),
-                                limits = c(0.1, 10000),
+    ggplot2::scale_x_continuous(expression("Particle diameter, \u03bcm"),
+                                limits = c(0.1, 4000),
                                 trans = "log10",
-                                breaks = c(0.1, 1, 10, 100, 1000, 10000),
-                                labels = c(0.1, 1, 10, 100, 1000, 10000))+
+                                breaks = c(0.1, 1, 10, 100, 1000),
+                                labels = as.character(c(0.1, 1, 10, 100, "1,000")))+
     ggplot2:: scale_y_continuous("% passing",
                                  limits = c(0, 1),
                                  breaks = seq(0, 1, 0.2),
                                  labels = scales::label_percent(suffix = ""))+
-    ggplot2::geom_vline(xintercept = log_lines, color = 'grey95', linetype = 'dotted',
+    ggplot2::geom_vline(xintercept = log_lines,
+                        color = 'grey96',
+                        linetype = 'dotted',
+                        size = 0.3)+
+    ggplot2::geom_vline(xintercept = bold_log_lines,
+                        color= 'grey96',
+                        size = 0.3)+
+    ggplot2::geom_hline(yintercept = seq(0, 1, 0.2), color = 'grey90',
                         size = 0.25)+
-    ggplot2::geom_vline(xintercept = bold_log_lines, color= 'grey95',
-                        size = 0.4)+
-    ggplot2::geom_hline(yintercept = seq(0, 1, 0.2), color = 'grey80',
-                        size = 0.25)+
-    soiltestr::gg_psdpts()+
+    ggplot2::geom_point()+
     ggplot2::geom_line()+
     ggplot2::ggtitle("Cumulative particle size distribution")+
     cowplot::theme_cowplot()+
     ggplot2::theme(
-      axis.line.y = element_blank(),
-      axis.ticks.y = element_blank(),
-      plot.title = element_text(hjust = 0.5)
+      axis.line.y = ggplot2::element_blank(),
+      axis.ticks.y = ggplot2::element_blank(),
+      #axis.text.x = ggplot2::element_text(angle = 45),
+      axis.text = ggplot2::element_text(size = 10, color = 'grey50'),
+      axis.title = ggplot2::element_text(color = 'grey25'),
+      axis.line.x = ggplot2::element_line(color = 'grey50'),
+      axis.ticks.x = ggplot2::element_line(color = 'grey50'),
+      plot.title = ggplot2::element_text(hjust = 0.5)
     )
   }
 

@@ -222,51 +222,92 @@ sub_bins <- mget(ls(pattern = "sub_bins")) %>%
                    .data$replication)
 
 
- # make the ggplots for each sample and replication
 
-# don't know where the code to do this went ??
+# make the ggplots for each sample and replication ---------------------
 
-# setting to NULL for now so  I can test other parts of the function
-  psd_plots <- NULL
+base_plots <- cumulative_percent_passing %>%
+  dplyr::left_join(psa_protocols_summary, by = "protocol_ID") %>%
+  dplyr::group_by(.data$batch_sample_number) %>%
+  tidyr::nest() %>%
+  dplyr::mutate(plot = purrr::map(data, ggpsd)) %>%
+  purrr::pluck("plot")
 
-  # psd_plots <- psd_plots_tibble$psd_plot %>%
-  #   purrr::set_names(psd_plots_tibble$plot_name)
+# this is a hack to filter to a single row per replication
+# not ideal but it works
+
+plots_extra_stuff <- cumulative_percent_passing %>%
+  dplyr::group_by(dplyr::across(.cols = .data$date:.data$batch_sample_number)) %>%
+  dplyr::summarise() %>%
+  dplyr::left_join(psa_protocols_summary, by = "protocol_ID") %>%
+  dplyr::mutate(subtitle = paste(
+  " Sample name: ", .data$sample_name, "\n",
+  "Replication ", .data$replication, "\n") )
+
+# this was some extra stuff I was going to include right on the plot
+# but I think it clutters it too much
+# this is mostly for EDA/qc anwyay; for a publication or
+# polished report I would do this in R Markdown
+
+  # "Fines sampling: ", .data$fines_method, "\n",
+#  g_sample, " g sample", "\n",
+#  "[See protocol ", protocol_ID, "for other method details.") ) %>%
+
+plot_subtitles <- plots_extra_stuff$subtitle
+
+plot_names <- paste0(plots_extra_stuff$sample_name, "_rep", plots_extra_stuff$replication)
+
+add_subtitle <- function(plot, text) {
+  plot +
+    labs(subtitle = text)+
+    ggplot2::theme(plot.subtitle = ggplot2::element_text(size = 8))
+}
 
 
-  # make an extra list containing info about the method and
-  # any other data derived from the test (such as loss on pretreatment)
+psd_plots <- purrr::map2(base_plots, plot_subtitles, add_subtitle) %>%
+  purrr::set_names(plot_names)
 
-  # obviously this should be chosen with a call to `switch()` but leaving as-is
-  # for now
 
-  #browser()
+################################################################################
 
-  method_metadata <-switch (protocol_ID,
+method_metadata <-switch (protocol_ID,
     "1" = psa_protocols[["1"]],
-    # "2" = psa_protocols[["2"]],
-     "3" = psa_protocols[["3"]],
-    # "4" = psa_protocols[["4"]],
-   #  "5" = psa_protocols[["5"]],
+    "2" = psa_protocols[["2"]],
+    "3" = psa_protocols[["3"]],
+    "4" = psa_protocols[["4"]],
+    "5" = psa_protocols[["5"]],
+    "6" = psa_protocols[["6"]],
+    "7" = psa_protocols[["7"]],
+    "8" = psa_protocols[["8"]],
     stop("Could not find any info for psa_protocol number", protocol_ID, call. = T))
 
 
+  # make another list that has the averages of each variable for the applicable
+  # data frames produced above
+
+  # this uses some helpers defined in psa-summarizing-helpers.R
+
+  # browser()
+
+  averages <- mget(x = c("cumulative_percent_passing", "simple_bins", "sub_bins", "pretreatment_loss"),
+              envir = rlang::current_env()) %>%
+    purrr::modify_if(
+      .p = ~ "microns" %in% names(.),
+      .f = pivot_cumulative_percent_passing_wider) %>%
+    purrr::map(summarize_psa) %>%
+    purrr::modify_if(
+      .p = ~ any(stringr::str_detect(string = names(.), pattern = "^\\d")),
+      .f = pivot_cumulative_percent_passing_longer)
+
   # construct list to return
-  # though I have used in mget many places
-  # I will just explicitly construct this one for
-  # extra safety
-
-
-  # create a variable to append the list for pretreatment;
-  # if it was not performed this value is NULL
-
 
 psa <- mget(
     c("cumulative_percent_passing",
     "simple_bins",
     "sub_bins",
-    "psd_plots",
     "method_metadata",
-    "pretreatment_loss"))
+    "pretreatment_loss",
+    "averages",
+    "psd_plots"))
 
 
 
