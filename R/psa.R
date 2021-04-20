@@ -110,6 +110,7 @@ rm(datafiles)
     "6" = compute_pipette_fines_pct_passing(),
     "7" = compute_pipette_fines_pct_passing(),
     "8" = compute_hydrometer_fines_pct_passing(),
+    "9" = compute_hydrometer_fines_pct_passing(),
     stop("Can't find the protocol - unable to compute % fines", protocol_ID, call. = T)
   )
 
@@ -125,6 +126,7 @@ rm(datafiles)
     "6" = compute_sieves_percent_passing(),
     "7" = compute_sieves_percent_passing(),
     "8" = compute_sieves_percent_passing(),
+    "9" = compute_sieves_percent_passing(),
     stop(
       "Can't find the protocol - unable to compute % coarse particles",
       protocol_ID,
@@ -170,6 +172,7 @@ rm(datafiles)
   "6" = SSSA_pipette_bins(),
   "7" = insufficient_fines_sampling(),
   "8" = insufficient_fines_sampling(),
+  "9" = insufficient_fines_sampling(),
   stop("Could not find any info for psa_protocol ID ", protocol_ID, call. = T)
 )
 
@@ -206,6 +209,7 @@ rm(datafiles)
      "6" = USGA_bins(),
      "7" = insufficient_coarse_sampling(),
      "8" = insufficient_coarse_sampling(),
+     "9" = insufficient_coarse_sampling(),
      stop("Could not find any info for psa_protocol ID ", protocol_ID, call. = T)
    )
 
@@ -269,6 +273,8 @@ psd_plots <- purrr::map2(base_plots, plot_subtitles, add_subtitle) %>%
 
 ################################################################################
 
+browser()
+
 method_metadata <-switch (protocol_ID,
     "1" = psa_protocols[["1"]],
     "2" = psa_protocols[["2"]],
@@ -278,6 +284,7 @@ method_metadata <-switch (protocol_ID,
     "6" = psa_protocols[["6"]],
     "7" = psa_protocols[["7"]],
     "8" = psa_protocols[["8"]],
+    "9" = psa_protocols[["9"]],
     stop("Could not find any info for psa_protocol number", protocol_ID, call. = T))
 
 

@@ -1,3 +1,4 @@
+
 #' Determine which functions to use for analyzing the data set
 #'
 #' An internal helper function for `psa()`
@@ -20,7 +21,6 @@ dir <- get(x = "dir", envir = rlang::caller_env())
 
 
 
-###############################################################################
 
 #' Divide file paths into common and method-specific
 #'
@@ -77,12 +77,11 @@ divide_psa_datafiles <- function(){
 
 }
 
-################################################################################
-
 
 #' Clean up a vector of file paths and then import each one as a tibble
-#' and assign the name while also making sure the protocol ID is imported
-#' # as a character type
+#'
+#' Assign the name while also making sure the protocol ID is imported
+#' as a character type
 #'
 #' @param x character vector of file paths
 #'
@@ -210,7 +209,9 @@ list2env(needed_objs,envir = rlang::current_env())
 
   # compute blank correction
 
-blanks_df <- method_specific_datafiles$blank_correction %>%
+  # browser()
+
+blanks_df <- method_specific_datafiles$pipette_blank_correction %>%
     dplyr::left_join(beaker_tares, by = c("beaker_number", "beaker_tare_set")) %>%
     dplyr::mutate(calgon_in_beaker = .data$beaker_mass_w_OD_sample - .data$beaker_empty_mass)
 

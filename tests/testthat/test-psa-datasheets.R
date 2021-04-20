@@ -33,4 +33,25 @@ test_that("6 files are written for protocol 7", {
   })
 
 
+test_that('error is thrown when arguments are of incorrect format',
+          {
+
+expect_error(
+  psa_datasheets(
+    dir = here::here(),
+    date = '2021-04-1',
+    protocol_ID = 8,
+    experiment_name = 'my-hydrometer-experiment',
+    sample_names = 1:4,
+    n_reps = 3,
+    tin_tare_set = '2021-03-04',
+    bouyoucos_cylinder_numbers = 1:12,
+    blank_correction_bouyoucos_cylinder = 13
+  )
+)
+
+
+          })
+
+
 

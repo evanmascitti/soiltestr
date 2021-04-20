@@ -26,6 +26,11 @@
 #' @param bouyoucos_cylinder_numbers Integer (optional). Vector of the test
 #'   cylinders used for pipette weighing. Important for hydrometer analysis due
 #'   to width correction.
+#' @param blank_correction_bouyoucos_cylinder Integer (optional). Cylinder number
+#' used for the blank correction; not so important for pipette analysis but needed
+#' for hydrometer to reference cross-sectional area which is needed for
+#' calculation of effective depth
+#' @param Gs Double vector of matching length to `sample_names`. Specific gravity of soil solids (assumed or measured). If no value entered, defaults to 2.70.
 #' @param ... other arguments passed to internal functions
 #'   [`pipette_sampling_datasheets()`], `[hydrometer_sampling_datasheets()`], or
 #'   [`sieving_datasheets()`]
@@ -49,6 +54,9 @@ psa_datasheets <- function(
   beaker_tare_set = NULL,
   pipette_beaker_numbers = NULL,
   bouyoucos_cylinder_numbers = NULL,
+  blank_correction_bouyoucos_cylinder = NULL,
+  Gs = 2.70,
+  calgon_solution_ID = NULL,
   ...){
 
   # coerce protocol ID to character type in case user supplies it as an integer
@@ -67,10 +75,20 @@ psa_datasheets <- function(
 
   }
 
-  ########
+
+  # check that date was entered in correct format
+
+  if(!stringr::str_detect(date, "^\\d{4}-\\d{2}-\\d{2}$")){
+    stop("Date format incorrect; please enter in YYYY-MM-DD format.",
+         call. = F)
+  }
 
 
-# Detect number of coarse and fine particle diameters to include i --------
+
+# -------------------------------------------------------------------------
+
+
+# Detect number of coarse and fine particle diameters to include  --------
 
 # this is an awfully ugly pipeline but having
 # a hard time with the indexing. Despite its inelegance,
@@ -94,10 +112,15 @@ coarse_diameters_sampled <- psa_protocols %>%
   .[["coarse_diameters_sampled"]] %>%
   .[[1]]
 
-######################################################
+
+
+# -------------------------------------------------------------------------
+
 
 
 # Sheets required for any type of test ------------------------------------
+
+# browser()
 
 psa_metadata <- tibble::tibble(
     date = date,
@@ -134,8 +157,6 @@ psa_metadata <- tibble::tibble(
 
 
 
-
-#############
 
 # For tests including pipette analysis ------------------------------------
 
@@ -182,6 +203,8 @@ if((!is.null(bouyoucos_cylinder_numbers) && length(bouyoucos_cylinder_numbers) !
        call. = F)
 }
 
+
+
 pipette_sheets <- pipetting_datasheets()
 
 # A very inelegant solution, but it works: rely on the 2 specific
@@ -192,7 +215,7 @@ pipette_sheets <- pipetting_datasheets()
 
       psa_pipetting_data <- pipette_sheets$psa_pipetting_data
 
-      psa_blank_correction_data <- pipette_sheets$psa_blank_correction_data
+      psa_pipette_blank_correction_data <- pipette_sheets$psa_pipette_blank_correction_data
 
       # This step probably isn't necessary now that I figured out how to subset
       # the list of all existing objects based on being of class data frame instead
@@ -203,25 +226,59 @@ pipette_sheets <- pipetting_datasheets()
 
 
 
-  # have not yet built the hydrometer_sampling_datasheets function
-  # or the overall framework for the laser diffraction methods - for the latter,
+# for tests including hydrometer analysis ---------------------------------
+
+
+
+ use_hydrometer <- protocol_ID %in% c(internal_data$hydrometer_invoking_protocol_IDs)
+if(use_hydrometer){
+
+  # generate the main datasheet and the sheet for the blank correction
+
+ # browser()
+
+  hydrometer_list <- hydrometer_datasheets()
+
+  hydrometer_sheet_names <- names(hydrometer_list)
+
+  # couldn't quite figure out how to use a functional
+  # to do this (I think it's an issue with
+  # it returning a new list containing the list element
+  # rather than just the list element itself )
+
+  # but a regular for loop seems to work fine
+
+  for (i in seq_along(hydrometer_sheet_names)) {
+    assign(x = hydrometer_sheet_names[[i]],
+           value = hydrometer_list[[i]])
+  }
+
+  }
+
+
+
+
+# use_fines_laser_diffraction <- protocol_ID %in% c(fines_laser_diffraction_invoking_protocol_IDs)
+  # if(use_fines_laser_diffraction){psa_fines_laser_diffraction_sampling_datasheets <- fines_laser_diffraction_sampling_datasheets(...)}
+
+
+
+# -------------------------------------------------------------------------
+
+
+
+  # for laser diffraction methods -------------------------------------------
+
+
+  # have not yet built any functions to create data sheets or analyze laser diffraction data
   # it is likely nothing is needed here, as the data will be collected automatically
   # using Panalytical's software and then exported as a csv file
 
-  # use_hydrometer <- protocol_ID %in% c(hydrometer_invoking_protocol_IDs)
-#   if(use_hydrometer){psa_hydrometer_sheets <- hydrometer_sampling_datasheets(...)}
-
-  # use_fines_laser_diffraction <- protocol_ID %in% c(fines_laser_diffraction_invoking_protocol_IDs)
-  # if(use_fines_laser_diffraction){psa_fines_laser_diffraction_sampling_datasheets <- fines_laser_diffraction_sampling_datasheets(...)}
-
-#############
-
-
 # For tests including sieving, either manually or with the Ro-tap ------------
 
+# browser()
 
-
-  use_sieves <- protocol_ID %in% c(internal_data$sieve_invoking_protocol_IDs)
+  use_sieves <- any(internal_data$sieve_invoking_protocol_IDs %in% protocol_ID)
 
 
   if(use_sieves){
@@ -242,12 +299,20 @@ if(use_pretreatment){
 
 
   # an elegant solution from the tidyverse and base r combined.....
-  # compare to the long BS below.
+  # compare to the long BS below. It is extra safe because it
+# uses two ways to select: 1. a regular expression pattern following the naming convention
+# I have adopted where the datasheet name begins with psa_ and ends with _data;
+# the underscores are later converted to dashes for naming the files, and
+# 2. the class attribute that it is a tibble. With both these in place I
+# think this should be pretty bulletproof so long as any sheets I add
+# at a later time are named this way
 
-  all_datasheets <- mget(ls(),
+  all_datasheets <- mget(ls(pattern = "psa_.*data"), # leaving out the second underscore because the metadata sheet doesn't end in _data
+                         mode = "list",
                       envir = rlang::current_env(),
-                      inherits = F) %>%
-    purrr::keep(tibble::is_tibble)
+                      inherits = F)
+  # %>%
+    # purrr::keep(tibble::is_tibble)
 
 
   # need something like this to keep only elements which have a data frame class:
@@ -258,7 +323,10 @@ if(use_pretreatment){
   # I was so close with this attempt!! Just needed to iterate because all_opjbs is a list, then reduce the level because the [] subsetting expects an atomic vector instead ofa list
   # all_data_frames <- all_objs[is.data.frame(all_objs)]
 
-  #####################
+
+# -------------------------------------------------------------------------
+
+
 
   # Last night spun my wheels for a couple HOURS on this.
   # This AM with a fresh mind I solved it in under 5 minutes

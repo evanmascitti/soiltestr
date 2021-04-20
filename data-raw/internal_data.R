@@ -13,9 +13,21 @@ library(tidyverse)
 rm(list = ls())
 
 
-# create tibble object containing terse versions of fines methods
 
-psa_fines_methods <- tibble::enframe(soiltestr::psa_protocols,
+# must load existing psa_protocols object into this session to use the object...
+# tried a couple ways with sourcing the files that create them then removing all
+# objects except those matching the pattern psa_protocols.*; finally dawned on
+# me to just load the rds objects into the session and assign them the correct names! (duh)
+
+
+load('./data/psa_protocols.rda')
+load('./data/psa_protocols_summary.rda')
+
+
+
+###########################
+# create tibble object containing terse versions of fines methods
+psa_fines_methods <- tibble::enframe(psa_protocols,
                                      name = "protocol_ID",
                                      value = "protocol_info") %>%
   dplyr::mutate(fines_method = purrr::map_chr(protocol_info, ~.$fines_method)) %>%
@@ -34,7 +46,7 @@ fines_laser_diffraction_invoking_protocol_IDs <- psa_fines_methods[psa_fines_met
 # create tibble object containing terse versions of coarse methods --------
 
 
-psa_coarse_methods <- tibble::enframe(soiltestr::psa_protocols,
+psa_coarse_methods <- tibble::enframe(psa_protocols,
                                       name = "protocol_ID",
                                       value = "protocol_info") %>%
   dplyr::mutate(coarse_method = purrr::map_chr(protocol_info, ~.$coarse_method)) %>%
@@ -75,8 +87,16 @@ pretreatment_invoking_protocol_IDs <- psa_protocols_summary %>%
     keep(~length(.) > 3)  %>%
     names())
 
+##############################################################################
 
-# collect all objects in this environment into a list
+
+# determine whether the blank correction for the hydrometer will be
+# made via companion measurements or a calibration curve
+
+
+
+
+# collect all objects in the global  environment into a list
 internal_data <- mget(x = ls())
 
 # write the list to the internal data file

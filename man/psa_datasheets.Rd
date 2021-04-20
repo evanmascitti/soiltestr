@@ -15,6 +15,9 @@ psa_datasheets(
   beaker_tare_set = NULL,
   pipette_beaker_numbers = NULL,
   bouyoucos_cylinder_numbers = NULL,
+  blank_correction_bouyoucos_cylinder = NULL,
+  Gs = 2.7,
+  calgon_solution_ID = NULL,
   ...
 )
 }
@@ -48,6 +51,13 @@ for pipette weighing.}
 \item{bouyoucos_cylinder_numbers}{Integer (optional). Vector of the test
 cylinders used for pipette weighing. Important for hydrometer analysis due
 to width correction.}
+
+\item{blank_correction_bouyoucos_cylinder}{Integer (optional). Cylinder number
+used for the blank correction; not so important for pipette analysis but needed
+for hydrometer to reference cross-sectional area which is needed for
+calculation of effective depth}
+
+\item{Gs}{Double vector of matching length to \code{sample_names}. Specific gravity of soil solids (assumed or measured). If no value entered, defaults to 2.70.}
 
 \item{...}{other arguments passed to internal functions
 \code{\link[=pipette_sampling_datasheets]{pipette_sampling_datasheets()}}, \verb{[hydrometer_sampling_datasheets()}], or
