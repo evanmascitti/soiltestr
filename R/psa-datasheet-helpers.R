@@ -1,3 +1,4 @@
+
 #' Construct datasheets for pipette analysis
 #'
 #'
@@ -24,7 +25,7 @@ pipetting_datasheets <- function(){
   needed_objs <- mget(x =  c("date", "experiment_name", "sample_names",
                              "fines_diameters_sampled", "n_reps", "protocol_ID",
                              "beaker_tare_set", "bouyoucos_cylinder_numbers",
-                             "pipette_beaker_numbers"),
+                             "pipette_beaker_numbers", "blank_correction_bouyoucos_cylinder"),
                       envir = rlang::caller_env())
 
   list2env(x = needed_objs, envir = rlang::current_env())
@@ -46,12 +47,12 @@ pipetting_datasheets <- function(){
   )
 
 
-  psa_blank_correction_data <- tibble::tibble(
+  psa_pipette_blank_correction_data <- tibble::tibble(
     date = date,
     experiment_name = experiment_name,
     protocol_ID = protocol_ID,
     blank_replication = 1:length(fines_diameters_sampled),
-    bouyoucos_cylinder_number = "",
+    bouyoucos_cylinder_number = blank_correction_bouyoucos_cylinder,
     beaker_tare_set = beaker_tare_set %||% "",
     beaker_number = "",
     beaker_mass_w_OD_sample = "",
@@ -61,7 +62,7 @@ pipetting_datasheets <- function(){
 
   both_pipetting_sheets <- list(
     psa_pipetting_data= psa_pipetting_data,
-    psa_blank_correction_data  = psa_blank_correction_data
+    psa_pipette_blank_correction_data  = psa_pipette_blank_correction_data
   )
 
   return(both_pipetting_sheets)
@@ -110,29 +111,267 @@ sieving_datasheet <- function() {
 
 }
 
+###############################################################################
+
+# hydrometer sheets -------------------------------------------------------
+
+#' Determine which method to use for hydrometer blank correction
+#'
+#' @return Character, either "companion" or "temp_calibration"
+#'
+check_hydrometer_blank_method <- function(){
+
+  # inherit the protocol ID from caller env and re-assign
+  # so it can be used inside the dplyr filter data mask
+   # browser()
+
+  # this one is a bit tricky, could not get the inherits = TRUE argument
+  # to work so trying rlang to search in the caller environment two levels up;
+  # figured this out by using the browser call above and then repeatedly
+  # calling rlang::caller_env() with different numbers and looking for the
+  # object name in the returned character vector
+
+
+  ID_for_hydrometer_blank_method <- get("protocol_ID", envir = rlang::caller_env(n = 2))
+
+
+  # return a Boolean based on protocol ID and text from protocol summaries
+  companion_measurement <- psa_protocols_summary %>%
+    dplyr::filter(protocol_ID == ID_for_hydrometer_blank_method) %>%
+    purrr::pluck("other_comments") %>%
+    stringr::str_detect("blank computed w/ companion measurement")
+
+  temp_calibration_measurement <-psa_protocols_summary %>%
+    dplyr::filter(protocol_ID == ID_for_hydrometer_blank_method) %>%
+    purrr::pluck("other_comments") %>%
+    stringr::str_detect("blank computed w/ temperature calibration")
+
+  # determine return value based on the above tests
+  if(companion_measurement) return('companion')
+
+  if(temp_calibration_measurement) return('temp_calibration')
+
+  # should never reach this error message b/c one of the above
+  # should always evaluate to TRUE ,but putting in for potential debugging help
+  stop("No method for blank correction detected.
+       Did you mis-match the protocol ID with the method used?")
+
+}
+
+
+
+
+#' Small helper for hydrometer datasheet function when companion measurements used
+#'
+#' Builds sheet structure knowing that companion measurements
+#' are required
+#'
+#' @return A tibble
+#' @seealso hydrometer_datasheeet
+#'
+hydrometer_blank_correction_datasheet <- function(){
+
+  # browser()
+
+  # ran into a bit of trouble as I thought I might -
+  # need to separately find the standard stuff and the variable named
+  # "hydrometer_blank_method"; the former exists in the _caller_ of the caller
+  # environment; i.e. 2 levels up, while the latter exists in the caller
+  # environment of the current environment, i.e. 1 level up
+  # Solved it by manually specifying the environment in which to look.
+  # Still very unclear how the inherits argument works in mget.....maybe
+  # due to the distinction between caller/parent/execution environments. Probably
+  # have to read Hadley's environments chapter a third time and it would make
+  # more sense
+
+  needed_objs <- mget(
+    x =  c(
+      "date",
+      "experiment_name",
+      "protocol_ID",
+      "fines_diameters_sampled",
+      "blank_correction_bouyoucos_cylinder",
+      "calgon_solution_ID"
+    ),
+    envir = rlang::caller_env(n = 2))
+
+   list2env(x = needed_objs, envir = rlang::current_env())
+
+   hydrometer_blank_method <-get("hydrometer_blank_method",
+                                 envir = rlang::caller_env(n = 1))
+
+
+
+  # Both options are created in this same function environment - this
+  # reduces duplication by eliminating what would otherwise be an entirely
+  # separate function to construct a nearly identical table
+
+  # The only difference is that for the temperature calibration
+  # method, the values for the hydrometer reading are given default
+  # values  of "-", which when read back in by `psa()` will be come an NA
+  # value. I think it is simpler this way; the sheet will still be named
+  # properly and have the protocol ID right there to be able to verify
+  # what was done and why the data are missing; by having the cell already
+  # filled in it makes it clear that the data were not simply forgotten about
+
+  # for redundancy, include the blank correction method as a column
+
+  psa_hydrometer_blank_correction_w_companion_data  <- tibble::tibble(
+    date = date,
+    experiment_name = experiment_name,
+    protocol_ID = protocol_ID,
+    hydrometer_blank_method = hydrometer_blank_method,
+    bouyoucos_cylinder_number = blank_correction_bouyoucos_cylinder,
+    time = "",
+    AM_PM = "",
+    water_temp_c = "",
+    hydrometer_reading = rep("", times = length(fines_diameters_sampled)),
+    comments = "-"
+  )
+
+  psa_hydrometer_blank_correction_w_temp_calibration_data  <-
+    psa_hydrometer_blank_correction_w_companion_data %>%
+    dplyr::mutate(hydrometer_reading = "-",
+                  calgon_solution_ID = calgon_solution_ID %||% "") %>%
+    dplyr::relocate(.data$calgon_solution_ID,
+                    .after = .data$hydrometer_blank_method)
+
+  # choose which one to return based on the value of the
+  # hydrometer_blank_method variable which was inherited from parent
+  # environment(s)
+
+  if(hydrometer_blank_method == "companion") {
+    return(psa_hydrometer_blank_correction_w_companion_data)
+  }
+
+  if(hydrometer_blank_method == "temp_calibration") {
+    return(psa_hydrometer_blank_correction_w_temp_calibration_data)
+  }
+}
+
+#' Construct two datasheets for hydrometer sampling
+#'
+#' The only hydrometer datasheet function actually called directly by
+#' `psa_datasheets()`.
+#' One sheet for the actual hydrometer measurements and a second one for
+#' the blank corrections. The latter is populated based on the value
+#' of a variable corresponding to the blank correction method employed
+#' (either companion measurements or a calibration curve)
+#'
+#' @return A tibble
+#'
+#'
+hydrometer_datasheets <- function(){
+
+
+
+  # inherit required objects from calling environment
+
+  needed_objs <- mget(
+    x = c("date", "experiment_name", "sample_names", "n_reps", "protocol_ID", "bouyoucos_cylinder_numbers",
+          "blank_correction_bouyoucos_cylinder", "fines_diameters_sampled", "Gs"),
+    envir = rlang::caller_env())
+
+  list2env(x = needed_objs, envir = rlang::current_env())
+
+  ############
+
+  # generate the blank correction datasheet
+
+  # I guess there is a little duplication here because I am
+  # generating the sheet inside the call to
+  # `hydrometer_blank_correction_datasheet()` and also choosing
+  # how to name it here. I can't think of a better way and feel
+  # pretty confident this will work
+
+hydrometer_blank_method <- check_hydrometer_blank_method()
+
+  sheet_name <- dplyr:::if_else(
+    hydrometer_blank_method == "companion",
+    "psa_hydrometer_blank_correction_w_companion_data",
+    "psa_hydrometer_blank_correction_w_temp_calibration_data")
+
+  # generate the blank correction sheet and assign it to the current environment with the correct name
+
+  sheet <-hydrometer_blank_correction_datasheet()
+  assign(x = sheet_name, value = sheet)
+
+######################
+
+  # generate the main datasheet
+  # for redundancy, include the blank correction method as a column
+
+  # browser()
+
+  psa_hydrometer_data  <- tibble::tibble(
+    date = date,
+    experiment_name = experiment_name,
+    protocol_ID = protocol_ID,
+    sample_name = rep(sample_names, each = n_reps*length(fines_diameters_sampled)),
+    replication = rep(rep(1:n_reps, times = length(fines_diameters_sampled) * length(sample_names))),
+    batch_sample_number = rep(1:(length(sample_names)*n_reps), each = length(fines_diameters_sampled)),
+    bouyoucos_cylinder_number = rep(bouyoucos_cylinder_numbers %||% "", each = length(fines_diameters_sampled)),
+    Gs = rep(Gs, each = n_reps * length(sample_names) * length(fines_diameters_sampled)),
+    approx_ESD = rep(fines_diameters_sampled %||% "" , times = length(sample_names) * n_reps),
+    time = "",
+    AM_PM = "",
+    water_temp_c = "",
+    hydrometer_reading = "",
+    comments = "-"
+  ) %>%
+    dplyr::arrange(
+      dplyr::desc(.data$approx_ESD),
+      .data$bouyoucos_cylinder_number,
+      .data$replication)
+
+
+######################
+
+  # collect the two objects to return; the blank correction sheet's name
+  # is not known so have to use a pattern that will catch that one and also
+  # the main hydrometer measurement sheet
+
+  # Alternatively since they are both lists I could use the mode argument of mget
+  # sticking with the pattern now just for curiosity to see if it works
+
+  return(
+    mget(x = ls(pattern = "psa_hydrometer_blank_correction_w\\w*_data|psa_hydrometer_data"))
+  )
+
+}
+
+
+#############################################################################
+
+
+# pre-treatments for OM, carbonates, Fe-oxides --------------------------------
+
 
 #' Construct datasheets for pretreatment (OM, carbonates, and/or Fe-oxides)
 #'
 #' Allows a "blank" to be run and the actual sample's oven-dry mass to be corrected
 #'
-#' @inheritParams psa_datasheets
-#' @return
-#' @export
+#' @return Tibble
 #'
-pretreatment_datasheet <- function(date, experiment_name, sample_names,
-                                   n_reps, protocol_ID, ...){
+pretreatment_datasheet <- function(){
+
+  needed_objs <- mget(x = c("date", "experiment_name", "sample_names",
+                            "n_reps", "protocol_ID"),
+                      envir = rlang::caller_env())
+
+  list2env(needed_objs, envir = rlang::current_env())
 
   psa_pretreatment_datasheet <- tibble::tibble(
     date = date,
     experiment_name = experiment_name,
-    protocol_ID = protocol_ID,
     sample_name = rep(sample_names, each = n_reps),
     replication = rep(1:n_reps),
     batch_sample_number = 1:(length(sample_names)*n_reps),
+    protocol_ID = protocol_ID,
+    air_dry_specimen_mass_before_pretreatment = "",
     container_tare = "",
-    beaker_mass_w_OD_sample = "",
-    container_w_OD_specimen_mass_after_pretreatment = "-"
-  )
+    container_mass_w_OD_sample = ""
+   )
 
   return(psa_pretreatment_datasheet)
 }

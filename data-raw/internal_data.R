@@ -13,9 +13,21 @@ library(tidyverse)
 rm(list = ls())
 
 
-# create tibble object containing terse versions of fines methods
 
-psa_fines_methods <- tibble::enframe(soiltestr::psa_protocols,
+# must load existing psa_protocols object into this session to use the object...
+# tried a couple ways with sourcing the files that create them then removing all
+# objects except those matching the pattern psa_protocols.*; finally dawned on
+# me to just load the rds objects into the session and assign them the correct names! (duh)
+
+
+load('./data/psa_protocols.rda')
+load('./data/psa_protocols_summary.rda')
+
+
+
+###########################
+# create tibble object containing terse versions of fines methods
+psa_fines_methods <- tibble::enframe(psa_protocols,
                                      name = "protocol_ID",
                                      value = "protocol_info") %>%
   dplyr::mutate(fines_method = purrr::map_chr(protocol_info, ~.$fines_method)) %>%
@@ -34,7 +46,7 @@ fines_laser_diffraction_invoking_protocol_IDs <- psa_fines_methods[psa_fines_met
 # create tibble object containing terse versions of coarse methods --------
 
 
-psa_coarse_methods <- tibble::enframe(soiltestr::psa_protocols,
+psa_coarse_methods <- tibble::enframe(psa_protocols,
                                       name = "protocol_ID",
                                       value = "protocol_info") %>%
   dplyr::mutate(coarse_method = purrr::map_chr(protocol_info, ~.$coarse_method)) %>%
@@ -42,10 +54,51 @@ psa_coarse_methods <- tibble::enframe(soiltestr::psa_protocols,
   dplyr::mutate(coarse_method = stringr::str_to_lower(coarse_method)) %>%
   dplyr::select(-protocol_info)
 
+
+# make a few other character vectors based on conditions
+
 sieve_invoking_protocol_IDs <- psa_coarse_methods[psa_coarse_methods$coarse_method == "shaken", ]$protocol_ID
 
 coarse_laser_diffraction_invoking_protocol_IDs <- psa_fines_methods[psa_fines_methods$fines_method == "mastersizer", ]$protocol_ID
 
+pretreatment_invoking_protocol_IDs <- psa_protocols_summary %>%
+  dplyr::select(c(protocol_ID, dplyr::contains('removal'))) %>%
+  dplyr::filter(dplyr::if_any(.cols = contains('removal'),
+                .fns = ~!is.na(.))) %>%
+  purrr::pluck('protocol_ID')
+
+
+# the ones that can the **fines** broken out into sub-classes
+# must have at least 3 measurements of the fines diameters
+
+(fines_sub_bin_invoking_protocol_IDS <-psa_protocols %>%
+  map("fines_diameters_sampled") %>%
+  flatten() %>%
+  keep(~length(.) >= 3)  %>%
+    names())
+
+# for the coarse measurements, same concept except there must be **more**
+# than 3 because 3 is just gravel and the upper and lower limits to be considered
+# sand
+
+(coarse_sub_bin_invoking_protocol_IDS <-psa_protocols %>%
+    map("coarse_diameters_sampled") %>%
+    flatten() %>%
+    keep(~length(.) > 3)  %>%
+    names())
+
+##############################################################################
+
+
+# determine whether the blank correction for the hydrometer will be
+# made via companion measurements or a calibration curve
+
+
+
+
+# collect all objects in the global  environment into a list
 internal_data <- mget(x = ls())
+
+# write the list to the internal data file
 
 usethis::use_data(internal_data, overwrite = TRUE, internal = TRUE)

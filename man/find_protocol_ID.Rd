@@ -4,10 +4,7 @@
 \alias{find_protocol_ID}
 \title{Determine which functions to use for analyzing the data set}
 \usage{
-find_protocol_ID(dir)
-}
-\arguments{
-\item{dir}{directory containing the data files}
+find_protocol_ID()
 }
 \value{
 Numeric vector of length 1

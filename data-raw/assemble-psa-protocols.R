@@ -30,7 +30,7 @@ references_file <- list.files(
   pattern = "expanded-details[.]csv$", full.names = T) %>%
   str_subset(pattern = "references", negate = F)
 
-clean_file_name <- function(x){
+clean_psa_details_file_name <- function(x){
   basename(x) %>%
     stringr::str_remove(string = ., '_expanded-details[.]csv$') %>%
     stringr::str_remove(., 'psa[_-]') %>%
@@ -47,7 +47,7 @@ references_table <- references_file %>%
 
 
 details_list <- details_files %>%
-  purrr::set_names(clean_file_name(.)) %>%
+  purrr::set_names(clean_psa_details_file_name(.)) %>%
   purrr::map(readr::read_csv, col_types = readr::cols(.default = 'c'))
 
 
@@ -101,12 +101,12 @@ protocol_details <- reduce(details_list, left_join, .init = protocol_summaries) 
 # }
 
 
-protocol_details$fines_diameters_sampled <-  map(protocol_details$fines_sizes_sampled, stringr::str_split, pattern = "-") %>%
+protocol_details$fines_diameters_sampled <-  map(protocol_details$fines_diameters_sampled, stringr::str_split, pattern = "-") %>%
   flatten() %>%
   map(as.numeric)
 
 
-protocol_details$coarse_diameters_sampled <-  map(protocol_details$coarse_sizes_sampled, stringr::str_split, pattern = "-") %>%
+protocol_details$coarse_diameters_sampled <-  map(protocol_details$coarse_diameters_sampled, stringr::str_split, pattern = "-") %>%
   flatten() %>%
   map(as.numeric)
 
@@ -115,18 +115,20 @@ protocol_details$coarse_diameters_sampled <-  map(protocol_details$coarse_sizes_
 # to manually type it each time I adda new protocol....basically this makes the column with the number
 # in the csv file moot but that's OK for now
 
-protocol_details$n_coarse_diameters_sampled <- map_dbl(protocol_details$coarse_sizes_sampled, length)
+protocol_details$n_fines_diameters_sampled <- map_dbl(protocol_details$fines_diameters_sampled, length)
 
-protocol_details$n_fines_diameters_sampled <- map_dbl(protocol_details$fines_sizes_sampled, length)
+protocol_details$n_coarse_diameters_sampled <- map_dbl(protocol_details$coarse_diameters_sampled, length)
+
+
 
 
 # put all into one condensed list and name with the protocol ID
 
-psa_protocols <- protocol_details %>%
+(psa_protocols <- protocol_details %>%
   group_by(protocol_ID) %>%
   nest() %>%
   .$data %>%
-  set_names(protocol_details$protocol_ID)
+  set_names(protocol_details$protocol_ID))
 
 
 # I was going to separately include the abbreviated protocol info
