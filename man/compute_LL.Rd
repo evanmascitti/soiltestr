@@ -7,7 +7,7 @@
 compute_LL(df)
 }
 \arguments{
-\item{df}{data frame containing colums named \code{water_content} and
+\item{df}{data frame containing columns named \code{water_content} and
 \code{blow_count}. Water contents may be easily computed with \code{\link[=add_w]{add_w()}} once
 the raw data is joined with the appropriate set of tin tares from
 \code{\link{example_tin_tares}}.}

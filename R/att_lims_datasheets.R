@@ -23,7 +23,7 @@ att_lims_datasheets <- function(dir, date, experiment_name, sample_names,
                                 n_AL_reps = 3, tin_tare_set = ""
                                 ){
 
-  new_folder <- paste0(dir, "/atterberg_limits_", date)
+  new_folder <- paste0(dir, "/atterberg-limits_", date)
 
   if(length(list.files(path = new_folder)) != 0){
     stop("\n There is already a folder titled `atterberg_limits`. Call halted to prevent over-writing of the existing files.")
@@ -45,7 +45,7 @@ att_lims_datasheets <- function(dir, date, experiment_name, sample_names,
     comments = "-"
   )
 
-  readr::write_csv(x = LL_raw_data, file = paste0(new_folder, "/", "LL_raw_data_", date, ".csv"))
+  readr::write_csv(x = LL_raw_data, file = paste0(new_folder, "/", "LL-raw-data_", date, ".csv"))
 
   PL_raw_data <- tibble::tibble(
     test_type = "PL",
@@ -61,7 +61,7 @@ att_lims_datasheets <- function(dir, date, experiment_name, sample_names,
     comments = "-"
   )
 
-  readr::write_csv(x = PL_raw_data, file = paste0(new_folder, "/", "PL_raw_data_", date, ".csv"))
+  readr::write_csv(x = PL_raw_data, file = paste0(new_folder, "/", "PL-raw-data_", date, ".csv"))
 
   if(adhesion_test == TRUE){
   AL_raw_data <-tibble::tibble(
@@ -78,7 +78,7 @@ att_lims_datasheets <- function(dir, date, experiment_name, sample_names,
     comments = "-"
   )
 
-  readr::write_csv(x = AL_raw_data, file = paste0(new_folder, "/", "AL_raw_data_", date, ".csv"))
+  readr::write_csv(x = AL_raw_data, file = paste0(new_folder, "/", "AL-raw-data_", date, ".csv"))
   }
 
   message(crayon::green("Please verify that files were written to disk."))

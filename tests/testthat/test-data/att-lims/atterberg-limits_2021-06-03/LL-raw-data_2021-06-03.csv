@@ -1,0 +1,9 @@
+test_type,date,experiment_name,sample_name,batch_sample_number,tin_number,blow_count,tin_w_wet_sample,tin_w_OD_sample,tin_tare_set,comments
+LL,2021-02-09,Quickcrete_Cu_Casselman,mix_28,1,1,35,15.375,14.308,2020-05-24,-
+LL,2021-02-09,Quickcrete_Cu_Casselman,mix_28,1,2,29,14.659,13.664,2020-05-24,-
+LL,2021-02-09,Quickcrete_Cu_Casselman,mix_28,1,3,28,14.049,13.137,2020-05-24,-
+LL,2021-02-09,Quickcrete_Cu_Casselman,mix_28,1,4,20,19.141,17.517,2020-05-24,-
+LL,2021-02-09,Quickcrete_Cu_Casselman,mix_test_na,99,-,-,-,-,2020-05-24,test for NA values
+LL,2021-02-09,Quickcrete_Cu_Casselman,mix_test_na,99,-,-,-,-,2020-05-24,test for NA values
+LL,2021-02-09,Quickcrete_Cu_Casselman,mix_test_na,99,-,-,-,-,2020-05-24,test for NA values
+LL,2021-02-09,Quickcrete_Cu_Casselman,mix_test_na,99,-,-,-,-,2020-05-24,test for NA values
