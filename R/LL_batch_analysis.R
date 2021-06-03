@@ -16,12 +16,7 @@
 #'
 LL_batch_analysis <- function(dir){
 
-  if(stringr::str_sub(string = dir, start = -1) == "/"){
-    directory <- dir} else{
-      directory <- paste0(dir, "/")
-      }
-
-  data_file_path <- list.files(path = directory, pattern = "LL_raw_data", full.names = T)
+  data_file_path <- list.files(path = dir, pattern = "LL[_-]raw[_-]data", full.names = T)
 
   data_file <- readr::read_csv(data_file_path,
                     col_types = readr::cols(
@@ -30,15 +25,14 @@ LL_batch_analysis <- function(dir){
                       experiment_name = readr::col_character(),
                       sample_name = readr::col_factor(),
                       batch_sample_number = readr::col_double(),
-                      tin_number = readr::col_double(),
+                      tin_number = readr::col_integer(),
                       blow_count = readr::col_double(),
                       tin_w_wet_sample = readr::col_double(),
                       tin_w_OD_sample = readr::col_double(),
                       tin_tare_set = readr::col_character(),
-                      comments = readr::col_character()
-                    )
-                    ) %>%
-    janitor::remove_empty(dat, which = "rows")
+                      comments = readr::col_character()),
+                      na = "-") %>%
+    janitor::remove_empty(dat = ., which = "rows")
 
   specimen_index <- tibble::tibble(
     date = unique(data_file$date),
@@ -49,52 +43,72 @@ LL_batch_analysis <- function(dir){
 
   tin_tare_date <- unique(data_file$tin_tare_set)
 
-  tin_tares <- asi468::tin_tares %>%
-    tibble::enframe(name= "date", value = "tin_tares_data") %>%
-    tidyr::unnest(.data$tin_tares_data) %>%
-    dplyr::filter(date == tin_tare_date) %>%
-    dplyr::select(-.data$date)
+  tin_tares <- dplyr::bind_rows(asi468::tin_tares)
 
-  LL_raw_data <- suppressMessages(
-    readr::read_csv(data_file_path,
-                    col_types = readr::cols(
-                      test_type = readr::col_character(),
-                      date = readr::col_date(),
-                      experiment_name = readr::col_character(),
-                      sample_name = readr::col_factor(),
-                      batch_sample_number = readr::col_double(),
-                      tin_number = readr::col_double(),
-                      blow_count = readr::col_double(),
-                      tin_w_wet_sample = readr::col_double(),
-                      tin_w_OD_sample = readr::col_double(),
-                      tin_tare_set = readr::col_character(),
-                      comments = readr::col_character()
-                    )
-    ) %>%
-      janitor::remove_empty(dat, which = "rows") %>%
-      dplyr::left_join(tin_tares) %>%
+  LL_raw_data <- data_file %>%
+      dplyr::left_join(tin_tares, by = c('tin_tare_set',
+                                         'tin_number')) %>%
       soiltestr::add_w()
-    )
+
 
   LL_values <- LL_raw_data %>%
   dplyr::group_by(.data$batch_sample_number) %>%
   tidyr::nest() %>%
   dplyr::mutate(
     test_type = "LL",
-    LL= purrr::map(
+    LL= purrr::map_dbl(
     .x= .data$data,
-    .f= purrr::possibly(.f = ~purrr::map(.x= data,
-                                         .f = soiltestr::compute_LL),
-                        otherwise = NA_real_)),
-         water_content = purrr::map_dbl(.data$LL, ~.[[1]]),
-         sample_name = purrr::map_chr(.data$data, ~unique(.$sample_name))
-    ) %>%
+    .f= soiltestr::compute_LL),
+    water_content = purrr::map_dbl(.data$LL, ~.[[1]]),
+    sample_name = purrr::map_chr(.data$data, ~unique(.$sample_name))) %>%
   dplyr::select(.data$batch_sample_number, .data$test_type, .data$water_content) %>%
   dplyr::ungroup() %>%
   dplyr::left_join(specimen_index) %>%
   dplyr::relocate(.data$batch_sample_number:.data$water_content, .after = .data$sample_name)
 
-  return(list(LL_results = LL_values))
+
+  # browser()
+
+  labeled_flow_curve <- function(df, title){
+
+    ggflowcurve(df = df )+
+      ggplot2::labs(title = title)
+  }
+
+# browser()
+
+  plots_df <- LL_raw_data %>%
+    dplyr::mutate(sample_name = as.character(sample_name)) %>%
+    dplyr::arrange(.data$sample_name) %>%
+    dplyr::group_by(.data$batch_sample_number) %>%
+    tidyr::nest() %>%
+    dplyr::mutate(
+      sample_name = purrr::map_chr(data, ~unique(purrr::pluck(., 'sample_name'))),
+      plot_title = paste0(
+        "Liquid limit test (sample name: ",
+        .data$sample_name,
+        ")"),
+      water_content = purrr::map(data, 'water_content'),
+      complete = purrr::map_lgl(water_content, ~!all(is.na(.))))%>%
+    dplyr::mutate(
+      flow_curve_plot = ifelse(
+        complete,
+        purrr::map2(.x = .data$data, .y =  .data$plot_title,
+                .f = labeled_flow_curve),
+        NA
+    )
+    )
+
+
+  plots <- plots_df$flow_curve_plot %>%
+    purrr::set_names(plots_df$sample_name)
+
+
+
+  return(structure(
+    list(LL_results = LL_values,
+         flow_curve_plots = plots),
+    class = 'LL_batch') )
 
   }
 
