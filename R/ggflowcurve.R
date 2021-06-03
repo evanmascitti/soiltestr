@@ -21,25 +21,30 @@ ggflowcurve <- function(df, ...){
 
 
   plot <- ggplot2::ggplot(data= df, aes(.data$blow_count, .data$water_content))+
+    ggplot2::geom_vline(xintercept = 15:35, color = 'grey95', size = 0.25)+
     ggplot2::geom_smooth(aes(...),
                          formula = y~x,
                          method = "lm",
-                         se= F)+
-    ggplot2::geom_point(aes(...))+
+                         se= F,
+                         size = 0.25)+
+    ggplot2::geom_point(aes(...), alpha = 1/3)+
     ggplot2::scale_x_continuous(
       name= 'Blow count, log scale',
       trans = 'log',
-      limits = c(15, 45),
+      limits = c(15, 35),
       breaks = seq(15, 45, 10)
       )+
     ggplot2::scale_y_continuous(
-      name = bquote('water content, % g g'^-1),
-      labels = scales::label_percent(accuracy = 0.1, suffix = ""))+
+      name = expression('Water content, g g'^-1 %*% 100),
+      labels = scales::label_percent(accuracy = 0.1, suffix = ""),
+      breaks = scales::breaks_width(width = 0.002),
+      # n.breaks = 6,
+      expand = ggplot2::expansion(mult = 0.25))+
     ggplot2::ggtitle(
       label = 'Liquid limit test data',
-      subtitle = 'Casagrande cup, ASTM D4318 - 17e1')+
-    cowplot::theme_cowplot()+
-    cowplot::background_grid()+
+      subtitle = 'Casagrande cup, ASTM D4318')+
+    ggplot2::theme_classic()+
+    cowplot::background_grid(size.major = 0.25, size.minor = 0.25)+
     ggplot2::theme(
       panel.grid.minor = ggplot2::element_line(linetype = 'dotted'))
 

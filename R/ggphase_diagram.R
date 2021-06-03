@@ -12,18 +12,25 @@
 #' @param water_content gravimetric water content
 #' @param sand_color quoted string containing color name or hex code
 #' @param clay_color quoted string containing color name or hex code
+#' @param alpha_level alpha value for the shaded box areas
 #' @param ambient_temp_c temperature used to compute water volume
 #' @param labels show the identity of each phase?
 #' @param values show the percent volume occupied by each phase?
+#' @param base_family character, passed to various text-drawing arguments
+#' @param return_data logical, whether to also return a data frame
 #'
-#' @return a ggplot object
+#' @return list containing a ggplot object and a tibble of the phase volumes. If return_data = FALSE, the second list element is NULL
 #' @export
 #'
 #' @example inst/examples/ggphase_diagram_example.R
 #'
+#' @importFrom rlang `%||%`
+#'
 ggphase_diagram <- function(sand_pct, clay_pct, G_sa, G_c, dry_density,
-                     water_content, sand_color = "#c2b280", clay_color = "#643F30",
-                     ambient_temp_c = 22, labels = TRUE, values = TRUE){
+                     water_content, sand_color = "#c2b280", clay_color = "#643F30", alpha_level = 1/4,
+                     ambient_temp_c = 22, labels = TRUE, values = TRUE, base_family = NULL, return_data = TRUE){
+
+  base_family <- base_family %||% 'sans'
 
   G_w <- soiltestr::h2o_properties_w_temp_c %>%
     dplyr::filter(dplyr::near(.data$water_temp_c, round(ambient_temp_c, 1))) %>%
@@ -51,35 +58,35 @@ ggphase_diagram <- function(sand_pct, clay_pct, G_sa, G_c, dry_density,
   base_phases_plot <- suppressMessages(
     ggplot2::ggplot(data = phases, ggplot2::aes(x = .data$x))+
       ggplot2::geom_rect(ggplot2::aes(xmin = 0.1, xmax = 0.2, ymin = 0, ymax = .data$v_sa/.data$v_tot),
-                         alpha = 1/5, fill = sand_color, color ='grey60', size = 0.25)+
+                         alpha = alpha_level, fill = sand_color, color ='grey60', size = 0.25)+
       ggplot2::geom_rect(ggplot2::aes(xmin = 0.1, xmax = 0.2, ymin = .data$v_sa/.data$v_tot, ymax = sum(.data$v_sa, .data$v_c)/.data$v_tot),
-                         alpha = 1/5, fill = clay_color, color ='grey60', size = 0.25)+
+                         alpha = alpha_level, fill = clay_color, color ='grey60', size = 0.25)+
       ggplot2::geom_rect(ggplot2::aes(xmin = 0.1, xmax = 0.2, ymin = sum(.data$v_sa, .data$v_c)/.data$v_tot, ymax = sum(.data$v_sa, .data$v_c, .data$v_w)/.data$v_tot),
-                         alpha = 1/5, fill = "#d4f1f9", color ='grey60', size = 0.25)+
+                         alpha = alpha_level, fill = "#d4f1f9", color ='grey60', size = 0.25)+
       ggplot2::geom_rect(ggplot2::aes(xmin = 0.1, xmax = 0.2, ymin = sum(.data$v_sa, .data$v_c, .data$v_w)/.data$v_tot, ymax = .data$v_tot),
-                         alpha = 1/5, fill = "transparent", color ='grey60', size = 0.25)+
-      ggplot2::coord_fixed(ratio = 0.2, xlim = c(0.05, 0.25))+
-      ggplot2::theme_void()
+                         alpha = alpha_level, fill = "transparent", color ='grey60', size = 0.25)+
+      ggplot2::coord_fixed(ratio = 0.2, xlim = c(0, 0.35))+
+      ggplot2::theme_void(base_family = base_family)
   )
 
   phases_plot_no_numbers <- suppressMessages(
     base_phases_plot+
-      ggplot2::annotate('text', label = bquote("V"["sand"]), x = 0.21, y= (phases$v_sa/2), size = 6, hjust = 0)+
-      ggplot2::annotate('text', label = bquote("V"["clay"]), x = 0.21, y= (phases$v_sa + phases$v_c/2), size = 6, hjust = 0)+
-      ggplot2::annotate('text', label = bquote("V"["water"]), x = 0.21, y= (phases$v_sa + phases$v_c + phases$v_w/2), size = 6, hjust = 0)+
-      ggplot2::annotate('text', label = bquote("V"["air"]), x = 0.21, y= (phases$v_tot - 0.5*phases$v_a), size = 6, hjust = 0)+
-      ggplot2::coord_fixed(ratio = 0.2, xlim = c(0.05, 0.25))+
-      ggplot2::theme_void()
+      ggplot2::annotate('text', label = bquote("V"["sand"]), x = 0.21, y= (phases$v_sa/2), size = 4, hjust = 0, family = base_family)+
+      ggplot2::annotate('text', label = bquote("V"["clay"]), x = 0.21, y= (phases$v_sa + phases$v_c/2), size = 4, hjust = 0, family = base_family)+
+      ggplot2::annotate('text', label = bquote("V"["water"]), x = 0.21, y= (phases$v_sa + phases$v_c + phases$v_w/2), size = 4, hjust = 0, family = base_family)+
+      ggplot2::annotate('text', label = bquote("V"["air"]), x = 0.21, y= (phases$v_tot - 0.5*phases$v_a), size = 4, hjust = 0, family = base_family)+
+      ggplot2::coord_fixed(ratio = 0.2, xlim = c(0, 0.35))+
+      ggplot2::theme_void(base_family = base_family)
   )
 
   phases_plot_w_numbers <- suppressMessages(
     base_phases_plot+
-      ggplot2::annotate('text', label = bquote("V"["sand   "]==~.(scales::percent(phases$v_sa))), x = 0.21, y= (phases$v_sa/2), size = 6, hjust = 0)+
-      ggplot2::annotate('text', label = bquote("V"["clay    "]==~.(scales::percent(phases$v_c))), x = 0.21, y= (phases$v_sa + phases$v_c/2), size = 6, hjust = 0)+
-      ggplot2::annotate('text', label = bquote("V"["water "]==~.(scales::percent(phases$v_w))), x = 0.21, y= (phases$v_sa + phases$v_c + phases$v_w/2), size = 6, hjust = 0)+
-      ggplot2::annotate('text', label = bquote("V"["air      "]==~.(scales::percent(phases$v_a))), x = 0.21, y= (phases$v_tot - 0.5*phases$v_a), size = 6, hjust = 0)+
-      ggplot2::coord_fixed(ratio = 0.2, xlim = c(0.05, 0.35))+
-      ggplot2::theme_void()
+      ggplot2::annotate('text', label = bquote("V"["sand   "]==~.(scales::percent(phases$v_sa))), x = 0.21, y= (phases$v_sa/2),  hjust = 0, family = base_family)+
+      ggplot2::annotate('text', label = bquote("V"["clay    "]==~.(scales::percent(phases$v_c))), x = 0.21, y= (phases$v_sa + phases$v_c/2),  hjust = 0, family = base_family)+
+      ggplot2::annotate('text', label = bquote("V"["water "]==~.(scales::percent(phases$v_w))), x = 0.21, y= (phases$v_sa + phases$v_c + phases$v_w/2),  hjust = 0, family = base_family)+
+      ggplot2::annotate('text', label = bquote("V"["air      "]==~.(scales::percent(phases$v_a))), x = 0.21, y= (phases$v_tot - 0.5*phases$v_a),  hjust = 0, family = base_family)+
+      ggplot2::coord_fixed(ratio = 0.2, xlim = c(0, 0.35))+
+      ggplot2::theme_void(base_family = base_family)
   )
 
   if(labels == TRUE & values == TRUE){
@@ -91,6 +98,17 @@ ggphase_diagram <- function(sand_pct, clay_pct, G_sa, G_c, dry_density,
   if(labels == FALSE)
     return_plot <- base_phases_plot
 
-  return(suppressMessages(return_plot))
+  if(return_data == TRUE){
+    phase_volumes <- phases
+  } else {
+      phase_volumes <- NULL
+    }
+
+  return_list <- list(phase_diagram_plot = return_plot,
+                      phase_volumes = phase_volumes)
+
+ # browser()
+
+  return(return_list)
 }
 

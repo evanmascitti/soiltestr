@@ -13,9 +13,12 @@ ggphase_diagram(
   water_content,
   sand_color = "#c2b280",
   clay_color = "#643F30",
+  alpha_level = 1/4,
   ambient_temp_c = 22,
   labels = TRUE,
-  values = TRUE
+  values = TRUE,
+  base_family = NULL,
+  return_data = TRUE
 )
 }
 \arguments{
@@ -35,14 +38,20 @@ ggphase_diagram(
 
 \item{clay_color}{quoted string containing color name or hex code}
 
+\item{alpha_level}{alpha value for the shaded box areas}
+
 \item{ambient_temp_c}{temperature used to compute water volume}
 
 \item{labels}{show the identity of each phase?}
 
 \item{values}{show the percent volume occupied by each phase?}
+
+\item{base_family}{character, passed to various text-drawing arguments}
+
+\item{return_data}{logical, whether to also return a data frame}
 }
 \value{
-a ggplot object
+list containing a ggplot object and a tibble of the phase volumes. If return_data = FALSE, the second list element is NULL
 }
 \description{
 Generates a ggplot showing volumetrically accurate
