@@ -2,7 +2,7 @@
 % Please edit documentation in R/psa-size-bins-helpers.R
 \name{USGA_bins}
 \alias{USGA_bins}
-\title{Size bins for USGA sieves}
+\title{(Internal)}
 \usage{
 USGA_bins()
 }

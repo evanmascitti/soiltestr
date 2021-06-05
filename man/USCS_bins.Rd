@@ -2,7 +2,7 @@
 % Please edit documentation in R/psa-size-bins-helpers.R
 \name{USCS_bins}
 \alias{USCS_bins}
-\title{Size bins for USCS breakdown}
+\title{(Internal)}
 \usage{
 USCS_bins()
 }

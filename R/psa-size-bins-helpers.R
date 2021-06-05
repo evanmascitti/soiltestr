@@ -27,6 +27,8 @@ check_for_coarse_complex_bins <- function(){
 
 # helpers for generating/cleaning the data frames created by the o --------
 
+#' (Internal)
+#'
 #' Helper for generating whole number from decimals
 #' when computing size bins
 #'
@@ -46,6 +48,8 @@ psa_decimal_to_pct <- function(df){
 }
 
 
+#' (Internal)
+#'
 #' Helper for selecting all columns that don't have names beginning with a number
 #'
 #' @param df data frame
@@ -61,6 +65,8 @@ psa_remove_number_bins <- function(df){
 
 # methods for coarse size bns ---------------------------------------------
 
+#' (Internal)
+#'
 #' Size bins for USGA sieves
 #'
 #'
@@ -94,7 +100,8 @@ USGA_bins <- function(){
 
 
 
-
+#' (Internal)
+#'
 #' Size bins for USCS breakdown
 #'
 USCS_bins <- function(){
@@ -125,6 +132,7 @@ USCS_bins <- function(){
 
 }
 
+#' (Internal)
 #' Size bins for pipette sampling with 20, 5, 2, and 0.2 microns
 #'
 #'
@@ -155,7 +163,8 @@ SSSA_pipette_bins <- function(){
 
 }
 
-
+#' (Internal)
+#'
 #' Size bins for pipette sampling for 2, and 0.2 microns
 #'
 #'
@@ -182,11 +191,6 @@ pipette_clay_2_to_0.2_only <- function(){
   return(clay_bins)
 
 }
-
-
-###
-
-# prior rendtions
 
 
 #' Only gravel (<4000 microns), sand, silt, and clay reported

@@ -6,7 +6,7 @@
 # but this is what Hadley recommends so I am going with it
 
 
-library(tidyverse)
+suppressPackageStartupMessages({library(tidyverse)})
 
 # clear workspace of global variables (targeted at my saved values for color hex codes)
 
@@ -57,36 +57,37 @@ psa_coarse_methods <- tibble::enframe(psa_protocols,
 
 # make a few other character vectors based on conditions
 
-sieve_invoking_protocol_IDs <- psa_coarse_methods[psa_coarse_methods$coarse_method == "shaken", ]$protocol_ID
+sieve_invoking_protocol_IDs <- psa_coarse_methods[psa_coarse_methods$coarse_method == "shaken", , drop = FALSE ]$protocol_ID
 
-coarse_laser_diffraction_invoking_protocol_IDs <- psa_fines_methods[psa_fines_methods$fines_method == "mastersizer", ]$protocol_ID
+coarse_laser_diffraction_invoking_protocol_IDs <- psa_fines_methods[psa_fines_methods$fines_method == "mastersizer", , drop = FALSE]$protocol_ID
 
 pretreatment_invoking_protocol_IDs <- psa_protocols_summary %>%
   dplyr::select(c(protocol_ID, dplyr::contains('removal'))) %>%
   dplyr::filter(dplyr::if_any(.cols = contains('removal'),
                 .fns = ~!is.na(.))) %>%
   purrr::pluck('protocol_ID')
-
+cat('pretreatment_invoking_protocol_IDs are', pretreatment_invoking_protocol_IDs, sep = "\n")
 
 # the ones that can the **fines** broken out into sub-classes
 # must have at least 3 measurements of the fines diameters
 
-(fines_sub_bin_invoking_protocol_IDS <-psa_protocols %>%
+fines_sub_bin_invoking_protocol_IDS <-psa_protocols %>%
   map("fines_diameters_sampled") %>%
   flatten() %>%
   keep(~length(.) >= 3)  %>%
-    names())
+    names()
+cat('fines_sub_bin_invoking_protocol_IDS are', fines_sub_bin_invoking_protocol_IDS, sep = "\n")
 
 # for the coarse measurements, same concept except there must be **more**
 # than 3 because 3 is just gravel and the upper and lower limits to be considered
 # sand
 
-(coarse_sub_bin_invoking_protocol_IDS <-psa_protocols %>%
+coarse_sub_bin_invoking_protocol_IDS <-psa_protocols %>%
     map("coarse_diameters_sampled") %>%
     flatten() %>%
     keep(~length(.) > 3)  %>%
-    names())
-
+    names()
+cat('coarse_sub_bin_invoking_protocol_IDS are', coarse_sub_bin_invoking_protocol_IDS, sep = "\n")
 ##############################################################################
 
 

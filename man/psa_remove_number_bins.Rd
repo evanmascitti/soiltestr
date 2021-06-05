@@ -2,7 +2,7 @@
 % Please edit documentation in R/psa-size-bins-helpers.R
 \name{psa_remove_number_bins}
 \alias{psa_remove_number_bins}
-\title{Helper for selecting all columns that don't have names beginning with a number}
+\title{(Internal)}
 \usage{
 psa_remove_number_bins(df)
 }

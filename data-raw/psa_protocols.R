@@ -1,8 +1,8 @@
 ## code to prepare `psa_protocols` dataset goes here
-library(tidyverse, quietly = T)
+suppressPackageStartupMessages({library(tidyverse)})
 
 # make a tibble containing the summaries of each protocol
-# note that protocl_ID is a character type even though I am using numbers
+# note that protocol_ID is a character type even though I am using numbers
 # this is to allow the protocols to each be named list objects
 # because object names cannot be numeric type. I guess ultimately
 # it actually doesn't matter because you have to use backticks anyway,

@@ -273,7 +273,7 @@ psd_plots <- purrr::map2(base_plots, plot_subtitles, add_subtitle) %>%
 
 ################################################################################
 
-browser()
+# browser()
 
 method_metadata <-switch (protocol_ID,
     "1" = psa_protocols[["1"]],

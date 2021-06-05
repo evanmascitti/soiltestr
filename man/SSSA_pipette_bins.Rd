@@ -2,7 +2,8 @@
 % Please edit documentation in R/psa-size-bins-helpers.R
 \name{SSSA_pipette_bins}
 \alias{SSSA_pipette_bins}
-\title{Size bins for pipette sampling with 20, 5, 2, and 0.2 microns}
+\title{(Internal)
+Size bins for pipette sampling with 20, 5, 2, and 0.2 microns}
 \usage{
 SSSA_pipette_bins()
 }
@@ -10,5 +11,6 @@ SSSA_pipette_bins()
 a tibble
 }
 \description{
+(Internal)
 Size bins for pipette sampling with 20, 5, 2, and 0.2 microns
 }

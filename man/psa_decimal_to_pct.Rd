@@ -2,8 +2,7 @@
 % Please edit documentation in R/psa-size-bins-helpers.R
 \name{psa_decimal_to_pct}
 \alias{psa_decimal_to_pct}
-\title{Helper for generating whole number from decimals
-when computing size bins}
+\title{(Internal)}
 \usage{
 psa_decimal_to_pct(df)
 }

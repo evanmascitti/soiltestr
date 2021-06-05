@@ -2,7 +2,7 @@
 % Please edit documentation in R/psa-size-bins-helpers.R
 \name{pipette_clay_2_to_0.2_only}
 \alias{pipette_clay_2_to_0.2_only}
-\title{Size bins for pipette sampling for 2, and 0.2 microns}
+\title{(Internal)}
 \usage{
 pipette_clay_2_to_0.2_only()
 }

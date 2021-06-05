@@ -1,12 +1,12 @@
 ## code to prepare `psa_protocols_summary` dataset goes here
 
 
-# This data object is built independtly from the more verbose data object
+# This data object is built independently from the more verbose data object
 # `psa_protocols`, but they have similar dependencies.....the former is designed
 # for easy use with tab completion, while this one is meant for a quick lookup
 # of the number.
 
-library(tidyverse, quietly = T)
+suppressPackageStartupMessages({library(tidyverse)})
 
 # make a tibble containing the summaries of each protocol
 # note that protocl_ID is a character type even though I am using numbers
