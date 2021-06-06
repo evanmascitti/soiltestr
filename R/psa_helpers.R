@@ -113,8 +113,11 @@ import_psa_datafile <- function(x){
 
   x %>%
     purrr::set_names(nm) %>%
-    purrr::map(readr::read_csv, col_types = readr::cols(), na = "-") %>%
-    purrr::map(janitor::remove_empty, which = 'rows') %>%
+    purrr::map(readr::read_csv,
+               col_types = readr::cols(),
+               na = "-",
+               trim_ws = TRUE,
+               skip_empty_rows = TRUE) %>%
     purrr::modify_if(.p = ~any(names(.) %in% "protocol_ID"),
                      .f = ~dplyr::mutate(. , protocol_ID = as.character(protocol_ID))) %>%
     purrr::modify_if(.p = ~any(names(.) %in% "beaker_tare_set"),

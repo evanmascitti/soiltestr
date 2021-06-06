@@ -8,4 +8,4 @@ protocol_ID,OM_removal,carbonate_removal,iron_oxide_removal,mechanical_dispersio
 7,-,-,-,milkshake_5,calgon_5,50,pipette,gravel+sand,after,-
 8,-,-,-,milkshake_5,calgon_5,50,hydrometer,gravel+sand,after,blank computed w/ companion measurement
 9,-,-,-,milkshake_5,calgon_5,50,hydrometer,gravel+sand,after,blank computed w/ temperature calibration
-10,-,-,-,overnight_shaker,calgon_5,10,pipette,gravel+sand,before,-
+10,-,-,-,milkshake_5,calgon_0.5,10,pipette,gravel+sand,before,-

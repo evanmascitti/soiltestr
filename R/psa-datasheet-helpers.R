@@ -216,12 +216,13 @@ hydrometer_blank_correction_datasheet <- function(){
 
   # for redundancy, include the blank correction method as a column
 
-  psa_hydrometer_blank_correction_w_companion_data  <- tibble::tibble(
+   psa_hydrometer_blank_correction_w_companion_data  <- tibble::tibble(
     date = date,
     experiment_name = experiment_name,
     protocol_ID = protocol_ID,
     hydrometer_blank_method = hydrometer_blank_method,
     bouyoucos_cylinder_number = blank_correction_bouyoucos_cylinder,
+    approx_ESD = fines_diameters_sampled %||% "",
     time = "",
     AM_PM = "",
     water_temp_c = "",

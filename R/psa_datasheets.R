@@ -31,9 +31,9 @@
 #' for hydrometer to reference cross-sectional area which is needed for
 #' calculation of effective depth
 #' @param Gs Double vector of matching length to `sample_names`. Specific gravity of soil solids (assumed or measured). If no value entered, defaults to 2.70.
-#' @param ... other arguments passed to internal functions
+#' @param ... Currently unused, reserved for expansion (potentially to pass other arguments to internal functions
 #'   `pipette_sampling_datasheets()`, `hydrometer_sampling_datasheets()`, or
-#'   `sieving_datasheets()`
+#'   `sieving_datasheets()`)
 #'
 #' @details The date refers to the date the first step of the test was begun. As
 #'   most soil tests span multiple days, this convention avoids any ambiguity

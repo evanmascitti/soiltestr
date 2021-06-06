@@ -23,9 +23,10 @@ all: ./R/sysdata.rda ./data/psa_protocols.rda ./data/psa_protocols_summary.rda
 test:
 	Rscript -e 'devtools::test()'
 
-check:
-	Rscript -e 'devtools::check()'
+# these seem not to work from the shell
+#check:
+#	Rscript -e 'devtools::check()'
 
-build:
-	Rcmd.exe INSTALL --no-multiarch --with-keep.source soiltestr
+#build:
+#	Rcmd.exe INSTALL --no-multiarch --with-keep.source soiltestr
 

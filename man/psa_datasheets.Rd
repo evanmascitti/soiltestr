@@ -59,9 +59,9 @@ calculation of effective depth}
 
 \item{Gs}{Double vector of matching length to \code{sample_names}. Specific gravity of soil solids (assumed or measured). If no value entered, defaults to 2.70.}
 
-\item{...}{other arguments passed to internal functions
+\item{...}{Currently unused, reserved for expansion (potentially to pass other arguments to internal functions
 \code{pipette_sampling_datasheets()}, \code{hydrometer_sampling_datasheets()}, or
-\code{sieving_datasheets()}}
+\code{sieving_datasheets()})}
 }
 \value{
 Files are written to disk and a message is printed.
