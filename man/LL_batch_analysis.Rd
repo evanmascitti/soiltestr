@@ -4,10 +4,12 @@
 \alias{LL_batch_analysis}
 \title{Compute the liquid limits for a large run of samples}
 \usage{
-LL_batch_analysis(dir)
+LL_batch_analysis(dir, tin_tares = NULL)
 }
 \arguments{
 \item{dir}{directory containing the raw data files.}
+
+\item{tin_tares}{a data frame of tin tares; if left as NULL, the option \code{soiltestr.tin_tares} is queried}
 }
 \value{
 a tibble containing the liquid limits along with information needed

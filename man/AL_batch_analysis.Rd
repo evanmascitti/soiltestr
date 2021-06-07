@@ -4,13 +4,12 @@
 \alias{AL_batch_analysis}
 \title{Analyze adhesion limit data for multiple specimens}
 \usage{
-AL_batch_analysis(dir)
+AL_batch_analysis(dir, tin_tares = NULL)
 }
 \arguments{
 \item{dir}{folder to look for data file}
-}
-\value{
-List of length 3 (average values, all values, and dot plot of replications)
+
+\item{tin_tares}{a data frame of tin tares; if left as NULL, the option \code{soiltestr.tin_tares} is queried}
 }
 \description{
 Analyze adhesion limit data for multiple specimens

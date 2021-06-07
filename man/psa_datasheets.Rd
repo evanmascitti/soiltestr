@@ -16,7 +16,8 @@ psa_datasheets(
   pipette_beaker_numbers = NULL,
   bouyoucos_cylinder_numbers = NULL,
   blank_correction_bouyoucos_cylinder = NULL,
-  Gs = 2.7,
+  hydrometer_ID = NULL,
+  Gs = NULL,
   calgon_solution_ID = NULL,
   ...
 )
@@ -56,6 +57,8 @@ to width correction.}
 used for the blank correction; not so important for pipette analysis but needed
 for hydrometer to reference cross-sectional area which is needed for
 calculation of effective depth}
+
+\item{hydrometer_ID}{Integer of length 1 identifying which hydrometer is used for the test. The ID is used to link to a data object in the \code{asi468} packgae which contains information about the hydrometer's dimensions. Ignored by protocols not using hydrometer analysis.}
 
 \item{Gs}{Double vector of matching length to \code{sample_names}. Specific gravity of soil solids (assumed or measured). If no value entered, defaults to 2.70.}
 

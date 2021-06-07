@@ -14,5 +14,5 @@ Builds sheet structure knowing that companion measurements
 are required
 }
 \seealso{
-hydrometer_datasheeet
+hydrometer_datasheets
 }

@@ -30,6 +30,7 @@
 #' used for the blank correction; not so important for pipette analysis but needed
 #' for hydrometer to reference cross-sectional area which is needed for
 #' calculation of effective depth
+#' @param hydrometer_ID Integer of length 1 identifying which hydrometer is used for the test. The ID is used to link to a data object in the `asi468` packgae which contains information about the hydrometer's dimensions. Ignored by protocols not using hydrometer analysis.
 #' @param Gs Double vector of matching length to `sample_names`. Specific gravity of soil solids (assumed or measured). If no value entered, defaults to 2.70.
 #' @param ... Currently unused, reserved for expansion (potentially to pass other arguments to internal functions
 #'   `pipette_sampling_datasheets()`, `hydrometer_sampling_datasheets()`, or
@@ -55,13 +56,33 @@ psa_datasheets <- function(
   pipette_beaker_numbers = NULL,
   bouyoucos_cylinder_numbers = NULL,
   blank_correction_bouyoucos_cylinder = NULL,
-  Gs = 2.70,
+  hydrometer_ID = NULL,
+  Gs = NULL,
   calgon_solution_ID = NULL,
   ...){
+
+
+# argument checking  ------------------------------------------------------
+
 
   # coerce protocol ID to character type in case user supplies it as an integer
 
   protocol_ID <- as.character(protocol_ID)
+
+
+  # if a vector is supplied for Gs, check that it is the same length as
+  # the number of samples
+  if(!is.null(Gs) && length(Gs) != length(sample_names)){
+    stop("Length of vectors supplied for `sample_names` and `Gs` are of different lengths.")
+  }
+
+  # capture user-supplied Gs vector, otherwise default to 2.7
+  Gs <- Gs %||% rep(2.70, times = length(sample_names))
+
+
+  if(protocol_ID %in% hydrometer_invoking_method_IDs & is.null(hydrometer_ID)){
+    stop("This protocol requires a value for `hydrometer_ID` but you did not provide one.")
+  }
 
 
   # create path to new folder and check if it already exists

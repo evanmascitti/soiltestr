@@ -4,10 +4,12 @@
 \alias{PL_batch_analysis}
 \title{Analyze plastic limit data for multiple specimens}
 \usage{
-PL_batch_analysis(dir)
+PL_batch_analysis(dir, tin_tares)
 }
 \arguments{
 \item{dir}{folder to look for data file}
+
+\item{tin_tares}{a data frame of tin tares; if left as NULL, the option \code{soiltestr.tin_tares} is queried}
 }
 \value{
 List of length 3 (average values, all values, and dot plot of replications)

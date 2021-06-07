@@ -105,14 +105,18 @@ protocol_details$fines_diameters_sampled <-  map(protocol_details$fines_diameter
   flatten() %>%
   map(as.numeric)
 
-
 protocol_details$coarse_diameters_sampled <-  map(protocol_details$coarse_diameters_sampled, stringr::str_split, pattern = "-") %>%
+  flatten() %>%
+  map(as.numeric)
+
+# same action, but instead of the number of fines diameters _measured_, specify the number of fines diameters to calculate
+protocol_details$fines_diameters_to_compute <-  map(protocol_details$fines_diameters_to_compute, stringr::str_split, pattern = "-") %>%
   flatten() %>%
   map(as.numeric)
 
 # now over-write the columns that contain the number of sizes sampled; I want them to stay in the
 # order that they already are but to use the data from the actual microns rather than having
-# to manually type it each time I adda new protocol....basically this makes the column with the number
+# to manually type it each time I add a new protocol....basically this makes the column with the number
 # in the csv file moot but that's OK for now
 
 protocol_details$n_fines_diameters_sampled <- map_dbl(protocol_details$fines_diameters_sampled, length)

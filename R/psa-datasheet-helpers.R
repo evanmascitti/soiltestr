@@ -25,7 +25,7 @@ pipetting_datasheets <- function(){
   needed_objs <- mget(x =  c("date", "experiment_name", "sample_names",
                              "fines_diameters_sampled", "n_reps", "protocol_ID",
                              "beaker_tare_set", "bouyoucos_cylinder_numbers",
-                             "pipette_beaker_numbers", "blank_correction_bouyoucos_cylinder"),
+                             "pipette_beaker_numbers", "blank_correction_bouyoucos_cylinder", "Gs"),
                       envir = rlang::caller_env())
 
   list2env(x = needed_objs, envir = rlang::current_env())
@@ -36,9 +36,10 @@ pipetting_datasheets <- function(){
     experiment_name = experiment_name,
     protocol_ID = protocol_ID,
     sample_name = rep(sample_names, each = n_reps*length(fines_diameters_sampled)),
-    replication = rep(rep(1:n_reps, each = length(fines_diameters_sampled), times = length(sample_names))),
+        replication = rep(rep(1:n_reps, each = length(fines_diameters_sampled), times = length(sample_names))),
     batch_sample_number = rep(1:(length(sample_names)*n_reps), each = length(fines_diameters_sampled)),
     bouyoucos_cylinder_number = rep(bouyoucos_cylinder_numbers %||% "", each = length(fines_diameters_sampled)),
+    Gs = rep(Gs, each = n_reps*length(fines_diameters_sampled)),
     beaker_tare_set = beaker_tare_set %||% "",
     microns = rep(fines_diameters_sampled %||% "", times = (length(sample_names)*n_reps)),
     beaker_number = pipette_beaker_numbers %||% "",
@@ -167,7 +168,7 @@ check_hydrometer_blank_method <- function(){
 #' are required
 #'
 #' @return A tibble
-#' @seealso hydrometer_datasheeet
+#' @seealso hydrometer_datasheets
 #'
 hydrometer_blank_correction_datasheet <- function(){
 
@@ -191,7 +192,8 @@ hydrometer_blank_correction_datasheet <- function(){
       "protocol_ID",
       "fines_diameters_sampled",
       "blank_correction_bouyoucos_cylinder",
-      "calgon_solution_ID"
+      "calgon_solution_ID",
+      "hydrometer_ID"
     ),
     envir = rlang::caller_env(n = 2))
 
@@ -222,11 +224,17 @@ hydrometer_blank_correction_datasheet <- function(){
     protocol_ID = protocol_ID,
     hydrometer_blank_method = hydrometer_blank_method,
     bouyoucos_cylinder_number = blank_correction_bouyoucos_cylinder,
+    hydrometer_ID = hydrometer_ID,
     approx_ESD = fines_diameters_sampled %||% "",
-    time = "",
-    AM_PM = "",
+    stir_date = "",
+    stir_time = "",
+    stir_AM_PM = "",
+    sampling_date = "",
+    sampling_time = "",
+    sampling_AM_PM = "",
     water_temp_c = "",
     hydrometer_reading = rep("", times = length(fines_diameters_sampled)),
+    meniscus_correction = "",
     comments = "-"
   )
 
@@ -270,7 +278,7 @@ hydrometer_datasheets <- function(){
 
   needed_objs <- mget(
     x = c("date", "experiment_name", "sample_names", "n_reps", "protocol_ID", "bouyoucos_cylinder_numbers",
-          "blank_correction_bouyoucos_cylinder", "fines_diameters_sampled", "Gs"),
+          "blank_correction_bouyoucos_cylinder", "fines_diameters_sampled", "Gs", "hydrometer_ID"),
     envir = rlang::caller_env())
 
   list2env(x = needed_objs, envir = rlang::current_env())
@@ -310,20 +318,22 @@ hydrometer_blank_method <- check_hydrometer_blank_method()
     protocol_ID = protocol_ID,
     sample_name = rep(sample_names, each = n_reps*length(fines_diameters_sampled)),
     replication = rep(rep(1:n_reps, times = length(fines_diameters_sampled) * length(sample_names))),
-    batch_sample_number = rep(1:(length(sample_names)*n_reps), each = length(fines_diameters_sampled)),
-    bouyoucos_cylinder_number = rep(bouyoucos_cylinder_numbers %||% "", each = length(fines_diameters_sampled)),
+    batch_sample_number = rep(1:(length(sample_names)*n_reps), times = length(fines_diameters_sampled)),
+    bouyoucos_cylinder_number = rep(bouyoucos_cylinder_numbers %||% "", times = length(fines_diameters_sampled)),
+    hydrometer_ID = hydrometer_ID,
     Gs = rep(Gs, each = n_reps * length(sample_names) * length(fines_diameters_sampled)),
-    approx_ESD = rep(fines_diameters_sampled %||% "" , times = length(sample_names) * n_reps),
-    time = "",
-    AM_PM = "",
+    approx_ESD = rep(fines_diameters_sampled %||% "" , each = length(sample_names) * n_reps),
+    stir_date = "",
+    stir_time = "",
+    stir_AM_PM = "",
+    sampling_date = "",
+    sampling_time = "",
+    sampling_AM_PM = "",
     water_temp_c = "",
     hydrometer_reading = "",
+    meniscus_correction = "",
     comments = "-"
-  ) %>%
-    dplyr::arrange(
-      dplyr::desc(.data$approx_ESD),
-      .data$bouyoucos_cylinder_number,
-      .data$replication)
+  )
 
 
 ######################

@@ -1,0 +1,11 @@
+date,experiment_name,protocol_ID,sample_name,replication,batch_sample_number,bouyoucos_cylinder_number,Gs,beaker_tare_set,microns,beaker_number,beaker_mass_w_OD_sample,comments
+2021-03-20,mets-july-2020,7,load,1,1,1,2.7,2021-01-15,2,1,49.525,-
+2021-03-20,mets-july-2020,7,load,2,2,2,2.7,2021-01-15,2,2,51.022,-
+2021-03-20,mets-july-2020,7,load,3,3,3,2.7,2021-01-15,2,3,50.608,-
+2021-03-20,mets-july-2020,7,load,4,4,4,2.7,2021-01-15,2,4,51.219,-
+2021-03-20,mets-july-2020,7,load,5,5,5,2.7,2021-01-15,2,5,51.550,-
+2021-03-20,mets-july-2020,7,load,6,6,6,2.7,2021-01-15,2,6,49.385,-
+2021-03-20,mets-july-2020,7,load,7,7,7,2.7,2021-01-15,2,7,48.948,-
+2021-03-20,mets-july-2020,7,load,8,8,8,2.7,2021-01-15,2,8,50.929,-
+2021-03-20,mets-july-2020,7,load,9,9,9,2.7,2021-01-15,2,9,50.743,-
+2021-03-20,mets-july-2020,7,load,10,10,10,2.7,2021-01-15,2,10,49.918,-

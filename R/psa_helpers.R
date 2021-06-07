@@ -12,7 +12,7 @@ dir <- get(x = "dir", envir = rlang::caller_env())
   # note that in this function the protocol is being read as a character column
   # to facilitate easy use of `switch()` later on
 
-  metadata_file <- readr::read_csv(list.files(path = dir, pattern = "metadata", full.names = T),
+metadata_file <- readr::read_csv(list.files(path = dir, pattern = "metadata", full.names = T),
                                    col_types = "Dccciic")
 
   protocol_ID <- as.character(unique(metadata_file$protocol_ID))
@@ -111,6 +111,14 @@ import_psa_datafile <- function(x){
   # to have a character type, because this will otherwise mess up joining
   # later in the process. Yea, this is DOPE!
 
+  # Finally I use readr::parse_number to remove the "g" sometimes
+  # printed by electronic balances. Sometimes the columns with these
+  # get read in as numeric (if there is no g printed), so I have to
+  # coerce the relevant columns to character types and _then_ parse the
+  # number
+
+  # browser()
+
   x %>%
     purrr::set_names(nm) %>%
     purrr::map(readr::read_csv,
@@ -123,7 +131,17 @@ import_psa_datafile <- function(x){
     purrr::modify_if(.p = ~any(names(.) %in% "beaker_tare_set"),
                      .f = ~dplyr::mutate(. , beaker_tare_set = as.character(beaker_tare_set))) %>%
     purrr::modify_if(.p = ~any(names(.) %in% "tin_tare_set"),
-                     .f = ~dplyr::mutate(. , tin_tare_set = as.character(tin_tare_set)))
+                     .f = ~dplyr::mutate(. , tin_tare_set = as.character(tin_tare_set))) %>%
+    purrr::modify_if(
+      .p = ~any(
+        stringr::str_detect(
+          string = names(.),
+          pattern = "^tin_w_.*sample")),
+      .f = ~dplyr::mutate(. ,
+                          dplyr::across(
+                            .cols = dplyr::matches(
+                              match = "^tin_w_\\w*_sample$"),
+                            .fns = ~readr::parse_number(as.character(.)))))
 
 
   }
@@ -239,14 +257,15 @@ blank_correction <- mean(blanks_df$calgon_in_beaker, na.rm = TRUE)
   return(fines_percent_passing)
 }
 
+# the function compute_hydrometer_fines_pct_passing() is kept in
+# its own file. It needs a number of helpers which are specific to that
+# function, and it is getting pretty long. Pulling out so it is easier to work through and so it does not clutter this file so badly.
 
-# will obviously need to come back to this one; it should also return a data frame
-# called `fines_percent_passing()` with an arbitrary number of particle diameters:
+# Like `compute_pipette_fines_pct_passing()`, the
+# `compute_hydrometer_fines_pct_passing()` function
+# also returns a data frame called `fines_percent_passing()`
+# with an arbitrary number of particle diameters:
 
-
-# compute_hydrometer_fines_pct_passing <- function(){
-#
-# }
 
 
 

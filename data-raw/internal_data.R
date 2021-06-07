@@ -94,7 +94,28 @@ cat('coarse_sub_bin_invoking_protocol_IDS are', coarse_sub_bin_invoking_protocol
 # determine whether the blank correction for the hydrometer will be
 # made via companion measurements or a calibration curve
 
+# (not yet done )
 
+
+# setting equipment parameters --------------------------------------------
+
+# this is a generic error message used for informing the user about
+# how to set the values for equipment dimensions
+
+equipment_instructions <- function(equipment_type) {
+
+  stop(
+  "No data found on ", equipment_type, "\n",
+  "Please set a global option in your .Rprofile file or provide a data frame as an argument in the call to `psa()`.\n",
+  "Editing your .Rprofile is easy with `usethis::edit_r_profile()`.\n",
+  "If you do not know what an .Rprofile file is, see https://support.rstudio.com/hc/en-us/articles/360047157094-Managing-R-with-Rprofile-Renviron-Rprofile-site-Renviron-site-rsession-conf-and-repos-conf.",
+  call. = FALSE)
+
+
+}
+
+
+# collect and export ------------------------------------------------------
 
 
 # collect all objects in the global  environment into a list

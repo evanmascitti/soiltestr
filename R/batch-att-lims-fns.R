@@ -77,12 +77,19 @@ AL_or_PL_batch_analysis <- function(type){
 
   tin_tare_date <- unique(data_file$tin_tare_set)
 
-  tin_tares <- asi468::tin_tares %>%
-    tibble::enframe(name= "date", value = "tin_tares_data") %>%
-    tidyr::unnest(.data$tin_tares_data) %>%
-    dplyr::filter(date == tin_tare_date) %>%
-    dplyr::select(-.data$date) %>%
-    dplyr::mutate(tin_number = as.numeric(.data$tin_number))
+# inherit the tin tares data frame from the caller environment
+
+  tin_tares <- get("tin_tares", envir = rlang::caller_env())
+
+ # old version that definitely works but is tied directly to asi468, therefore
+  # I'd rather not use
+   #
+   # tin_tares <- asi468::tin_tares %>%
+   #  tibble::enframe(name= "date", value = "tin_tares_data") %>%
+   #  tidyr::unnest(.data$tin_tares_data) %>%
+   #  dplyr::filter(date == tin_tare_date) %>%
+   #  dplyr::select(-.data$date) %>%
+   #  dplyr::mutate(tin_number = as.numeric(.data$tin_number))
 
   consistency_limit_raw_data <- data_file %>%
     dplyr::left_join(tin_tares, by = c("tin_number", "tin_tare_set")) %>%
@@ -156,10 +163,11 @@ AL_or_PL_batch_analysis <- function(type){
 #' Analyze plastic limit data for multiple specimens
 #'
 #' @param dir folder to look for data file
+#' @param tin_tares a data frame of tin tares; if left as NULL, the option `soiltestr.tin_tares` is queried
 #' @return List of length 3 (average values, all values, and dot plot of replications)
 #' @export
 #'
-PL_batch_analysis <- function(dir){
+PL_batch_analysis <- function(dir, tin_tares){
 
   dir <- dir
 
@@ -172,13 +180,14 @@ PL_batch_analysis <- function(dir){
 
 #' Analyze adhesion limit data for multiple specimens
 #'
-#' @param dir folder to look for data file
-#' @return List of length 3 (average values, all values, and dot plot of replications)
+#' @inheritParams PL_batch_analysis
 #' @export
 #'
-AL_batch_analysis <- function(dir){
+AL_batch_analysis <- function(dir, tin_tares = NULL){
 
   dir <- dir
+
+  tin_tares <- tin_tares %||% getOption('soiltestr.tin_tares') %||% internal_data$equipment_instructions("tin_tares")
 
   results <- AL_or_PL_batch_analysis(type = 'AL')
 
@@ -193,6 +202,7 @@ AL_batch_analysis <- function(dir){
 #'   the liquid limits of several specimens.
 #'
 #' @param dir directory containing the raw data files.
+#' @param tin_tares a data frame of tin tares; if left as NULL, the option `soiltestr.tin_tares` is queried
 #'
 #' @details Function searches for a file containing the string "LL_raw_data."
 #'   File is read and analyzed; the original (empty) file should have been
@@ -203,7 +213,7 @@ AL_batch_analysis <- function(dir){
 #'   to uniquely identify each specimen
 #' @export
 #'
-LL_batch_analysis <- function(dir){
+LL_batch_analysis <- function(dir, tin_tares = NULL){
 
   data_file_path <- list.files(path = dir, pattern = "LL[_-]raw[_-]data", full.names = T)
 

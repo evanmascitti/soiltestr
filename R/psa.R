@@ -3,6 +3,10 @@
 #' Accepts a variety of laboratory protocols, see [`psa_protocols()`]
 #'
 #' @param dir Folder containing the pertinent files
+#' @param ... other arguments passed for individual protocols. These identify sets of lab equipment used to perform calculations. See details.
+#' @param bouyoucos_cylinder_dims dimensions of sedimentation cylinders
+#' @param tin_tares data frame of tin tares used for water content determination
+#' @param hydrometer_dims data frame of hydrometer dimensions
 #'
 #' @return List of length 6 containing:
 #'
@@ -19,7 +23,18 @@
 #'
 #' @export
 #'
-psa <- function(dir){
+#' @details This function relies on the dimensions of lab equipment used during the tests.
+#' It is recommended to set these as global options in your `.Rprofile file`, but they can also be passed as individual named arguments. See the vignette on setting lab equipment to work with **soiltestr**. (link needed).
+#' Choices include the following (tests which require each type of equipment are in parentheses):
+#'   - `bouyoucos_cylinder_dims` (hydrometer)
+#'   - `tin_tares` (all tests)
+#'   - `psa_beaker_tares` (pipette)
+#'   - (need to finish this list before publishing on CRAN)....
+#'
+psa <- function(dir, bouyoucos_cylinder_dims = NULL, tin_tares = NULL,
+                hydrometer_dims = NULL, ...){
+
+  #browser()
 
   # determine which protocol was used and assign to a local variable
 
@@ -44,24 +59,29 @@ list2env(datafiles, envir = rlang::current_env())
 # for safety, remove the datafiles object since its contents are now dumped
 # into the current environment
 
-rm(datafiles)
+rm(datafiles, all_datafile_paths)
 
 
 # compute hygroscopic water contents --------------------------------------
 
+# experimenting with using options instead of tying directly
+# to asi468 package
   # first need to pair data with correct set of tin tares
+#
+#
+#   tin_tare_set <- as.character(unique(common_datafiles$hygroscopic_corrections$tin_tare_set))
+#
+#   tin_tares <- asi468::tin_tares[[tin_tare_set]]
 
-# browser()
-
-  tin_tare_set <- as.character(unique(common_datafiles$hygroscopic_corrections$tin_tare_set))
-
-  tin_tares <- asi468::tin_tares[[tin_tare_set]]
+  tin_tares <- tin_tares %||% getOption('soiltestr.tin_tares') %||% internal_data$equipment_instructions("tin_tares")
 
 
   # calculate air-dry water contents
 
-  hygroscopic_water_contents <- common_datafiles$hygroscopic_corrections %>%
-      dplyr::left_join(tin_tares, by = "tin_number")%>%
+  # browser()
+
+hygroscopic_water_contents <- common_datafiles$hygroscopic_corrections %>%
+      dplyr::left_join(tin_tares, by = c("tin_tare_set", "tin_number")) %>%
       soiltestr::add_w() %>%
     dplyr::rename(hygroscopic_water_content = .data$water_content) %>%
     dplyr::select(.data$date:.data$batch_sample_number, .data$hygroscopic_water_content)
@@ -101,17 +121,18 @@ rm(datafiles)
 
   # now that the correct specimen mass is known, compute the fines % passing
 
+ #  browser()
   fines_percent_passing <- switch (protocol_ID,
     "1" = compute_pipette_fines_pct_passing(),
-    "2" = compute_hydrometer_fines_pct_passing(),
+    "2" = compute_152H_hydrometer_fines_pct_passing(...),
     "3" = compute_pipette_fines_pct_passing(),
     "4" = compute_pipette_fines_pct_passing(),
-    "5" = compute_hydrometer_fines_pct_passing(),
+    "5" = compute_152H_hydrometer_fines_pct_passing(...),
     "6" = compute_pipette_fines_pct_passing(),
     "7" = compute_pipette_fines_pct_passing(),
-    "8" = compute_hydrometer_fines_pct_passing(),
-    "9" = compute_hydrometer_fines_pct_passing(),
-    stop("Can't find the protocol - unable to compute % fines", protocol_ID, call. = T)
+    "8" = compute_152H_hydrometer_fines_pct_passing(...),
+    "9" = compute_152H_hydrometer_fines_pct_passing(...),
+    stop("Can't find the protocol... unable to compute % fines for protocol_ID", protocol_ID, call. = T)
   )
 
   # browser()
@@ -180,7 +201,7 @@ rm(datafiles)
   }
 
 
-
+# browser()
 
  # check if the protocol permits more complex bin sizes to be computed for
  # the coarse method
@@ -217,13 +238,26 @@ rm(datafiles)
 
  # browser()
 
-sub_bins <- mget(ls(pattern = "sub_bins")) %>%
-  purrr::reduce(
-    dplyr::left_join,
-    by = c("date", "experiment_name", "protocol_ID", "sample_name",
-           "replication", "batch_sample_number")) %>%
-  dplyr::arrange(.data$batch_sample_number,
+# combine all of the sub-bins if they have been computed....
+# otherwise this element gets NULL
+
+all_sub_bins <- ls(pattern = "sub_bins")
+
+if(length(all_sub_bins != 0)){
+
+  sub_bins <- mget(all_sub_bins) %>%
+    purrr::reduce(
+      dplyr::left_join,
+      by = c("date", "experiment_name", "protocol_ID", "sample_name",
+             "replication", "batch_sample_number")) %>%
+    dplyr::arrange(.data$batch_sample_number,
                    .data$replication)
+
+} else {
+
+  sub_bins <- NULL
+}
+
 
 
 
@@ -292,32 +326,39 @@ method_metadata <-switch (protocol_ID,
   # data frames produced above
 
   # this uses some helpers defined in psa-summarizing-helpers.R
+# the predicates check that the element is not null and whether
+# it has the relevant column names
 
-  # browser()
+  #  browser()
 
   averages <- mget(x = c("cumulative_percent_passing", "simple_bins", "sub_bins", "pretreatment_loss"),
               envir = rlang::current_env()) %>%
     purrr::modify_if(
-      .p = ~ "microns" %in% names(.),
+      .p = ~ !is.null(.) & "microns" %in% names(.),
       .f = pivot_cumulative_percent_passing_wider) %>%
-    purrr::map(summarize_psa) %>%
     purrr::modify_if(
-      .p = ~ any(stringr::str_detect(string = names(.), pattern = "^\\d")),
+      .p = ~ !is.null(.),
+      .f = summarize_psa) %>%
+    #purrr::map(summarize_psa) %>%
+    purrr::modify_if(
+      .p = ~ !is.null(.) & any(stringr::str_detect(string = names(.), pattern = "^\\d")) ,
       .f = pivot_cumulative_percent_passing_longer)
 
   # construct list to return
 
-psa <- mget(
+psa_object <- structure(
+  .Data = mget(
     c("cumulative_percent_passing",
     "simple_bins",
     "sub_bins",
     "method_metadata",
     "pretreatment_loss",
     "averages",
-    "psd_plots"))
+    "psd_plots")),
+  class = "soiltestr_psa"
+)
 
 
-
-  return(psa)
+  return(psa_object)
 
   }

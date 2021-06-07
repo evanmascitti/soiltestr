@@ -5,9 +5,7 @@
 \alias{psa_protocols}
 \title{Particle size-analysis protocols}
 \format{
-If \strong{tibble} or \strong{dplyr} is loaded, a tibble with two list-columns
-(\code{extra_pretreatement} and \code{references}). Otherwise, a data frame with
-list-columns.
+Data frame or tibble containing several list columns.
 }
 \usage{
 psa_protocols

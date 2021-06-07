@@ -4,10 +4,24 @@
 \alias{psa}
 \title{Analyze the results of a particle size test}
 \usage{
-psa(dir)
+psa(
+  dir,
+  bouyoucos_cylinder_dims = NULL,
+  tin_tares = NULL,
+  hydrometer_dims = NULL,
+  ...
+)
 }
 \arguments{
 \item{dir}{Folder containing the pertinent files}
+
+\item{bouyoucos_cylinder_dims}{dimensions of sedimentation cylinders}
+
+\item{tin_tares}{data frame of tin tares used for water content determination}
+
+\item{hydrometer_dims}{data frame of hydrometer dimensions}
+
+\item{...}{other arguments passed for individual protocols. These identify sets of lab equipment used to perform calculations. See details.}
 }
 \value{
 List of length 6 containing:
@@ -26,4 +40,15 @@ otherwise \code{NULL}
 }
 \description{
 Accepts a variety of laboratory protocols, see \code{\link[=psa_protocols]{psa_protocols()}}
+}
+\details{
+This function relies on the dimensions of lab equipment used during the tests.
+It is recommended to set these as global options in your \verb{.Rprofile file}, but they can also be passed as individual named arguments. See the vignette on setting lab equipment to work with \strong{soiltestr}. (link needed).
+Choices include the following (tests which require each type of equipment are in parentheses):
+\itemize{
+\item \code{bouyoucos_cylinder_dims} (hydrometer)
+\item \code{tin_tares} (all tests)
+\item \code{psa_beaker_tares} (pipette)
+\item (need to finish this list before publishing on CRAN)....
+}
 }
