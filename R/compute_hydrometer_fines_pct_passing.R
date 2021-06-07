@@ -39,20 +39,35 @@ compute_152H_hydrometer_fines_pct_passing <- function(...){
   # and the actual hydrometer data sheet. Easier to keep it that way for
   # internal consistency and just make the single adjustment here
 
-
-  blank_correction_data <-  method_specific_datafiles$hydrometer_blank_correction_w_companion %>%
+   blank_correction_data <-  method_specific_datafiles$hydrometer_blank_correction_w_companion %>%
     dplyr::rename(blank_hydrometer_reading = hydrometer_reading) %>%
+    dplyr::left_join(hydrometer_dims, by = "hydrometer_ID") %>%
     dplyr::select(.data$date,
                   .data$experiment_name,
                   .data$approx_ESD,
-                  .data$blank_hydrometer_reading)
+                  .data$blank_hydrometer_reading,
+                  .data$pure_water_offset)
 
   # join hydrometer data with the other required information,
   # then create datetime objects for stir time and
   # sampling time from the appropriate components. Finally,
   # join with specimen masses
 
-  #browser()
+  # 2021-06-07 testing something out: my hydrometer shows a reading of
+  # 1.25 g/L (read @ top of meniscus) when it is in pure water....it should
+  # theoretically be zero or very close to it at this temperature...were
+  # it due to temperature, the reading should actually be negative because
+  # water is less dense and therefore the hydrometer should sink deeper.
+  # make an adjustment to the blank correction....use a column from the
+  # hydrometer_dims data frame, which contains a column called pure_water_offset.
+  # this number should be subtracted from both the actual hydrometer reading
+  # and the blank correction reading, because it _should_ be nothing. This
+  # happens with across in the mutate statement near the end of this pipeline.
+
+  # ok, after testing this and thinking through it some more, it doesn't really
+  # matter because
+
+  # browser()
 
   hydrometer_data <- method_specific_datafiles$hydrometer %>%
     dplyr::left_join(
@@ -72,10 +87,10 @@ compute_152H_hydrometer_fines_pct_passing <- function(...){
                  sep = ' ') %>%
     dplyr::mutate(
       sampling_datetime = lubridate::ymd_hms(sampling_datetime, tz = Sys.timezone()),
-      stir_datetime = lubridate::ymd_hms(stir_datetime, tz = Sys.timezone())
-    ) %>%
-    dplyr::mutate(
-      elapsed_time = lubridate::as.duration(sampling_datetime - stir_datetime)) %>%
+      stir_datetime = lubridate::ymd_hms(stir_datetime, tz = Sys.timezone()),
+      elapsed_time = lubridate::as.duration(sampling_datetime - stir_datetime),
+      dplyr::across(.cols = dplyr::matches("hydrometer_reading"),
+                    .fns = ~. - pure_water_offset)) %>%
     dplyr::left_join(OD_specimen_masses, by = c("date", "experiment_name", "sample_name", "replication", "batch_sample_number"))
 
   # get hydrometer used for test

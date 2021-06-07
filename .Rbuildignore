@@ -29,3 +29,22 @@ inst/extdata
 ^ignore-this//psa-functions-development/OM-removal-corrected/pipette_w_sieves_data_2021-03-04/pipetting_data_2021-03-04\.csv$
 ^ignore-this//psa-functions-development/OM-removal-corrected/pipette_w_sieves_data_2021-03-04/sieving_data_2021-03-04\.csv$
 ^ignore-this//psa-functions-development/OM-removal-corrected/pipette_w_sieves_data_2021-03-04/specimen_masses_data_2021-03-04\.csv$
+^psa-functions-development$
+^ignore-this//psa-functions-development/before-hydrometer-pure-water-adjustment\.png$
+^ignore-this//psa-functions-development/testing-new-psa-datasheets-fuction/psa-data_2021-03-23/psa_blank_correction_data_2021-03-23\.csv$
+^ignore-this//psa-functions-development/testing-new-psa-datasheets-fuction/psa-data_2021-03-23/psa_hygroscopic_corrections_2021-03-23\.csv$
+^ignore-this//psa-functions-development/testing-new-psa-datasheets-fuction/psa-data_2021-03-23/psa_metadata_2021-03-23\.csv$
+^ignore-this//psa-functions-development/testing-new-psa-datasheets-fuction/psa-data_2021-03-23/psa_pipetting_data_2021-03-23\.csv$
+^ignore-this//psa-functions-development/testing-new-psa-datasheets-fuction/psa-data_2021-03-23/psa_sieving_data_2021-03-23\.csv$
+^ignore-this//psa-functions-development/testing-new-psa-datasheets-fuction/psa-data_2021-03-23/psa_sieving_datasheet_2021-03-23\.csv$
+^ignore-this//psa-functions-development/testing-new-psa-datasheets-fuction/psa-data_2021-03-23/psa_specimen_masses_2021-03-23\.csv$
+^ignore-this//psa-functions-development/testing-new-psa()-fuction/a script for averaging the results\.R$
+^ignore-this//psa-functions-development/testing-new-psa()-fuction/pretreatmentstuff\.csv$
+^ignore-this//psa-functions-development/testing-new-psa()-fuction/psa-data_2021-03-04/psa_blank_correction_data_2021-03-04\.csv$
+^ignore-this//psa-functions-development/testing-new-psa()-fuction/psa-data_2021-03-04/psa_hygroscopic_corrections_2021-03-04\.csv$
+^ignore-this//psa-functions-development/testing-new-psa()-fuction/psa-data_2021-03-04/psa_metadata_2021-03-04\.csv$
+^ignore-this//psa-functions-development/testing-new-psa()-fuction/psa-data_2021-03-04/psa_pipetting_data_2021-03-04\.csv$
+^ignore-this//psa-functions-development/testing-new-psa()-fuction/psa-data_2021-03-04/psa_pretreatment_loss_data_2021-03-04\.csv$
+^ignore-this//psa-functions-development/testing-new-psa()-fuction/psa-data_2021-03-04/psa_sieving_data_2021-03-04\.csv$
+^ignore-this//psa-functions-development/testing-new-psa()-fuction/psa-data_2021-03-04/psa_specimen_masses_2021-03-04\.csv$
+^ignore-this//psa-functions-development/testing-new-psa()-fuction/w_conts\.csv$
