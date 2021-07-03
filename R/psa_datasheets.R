@@ -69,18 +69,30 @@ psa_datasheets <- function(
 
   protocol_ID <- as.character(protocol_ID)
 
+#browser()
 
-  # if a vector is supplied for Gs, check that it is the same length as
-  # the number of samples
-  if(!is.null(Gs) && length(Gs) != length(sample_names)){
+  # if a vector is supplied for Gs, check that it is either a single value or the same length as the number of samples
+  if(!is.null(Gs) && (!length(Gs) %in% c(1, length(sample_names)) )){
     stop("Length of vectors supplied for `sample_names` and `Gs` are of different lengths.")
   }
 
-  # capture user-supplied Gs vector, otherwise default to 2.7
-  Gs <- Gs %||% rep(2.70, times = length(sample_names))
+  # if the supplied Gs vector is length 1, repeat it as many times as there are sample names. The above error check makes sure to exit if the vector is supplie and is the wrong length, so no need to check that conditions again.
+  if(length(Gs)  == 1L ){
+
+    Gs <- rep(Gs, times = length(sample_names))
+
+  } else{
+
+    # if vector is supplied or created in the above statement, capture it....
+    # otherwise (meaning it is NULL), default to 2.7
+
+    Gs <- Gs %||% rep(2.7, times = length(sample_names))
+
+  }
 
 
-  if(protocol_ID %in% hydrometer_invoking_method_IDs & is.null(hydrometer_ID)){
+
+    if(protocol_ID %in% hydrometer_invoking_method_IDs & is.null(hydrometer_ID)){
     stop("This protocol requires a value for `hydrometer_ID` but you did not provide one.")
   }
 

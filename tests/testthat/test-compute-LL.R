@@ -6,7 +6,7 @@
 # setwd(here::here('tests/testthat/'))
 
 LL_data <- readr::read_csv('test-data/att-lims/atterberg-limits_2021-06-03/LL-raw-data_2021-06-03.csv', col_types = 'cDcciiiddcc', na = '-') |>
-  dplyr::left_join(asi468::tin_tares$`2020-05-24`, by = c('tin_tare_set', 'tin_number')) |>
+  dplyr::left_join(asi468::tin_tares, by = c('tin_tare_set', 'tin_number')) |>
   add_w()
 
 test_that(desc = 'compute_LL handles missing data',

@@ -63,7 +63,7 @@ psa_remove_number_bins <- function(df){
 
 }
 
-# methods for coarse size bns ---------------------------------------------
+# methods for coarse size bins ---------------------------------------------
 
 #' (Internal)
 #'
@@ -132,6 +132,41 @@ USCS_bins <- function(){
 
 }
 
+
+#' (Internal)
+#'
+#' Size bins for USGA sieves
+#'
+#'
+#' @return a tibble
+#'
+expanded_sieve_bins_1 <- function(){
+
+  #  browser()
+
+  # assign cumulative percent passing to local variable based on its value in global environment
+
+  cumulative_percent_passing <- get("cumulative_percent_passing", envir = rlang::caller_env() )
+
+  expanded_sieve_bins <- cumulative_percent_passing %>%
+    dplyr::filter(.data$microns >= 53) %>%
+    tidyr::pivot_wider(names_from = .data$microns, values_from = .data$percent_passing) %>%
+    psa_decimal_to_pct() %>%
+    dplyr::mutate(
+      gravel = .data$`6350` - .data$`2000`,
+      very_coarse_sand = .data$`2000` - .data$`1000`,
+      coarse_sand = .data$`1000` - .data$`500`,
+      medium_sand = .data$`500` - .data$`250`,
+      fine_sand = .data$`250` - .data$`150`,
+      very_fine_sand = .data$`150` - .data$`53`) %>%
+    psa_remove_number_bins()
+
+
+  return(expanded_sieve_bins)
+
+}
+
+
 #' (Internal)
 #' Size bins for pipette sampling with 20, 5, 2, and 0.2 microns
 #'
@@ -170,7 +205,7 @@ SSSA_pipette_bins <- function(){
 #'
 #'@return a tibble
 #'
-pipette_clay_2_to_0.2_only <- function(){
+pipette_20_to_0.2_only <- function(){
 
   # assign cumulative percent passing to local variable based on its value in global environment
 
@@ -183,7 +218,8 @@ pipette_clay_2_to_0.2_only <- function(){
     tidyr::pivot_wider(names_from = .data$microns, values_from = .data$percent_passing) %>%
     psa_decimal_to_pct() %>%
     dplyr::mutate(
-      silt = .data$`53` - .data$`2`,
+      coarse_silt = .data$`53` - .data$`20`,
+      coarse_silt = .data$`20` - .data$`2`,
       coarse_clay = .data$`2` - .data$`0.2`,
       fine_clay = .data$`0.2`) %>%
     psa_remove_number_bins()

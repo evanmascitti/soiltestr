@@ -166,8 +166,10 @@ AL_or_PL_batch_analysis <- function(type){
 #' @param tin_tares a data frame of tin tares; if left as NULL, the option `soiltestr.tin_tares` is queried
 #' @return List of length 3 (average values, all values, and dot plot of replications)
 #' @export
-#'
-PL_batch_analysis <- function(dir, tin_tares){
+#' @importFrom rlang `%||%`
+PL_batch_analysis <- function(dir, tin_tares = NULL){
+
+  tin_tares <- tin_tares %||% getOption('soiltestr.tin_tares') %||% internal_data$equipment_instructions("tin_tares")
 
   dir <- dir
 

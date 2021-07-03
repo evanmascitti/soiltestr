@@ -4,7 +4,7 @@
 \alias{PL_batch_analysis}
 \title{Analyze plastic limit data for multiple specimens}
 \usage{
-PL_batch_analysis(dir, tin_tares)
+PL_batch_analysis(dir, tin_tares = NULL)
 }
 \arguments{
 \item{dir}{folder to look for data file}

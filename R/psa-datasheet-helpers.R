@@ -12,7 +12,7 @@
 #'   its beaker numbers should not be interspersed within the sample beakers'
 #'   sequence.
 #'
-#' @importFrom  rlang %||%
+#' @importFrom  rlang `%||%`
 #'
 #' @return a list of two data sheets, one for the actual sampling and one for
 #' the blank correction
@@ -30,6 +30,7 @@ pipetting_datasheets <- function(){
 
   list2env(x = needed_objs, envir = rlang::current_env())
 
+  #browser()
 
   psa_pipetting_data <- tibble::tibble(
     date = date,
@@ -310,7 +311,7 @@ hydrometer_blank_method <- check_hydrometer_blank_method()
   # generate the main datasheet
   # for redundancy, include the blank correction method as a column
 
-  # browser()
+ # browser()
 
   psa_hydrometer_data  <- tibble::tibble(
     date = date,
@@ -321,7 +322,9 @@ hydrometer_blank_method <- check_hydrometer_blank_method()
     batch_sample_number = rep(1:(length(sample_names)*n_reps), times = length(fines_diameters_sampled)),
     bouyoucos_cylinder_number = rep(bouyoucos_cylinder_numbers %||% "", times = length(fines_diameters_sampled)),
     hydrometer_ID = hydrometer_ID,
-    Gs = rep(Gs, each = n_reps * length(sample_names) * length(fines_diameters_sampled)),
+    # the Gs value can be programmed to react to whether it was provided or not....up until now I have always just assumed 2.7, so
+    # might as well just leave it that way. To use conditional logic will require some multiple of n_reps * length(sample_names) * length(fines_diameters_sampled) or similar, but I haven't quite found the right combination yet.
+    Gs = Gs,
     approx_ESD = rep(fines_diameters_sampled %||% "" , each = length(sample_names) * n_reps),
     stir_date = "",
     stir_time = "",

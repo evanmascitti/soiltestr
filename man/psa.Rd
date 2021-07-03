@@ -8,6 +8,7 @@ psa(
   dir,
   bouyoucos_cylinder_dims = NULL,
   tin_tares = NULL,
+  beaker_tares = NULL,
   hydrometer_dims = NULL,
   ...
 )
@@ -18,6 +19,8 @@ psa(
 \item{bouyoucos_cylinder_dims}{dimensions of sedimentation cylinders}
 
 \item{tin_tares}{data frame of tin tares used for water content determination}
+
+\item{beaker_tares}{data frame of beaker tares used for pipette methods}
 
 \item{hydrometer_dims}{data frame of hydrometer dimensions}
 

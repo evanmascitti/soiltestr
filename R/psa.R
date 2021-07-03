@@ -6,6 +6,7 @@
 #' @param ... other arguments passed for individual protocols. These identify sets of lab equipment used to perform calculations. See details.
 #' @param bouyoucos_cylinder_dims dimensions of sedimentation cylinders
 #' @param tin_tares data frame of tin tares used for water content determination
+#' @param beaker_tares data frame of beaker tares used for pipette methods
 #' @param hydrometer_dims data frame of hydrometer dimensions
 #'
 #' @return List of length 6 containing:
@@ -32,9 +33,10 @@
 #'   - (need to finish this list before publishing on CRAN)....
 #'
 psa <- function(dir, bouyoucos_cylinder_dims = NULL, tin_tares = NULL,
+                beaker_tares = NULL,
                 hydrometer_dims = NULL, ...){
 
-  #browser()
+  # browser()
 
   # determine which protocol was used and assign to a local variable
 
@@ -78,7 +80,7 @@ rm(datafiles, all_datafile_paths)
 
   # calculate air-dry water contents
 
-  # browser()
+ # browser()
 
 hygroscopic_water_contents <- common_datafiles$hygroscopic_corrections %>%
       dplyr::left_join(tin_tares, by = c("tin_tare_set", "tin_number")) %>%
@@ -123,16 +125,20 @@ hygroscopic_water_contents <- common_datafiles$hygroscopic_corrections %>%
 
  #  browser()
   fines_percent_passing <- switch (protocol_ID,
-    "1" = compute_pipette_fines_pct_passing(),
+    "1" = compute_pipette_fines_pct_passing(...),
     "2" = compute_152H_hydrometer_fines_pct_passing(...),
-    "3" = compute_pipette_fines_pct_passing(),
-    "4" = compute_pipette_fines_pct_passing(),
+    "3" = compute_pipette_fines_pct_passing(...),
+    "4" = compute_pipette_fines_pct_passing(...),
     "5" = compute_152H_hydrometer_fines_pct_passing(...),
-    "6" = compute_pipette_fines_pct_passing(),
-    "7" = compute_pipette_fines_pct_passing(),
+    "6" = compute_pipette_fines_pct_passing(...),
+    "7" = compute_pipette_fines_pct_passing(...),
     "8" = compute_152H_hydrometer_fines_pct_passing(...),
     "9" = compute_152H_hydrometer_fines_pct_passing(...),
-    stop("Can't find the protocol... unable to compute % fines for protocol_ID", protocol_ID, call. = T)
+    "10" = compute_pipette_fines_pct_passing(...),
+    "11" = compute_pipette_fines_pct_passing(...),
+    "12" = compute_pipette_fines_pct_passing(...),
+    "13" = compute_pipette_fines_pct_passing(...),
+    stop("Can't find the protocol... unable to compute % fines for protocol_ID ", protocol_ID, call. = T)
   )
 
   # browser()
@@ -148,8 +154,12 @@ hygroscopic_water_contents <- common_datafiles$hygroscopic_corrections %>%
     "7" = compute_sieves_percent_passing(),
     "8" = compute_sieves_percent_passing(),
     "9" = compute_sieves_percent_passing(),
+    "10" = compute_sieves_percent_passing(),
+    "11" = compute_sieves_percent_passing(),
+    "12" = compute_sieves_percent_passing(),
+    "13" = compute_sieves_percent_passing(),
     stop(
-      "Can't find the protocol - unable to compute % coarse particles",
+      "Can't find the protocol - unable to compute % coarse particles for protocol_ID ",
       protocol_ID,
       call. = T
     )
@@ -181,7 +191,7 @@ hygroscopic_water_contents <- common_datafiles$hygroscopic_corrections %>%
 
    insufficient_fines_sampling <- function() {
      stop("Only total clay can be computed for this protocol (not enough samples collected).",
-          call. = F)
+          call. = T)
    }
 
    fines_sub_bins <- switch (protocol_ID,
@@ -194,7 +204,12 @@ hygroscopic_water_contents <- common_datafiles$hygroscopic_corrections %>%
   "7" = insufficient_fines_sampling(),
   "8" = insufficient_fines_sampling(),
   "9" = insufficient_fines_sampling(),
-  stop("Could not find any info for psa_protocol ID ", protocol_ID, call. = T)
+  "10" = insufficient_fines_sampling(),
+  "11" = insufficient_fines_sampling(),
+  "12" = insufficient_fines_sampling(),
+  "11" = insufficient_fines_sampling(),
+  "13" = pipette_20_to_0.2_only(),
+  stop("Could not find any info for psa_protocol ID ", protocol_ID, ". Can't compute sub-bins.", call. = T)
 )
 
 
@@ -215,7 +230,7 @@ hygroscopic_water_contents <- common_datafiles$hygroscopic_corrections %>%
 
    insufficient_coarse_sampling <- function() {
      stop("Only total sand and gravel can be computed for this protocol (not enough samples collected)",
-          call. = F)
+          call. = T)
    }
 
    # browser()
@@ -231,7 +246,11 @@ hygroscopic_water_contents <- common_datafiles$hygroscopic_corrections %>%
      "7" = insufficient_coarse_sampling(),
      "8" = insufficient_coarse_sampling(),
      "9" = insufficient_coarse_sampling(),
-     stop("Could not find any info for psa_protocol ID ", protocol_ID, call. = T)
+     "10" = insufficient_coarse_sampling(),
+     "11" = expanded_sieve_bins_1(),
+     "12" = insufficient_coarse_sampling(),
+     "13" = USGA_bins(),
+     stop("Could not find any info for psa_protocol ID ", protocol_ID, ". Can't compute any sub-bins for sand-size parcticles.", call. = T)
    )
 
    }
@@ -319,7 +338,10 @@ method_metadata <-switch (protocol_ID,
     "7" = psa_protocols[["7"]],
     "8" = psa_protocols[["8"]],
     "9" = psa_protocols[["9"]],
-    stop("Could not find any info for psa_protocol number", protocol_ID, call. = T))
+    "10" = psa_protocols[["10"]],
+    "12" = psa_protocols[["11"]],
+    "13" = psa_protocols[["11"]],
+    stop("Could not find any metadata for psa_protocol number ", protocol_ID, call. = T))
 
 
   # make another list that has the averages of each variable for the applicable

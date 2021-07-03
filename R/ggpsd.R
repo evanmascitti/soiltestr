@@ -53,8 +53,8 @@ ggpsd <- function(df, points = TRUE, ...){
                         size = 0.3)+
     ggplot2::geom_hline(yintercept = seq(0, 1, 0.2), color = 'grey90',
                         size = 0.25)+
-    ggplot2::geom_point()+
-    ggplot2::geom_line()+
+    ggplot2::geom_point(alpha = 1/2)+
+    ggplot2::geom_line( alpha = 1/2)+
     ggplot2::ggtitle("Cumulative particle size distribution")+
     cowplot::theme_cowplot()+
     ggplot2::theme(
@@ -65,7 +65,7 @@ ggpsd <- function(df, points = TRUE, ...){
       axis.title = ggplot2::element_text(color = 'grey25'),
       axis.line.x = ggplot2::element_line(color = 'grey50'),
       axis.ticks.x = ggplot2::element_line(color = 'grey50'),
-      plot.title = ggplot2::element_text(hjust = 0.5)
+      plot.title = ggplot2::element_text(hjust = 0.5, face = 'plain')
     )
   }
 

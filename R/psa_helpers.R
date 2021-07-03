@@ -210,23 +210,27 @@ check_pretreatment_correction <- function(){
 #'
 #' @return data frame named `fines_pct_passing`
 #'
-compute_pipette_fines_pct_passing <- function(){
+compute_pipette_fines_pct_passing <- function(...){
 
 # inherit the datafiles and OD_specimen masses from the parent function environment
 
+# browser()
 
-
-needed_objs <- mget(x = c("method_specific_datafiles", "OD_specimen_masses"),
+needed_objs <- mget(x = c("method_specific_datafiles", "OD_specimen_masses", "beaker_tares"),
                     envir = rlang::caller_env())
 
 # make them available in the current function call
 list2env(needed_objs,envir = rlang::current_env())
 
+# find beaker tares through user-supplied argument or option
+beaker_tares <- beaker_tares %||% getOption('soiltestr.beaker_tares') %||% internal_data$equipment_instructions("beaker_tares")
+
+
 # locate beaker tare set from data files
 
-  beaker_tare_set <- unique(method_specific_datafiles$pipetting$beaker_tare_set)
+  #beaker_tare_set <- unique(method_specific_datafiles$pipetting$beaker_tare_set)
 
-  beaker_tares <- asi468::psa_beaker_tares[[beaker_tare_set]]
+ # beaker_tares <- asi468::psa_beaker_tares[[beaker_tare_set]]
 
   # compute blank correction
 
