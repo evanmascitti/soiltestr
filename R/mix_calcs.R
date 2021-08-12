@@ -37,9 +37,6 @@
 #'   in decimal form.
 #' @param w_clay The gravimetric water content of the air-dry "clay" component,
 #'   in decimal form.
-#' @param backpack_flo_rate_g_per_sec The measured flow rate of water which is
-#'   being sprayed on the soil while in the mixer, in
-#'   cm\ifelse{html}{\out{<sup>3</sup>}}{\eqn{^3}{^3}}/second.
 #'
 #' @usage mix_calcs(mix_date, expt_mix_nums, sand_name, clay_name,
 #'  final_sand_pcts, final_OD_kg= 43, w_final= 0.05, sand_pct_in_sand,
@@ -78,7 +75,7 @@
 mix_calcs <- function(mix_date, expt_mix_nums, sand_name, clay_name,
                               final_sand_pcts, final_OD_kg= 43, w_final= 0.05,
                               sand_pct_in_sand, sand_pct_in_clay, w_sand= 0.001,
-                              w_clay=0.02, backpack_flo_rate_g_per_sec= 28.3) {
+                              w_clay=0.02) {
   mix_ref <-   tibble::tibble(
     mix_date= lubridate::as_date(mix_date),
     expt_mix_nums = expt_mix_nums,
@@ -94,16 +91,13 @@ mix_calcs <- function(mix_date, expt_mix_nums, sand_name, clay_name,
     kg_air_dry_clay_component = .data$kg_OD_clay_component*(1+w_clay),
     kg_water_already_present = ( (w_sand * .data$kg_OD_sand_component) + (w_clay * .data$kg_OD_clay_component) ),
     kg_water_desired_after_mixing = w_final * final_OD_kg,
-    kg_water_to_add = .data$kg_water_desired_after_mixing - .data$kg_water_already_present,
-    sec_to_spray_w_backpack = (.data$kg_water_to_add*1000) / backpack_flo_rate_g_per_sec ) %>%
+    kg_water_to_add = .data$kg_water_desired_after_mixing - .data$kg_water_already_present) %>%
     dplyr::select(mix_date, expt_mix_nums, sand_name, clay_name, .data$sand_pct,
                   .data$kg_air_dry_sand_component, .data$kg_air_dry_clay_component,
-                  .data$kg_water_to_add,
-                  .data$sec_to_spray_w_backpack ) %>%
+                  .data$kg_water_to_add) %>%
     dplyr::mutate(sand_pct= 100*.data$sand_pct,
                   kg_air_dry_sand_component= .data$kg_air_dry_sand_component,
-                  kg_air_dry_clay_component = .data$kg_air_dry_clay_component,
-                  sec_to_spray_w_backpack= .data$sec_to_spray_w_backpack)  %>%
+                  kg_air_dry_clay_component = .data$kg_air_dry_clay_component)  %>%
     dplyr::rename(`Mix Date`=  mix_date,
                   `Mix number` = expt_mix_nums,
                   `Sand name` = sand_name,
@@ -111,7 +105,6 @@ mix_calcs <- function(mix_date, expt_mix_nums, sand_name, clay_name,
                   `Final % sand-size` = .data$sand_pct,
                   `kg sand component`= .data$kg_air_dry_sand_component,
                   `kg clay component`= .data$kg_air_dry_clay_component,
-                  `kg water to add `= .data$kg_water_to_add,
-                  `seconds to spray`= .data$sec_to_spray_w_backpack)
+                  `kg water to add`= .data$kg_water_to_add)
   return(mix_ref)
 }

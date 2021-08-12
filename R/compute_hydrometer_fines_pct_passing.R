@@ -1,5 +1,6 @@
 compute_152H_hydrometer_fines_pct_passing <- function(...){
 
+  browser()
 
   # find needed objects from caller environment and
   # make them available in the current function call
@@ -71,8 +72,8 @@ compute_152H_hydrometer_fines_pct_passing <- function(...){
                  stir_AM_PM,
                  sep = ' ') %>%
     dplyr::mutate(
-      sampling_datetime = lubridate::ymd_hms(sampling_datetime, tz = Sys.timezone()),
-      stir_datetime = lubridate::ymd_hms(stir_datetime, tz = Sys.timezone()),
+      sampling_datetime = lubridate::ymd_hm(sampling_datetime, tz = Sys.timezone()),
+      stir_datetime = lubridate::ymd_hm(stir_datetime, tz = Sys.timezone()),
       elapsed_time = lubridate::as.duration(sampling_datetime - stir_datetime)) %>%
     dplyr::left_join(OD_specimen_masses, by = c("date", "experiment_name", "sample_name", "replication", "batch_sample_number"))
 
@@ -267,7 +268,7 @@ percent_finer_D_x <- function(calculations_df, d_microns) {
 
   # next, fit a log-linear model to those two data points
 
-  #browser()
+  # browser()
 
   log_lin_mod <- lm(
     data = filtered_distances_df,

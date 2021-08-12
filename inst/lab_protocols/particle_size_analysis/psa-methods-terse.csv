@@ -1,14 +1,15 @@
-protocol_ID,OM_removal,carbonate_removal,iron_oxide_removal,mechanical_dispersion,chemical_dispersion,g_sample,fines_method,coarse_method,wash_thru_270_time,other_comments
-1,-,-,-,milkshake_5,calgon_0.5,10,pipette,USGA_sieves,before,-
-2,-,-,-,milkshake_5,calgon_5,50,hydrometer,USGA_sieves,before,-
-3,peroxide,-,-,milkshake_5,calgon_0.5,10,pipette,USGA_sieves,before,-
-4,-,-,-,overnight_shaker,calgon_5,50,pipette,USGA_sieves,before,-
-5,-,-,-,overnight_shaker,calgon_5,50,hydrometer,USGA_sieves,before,blank computed w/ companion measurement
-6,bleach,-,-,milkshake_5,calgon_0.5,10,pipette,USGA_sieves,before,-
-7,-,-,-,milkshake_5,calgon_5,50,pipette,gravel+sand,after,-
-8,-,-,-,milkshake_5,calgon_5,50,hydrometer,gravel+sand,after,blank computed w/ companion measurement
-9,-,-,-,milkshake_5,calgon_5,50,hydrometer,gravel+sand,after,blank computed w/ temperature calibration
-10,-,-,-,milkshake_5,calgon_0.5,10,pipette,gravel+sand,before,-
-11,-,-,-,milkshake_5,calgon_5,25,pipette,expanded_sieve_bins_1,before,-
-12,-,-,-,milkshake_5,calgon_5,50,pipette,USGA_sieves,before,-
-13,-,-,-,milkshake_5,calgon_5,50,pipette,USGA_sieves,before,-
+protocol_ID,OM_removal,carbonate_removal,iron_oxide_removal,mechanical_dispersion,chemical_dispersion,g_sample,fines_method,coarse_method,wash_thru_270_time,other_comments,L
+1,-,-,-,milkshake_5,calgon_0.5,10,pipette,USGA_sieves,before,-,
+2,-,-,-,milkshake_5,calgon_5,50,hydrometer,USGA_sieves,before,-,
+3,peroxide,-,-,milkshake_5,calgon_0.5,10,pipette,USGA_sieves,before,-,
+4,-,-,-,overnight_shaker,calgon_5,50,pipette,USGA_sieves,before,-,
+5,-,-,-,overnight_shaker,calgon_5,50,hydrometer,USGA_sieves,before,blank computed w/ companion measurement,
+6,bleach,-,-,milkshake_5,calgon_0.5,10,pipette,USGA_sieves,before,-,
+7,-,-,-,milkshake_5,calgon_5,50,pipette,gravel+sand,after,-,
+8,-,-,-,milkshake_5,calgon_5,50,hydrometer,gravel+sand,after,blank computed w/ companion measurement,
+9,-,-,-,milkshake_5,calgon_5,50,hydrometer,gravel+sand,after,blank computed w/ temperature calibration,
+10,-,-,-,milkshake_5,calgon_0.5,10,pipette,gravel+sand,before,-,
+11,-,-,-,milkshake_5,calgon_5,25,pipette,expanded_sieve_bins_1,before,-,
+12,-,-,-,milkshake_5,calgon_5,50,pipette,USGA_sieves,before,-,
+13,-,-,-,milkshake_5,calgon_5,50,pipette,USGA_sieves,before,-,
+14,-,-,-,milkshake_5,calgon_5,50,wash-through,gravel+sand,-,total fines computed from #270 wash-through; no split between silt and clay....goal is to compute sand + gravel vs. fines,

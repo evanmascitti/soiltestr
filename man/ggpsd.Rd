@@ -4,13 +4,17 @@
 \alias{ggpsd}
 \title{Plot one or more particle size distributions}
 \usage{
-ggpsd(df, points = TRUE, ...)
+ggpsd(df, points = TRUE, log_lines = TRUE, bold_log_lines = TRUE, ...)
 }
 \arguments{
 \item{df}{Data frame containing columns titled \code{microns} and
 \code{percent_passing}}
 
 \item{points}{Whether to include points on the plot (default is TRUE, set to FALSE for lines only)}
+
+\item{log_lines}{Logical. Plot the canonical log-10 vertical grid?}
+
+\item{bold_log_lines}{Logical. Plot thicker lines at 0.1, 1, 10, 100, and 1000 microns}
 
 \item{...}{Other arguments passed on to \code{aes()} in the initial call to
 \code{ggplot()} (affects both points and lines)}

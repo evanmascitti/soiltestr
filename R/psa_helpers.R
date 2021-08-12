@@ -99,7 +99,7 @@ import_psa_datafile <- function(x){
   # it, but I finally succeeded in using modify_if.....for each list element
   # (in this particular case there are only 2 but it would generalize),
   # this checks if the data frame has a column named "protocol_ID" and then
-  # if it does it applies my anaonymous function to mutate that column
+  # if it does it applies my anonymous function to mutate that column
   # into a charcter type. In this way the rest of the data frames are "shielded"
   # from that function; i.e. they will never see it which allows me to use the
   # normal NSE syntax for the mutate call
@@ -272,6 +272,43 @@ blank_correction <- mean(blanks_df$calgon_in_beaker, na.rm = TRUE)
 
 
 
+# this one is a helper for exiting early when user only is doing a
+# wash-though analysis to compute total coarse content and total fines
+# (i.e. no separation between silt and clay)
+
+#' Compute gravel, sand, and total fines
+#'
+#' (Internal)
+#'
+#' @return tibble with one row per specimen
+#'
+wash_through_coarse_grains <- function(){
+
+   # browser()
+
+  # find simple bins data frame
+
+  cumulative_percent_passing <- get("cumulative_percent_passing", envir = rlang::caller_env() )
+
+  wash_through_size_bins <- cumulative_percent_passing %>%
+    dplyr::filter(!is.na(microns)) %>%
+    tidyr::pivot_wider(names_from = .data$microns,
+                       values_from = .data$percent_passing) %>%
+    dplyr::mutate(
+      gravel = .data$`4000` - .data$`2000`,
+      sand = .data$`2000` - .data$`53`,
+      fines = .data$`53` ) %>%
+    dplyr::select(.data$date:.data$batch_sample_number,
+                  .data$gravel:.data$fines) %>%
+    dplyr::mutate(
+      dplyr::across(
+        .cols = .data$gravel:.data$fines,
+        .fns = ~.*100))
+
+  return(wash_through_size_bins)
+
+}
+
 
 #' Calculate % finer for arbitrary number of sieves
 #'
@@ -282,6 +319,7 @@ compute_sieves_percent_passing <- function(){
 
   # find required objects from calling environment
 
+ # browser()
 
   needed_objs <- mget(x = c("method_specific_datafiles", "OD_specimen_masses"),
                       envir = rlang::caller_env())

@@ -7,7 +7,7 @@ check_for_fines_complex_bins <- function(){
 
   # return a logical based on whether at least 3 particle diameters were sampled
   # for the fines method
-  protocol_ID %in% internal_data$fines_sub_bin_invoking_protocol_IDS
+  protocol_ID %in% internal_data$fines_sub_bin_invoking_protocol_IDs
 
 }
 
@@ -20,7 +20,7 @@ check_for_coarse_complex_bins <- function(){
   # return a logical based on whether at least 3 particle diameters were sampled
   # for the coarse method
 
-  protocol_ID %in% internal_data$coarse_sub_bin_invoking_protocol_IDS
+  protocol_ID %in% internal_data$coarse_sub_bin_invoking_protocol_IDs
 
 }
 
@@ -228,6 +228,32 @@ pipette_20_to_0.2_only <- function(){
 
 }
 
+
+#' Dummy data frame with no cases for 270 wash-through protocols
+#'
+#' (Internal)
+#' @return tibble with no cases but having same names as other
+#' datasheets to allow joining and binding
+#'
+wash_through_fines_df <- function(){
+
+  # browser()
+
+  needed_objs <- mget(x = c("common_datafiles"),
+                      envir = rlang::caller_env())
+
+  # make them available in the current function call
+  list2env(needed_objs,envir = rlang::current_env())
+
+dummy_fines_percent_passing <- common_datafiles$metadata %>%
+  dplyr::mutate(
+    microns = NA,
+    percent_passing = NA
+  )
+
+return(dummy_fines_percent_passing)
+
+}
 
 #' Only gravel (<4000 microns), sand, silt, and clay reported
 #'

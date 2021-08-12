@@ -71,23 +71,23 @@ cat('pretreatment_invoking_protocol_IDs are', pretreatment_invoking_protocol_IDs
 # the ones that can the **fines** broken out into sub-classes
 # must have at least 3 measurements of the fines diameters
 
-fines_sub_bin_invoking_protocol_IDS <-psa_protocols %>%
+fines_sub_bin_invoking_protocol_IDs <-psa_protocols %>%
   map("fines_diameters_sampled") %>%
   flatten() %>%
   keep(~length(.) >= 3)  %>%
     names()
-cat('fines_sub_bin_invoking_protocol_IDS are', fines_sub_bin_invoking_protocol_IDS, sep = "\n")
+cat('fines_sub_bin_invoking_protocol_IDs are', fines_sub_bin_invoking_protocol_IDs, sep = "\n")
 
 # for the coarse measurements, same concept except there must be **more**
 # than 3 because 3 is just gravel and the upper and lower limits to be considered
 # sand
 
-coarse_sub_bin_invoking_protocol_IDS <-psa_protocols %>%
+coarse_sub_bin_invoking_protocol_IDs <-psa_protocols %>%
     map("coarse_diameters_sampled") %>%
     flatten() %>%
     keep(~length(.) > 3)  %>%
     names()
-cat('coarse_sub_bin_invoking_protocol_IDS are', coarse_sub_bin_invoking_protocol_IDS, sep = "\n")
+cat('coarse_sub_bin_invoking_protocol_IDs are', coarse_sub_bin_invoking_protocol_IDs, sep = "\n")
 ##############################################################################
 
 
@@ -113,6 +113,15 @@ equipment_instructions <- function(equipment_type) {
 
 
 }
+
+
+# identify protocols that use a wash-through procedure for computing total fines
+
+
+wash_through_protocol_IDs <- psa_protocols_summary %>%
+  dplyr::filter(fines_method == "wash-through") %>%
+  purrr::pluck("protocol_ID")
+cat('wash_through_protocol_IDs are', wash_through_protocol_IDs, sep = "\n")
 
 
 # collect and export ------------------------------------------------------

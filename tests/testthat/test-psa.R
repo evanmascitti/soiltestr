@@ -12,7 +12,7 @@ test_that("PSA protocol 3", {
 
 
 
-  library(tidyverse)
+  suppressPackageStartupMessages(library(tidyverse))
 
 # set current working directory for clarity and less typing
 

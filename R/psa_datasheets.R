@@ -291,6 +291,11 @@ if(use_hydrometer){
 
 
 
+# for wash-through methods, i.e. total fines only -------------------------
+
+# no additional sheets required beyond the datasheets common to all methods
+
+
 # use_fines_laser_diffraction <- protocol_ID %in% c(fines_laser_diffraction_invoking_protocol_IDs)
   # if(use_fines_laser_diffraction){psa_fines_laser_diffraction_sampling_datasheets <- fines_laser_diffraction_sampling_datasheets(...)}
 

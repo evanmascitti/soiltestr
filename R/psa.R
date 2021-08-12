@@ -42,6 +42,10 @@ psa <- function(dir, bouyoucos_cylinder_dims = NULL, tin_tares = NULL,
 
   protocol_ID <- find_protocol_ID()
 
+
+
+
+
   # read all raw data files and put into a list, then divide into common
   # and method-specific lists and clean up any empty rows from each
 
@@ -138,6 +142,7 @@ hygroscopic_water_contents <- common_datafiles$hygroscopic_corrections %>%
     "11" = compute_pipette_fines_pct_passing(...),
     "12" = compute_pipette_fines_pct_passing(...),
     "13" = compute_pipette_fines_pct_passing(...),
+    "14" = wash_through_fines_df( ...),
     stop("Can't find the protocol... unable to compute % fines for protocol_ID ", protocol_ID, call. = T)
   )
 
@@ -158,6 +163,7 @@ hygroscopic_water_contents <- common_datafiles$hygroscopic_corrections %>%
     "11" = compute_sieves_percent_passing(),
     "12" = compute_sieves_percent_passing(),
     "13" = compute_sieves_percent_passing(),
+    "14" = compute_sieves_percent_passing(),
     stop(
       "Can't find the protocol - unable to compute % coarse particles for protocol_ID ",
       protocol_ID,
@@ -167,10 +173,39 @@ hygroscopic_water_contents <- common_datafiles$hygroscopic_corrections %>%
 
   # bind coarse and fine data frames together
 
-  cumulative_percent_passing <- rbind(fines_percent_passing,
+ #  browser()
+  cumulative_percent_passing <- dplyr::bind_rows(fines_percent_passing,
                                       coarse_percent_passing) %>%
     dplyr::arrange(.data$batch_sample_number,
-                   dplyr::desc(.data$microns))
+                   dplyr::desc(.data$microns)) %>%
+    dplyr::filter(
+      !is.na(microns)
+    )
+
+
+
+  # in special case of wash-through protocols,
+  # exit early by using a special function which calculates the bin % for
+  # gravel, sand, and fines
+
+  # in the special case that the protocol is number 14, the only things
+  # computed should be gravel, sand ,and fines....call a different
+  # function that will exit early without trying to calculate any of the
+  # other things normally associated with a psa
+
+
+  # browser
+  if(protocol_ID %in% internal_data$wash_through_protocol_IDs){
+
+   #  browser()
+
+    coarse_fine_split <- wash_through_coarse_grains()
+
+    return(coarse_fine_split)
+
+  }
+
+  ####
 
   # create data frame of standard bin sizes
 
@@ -209,6 +244,7 @@ hygroscopic_water_contents <- common_datafiles$hygroscopic_corrections %>%
   "12" = insufficient_fines_sampling(),
   "11" = insufficient_fines_sampling(),
   "13" = pipette_20_to_0.2_only(),
+  "14" = insufficient_fines_sampling(),
   stop("Could not find any info for psa_protocol ID ", protocol_ID, ". Can't compute sub-bins.", call. = T)
 )
 
@@ -250,10 +286,12 @@ hygroscopic_water_contents <- common_datafiles$hygroscopic_corrections %>%
      "11" = expanded_sieve_bins_1(),
      "12" = insufficient_coarse_sampling(),
      "13" = USGA_bins(),
+     "14" = insufficient_coarse_sampling(),
      stop("Could not find any info for psa_protocol ID ", protocol_ID, ". Can't compute any sub-bins for sand-size parcticles.", call. = T)
    )
 
    }
+
 
  # browser()
 
@@ -339,8 +377,10 @@ method_metadata <-switch (protocol_ID,
     "8" = psa_protocols[["8"]],
     "9" = psa_protocols[["9"]],
     "10" = psa_protocols[["10"]],
-    "12" = psa_protocols[["11"]],
-    "13" = psa_protocols[["11"]],
+    "11" = psa_protocols[["11"]],
+    "12" = psa_protocols[["12"]],
+    "13" = psa_protocols[["13"]],
+    "14" = psa_protocols[["14"]],
     stop("Could not find any metadata for psa_protocol number ", protocol_ID, call. = T))
 
 

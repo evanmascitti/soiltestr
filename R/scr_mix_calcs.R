@@ -1,0 +1,87 @@
+#' Produce a soil with a known silt-to-clay ratio
+#' \loadmathjax
+#' Compute air-dry component masses to use based on silt-size and clay-size mass
+#' percentages and extant water contents
+#'
+#' @param final_OD_kg oven-dry mass of particles < 53 microns in final mixture (in kg)
+#' @param scr silt-to clay ratio, computed as \mjeqn{\frac{percent silt-size}{percent clay-size}}{}
+#' @param silt_silty percent silt in the silty soil (decimal)
+#' @param clay_silty percent clay in the silty soil (decimal)
+#' @param silt_clayey percent silt in the clayey soil (decimal)
+#' @param clay_clayey percent clay in the clayey soil (decimal)
+#' @param w_silty gravimetric water content of silty soil (decimal)
+#' @param w_clayey gravimetric water content of clayey soil (decimal)
+#'
+#' @return a tibble with two columns; the air-dry mass of component A (the silty soil) and component B (the clayey soil)
+#' @export
+#'
+scr_mix_calcs <- function(final_OD_kg, scr, silt_silty, clay_silty, silt_clayey, clay_clayey, w_silty, w_clayey){
+
+  # browser()
+
+
+
+  # This function calculates the masses of air-dry components
+  # needed to generate a known oven-dry mass of _fines_, not
+  # of total soil A + soil B.....in other words, it accounts for
+  # the "extra" mass of sand that is simply "along for the ride",
+  # just as potassium might be when applying N-P-K fertilizer at
+  # an N-based rate.
+
+  # the convention will be to consider soil A
+  # the siltier material.
+
+  # first need to calculate mass % of soil A and soil B
+
+  # recode scr as R for easier typing
+
+  R <- scr
+
+
+  Mb <- ( (R * clay_silty) - silt_silty) / (silt_clayey - silt_silty + (R * clay_silty) - (R * clay_clayey) )
+
+  Ma <- 1 - Mb
+
+  # calculate correction factor to use some "extra" of each
+  # soil so that the total mass of soil contains the needed
+  # mass of OD fines
+
+  final_OD_sand_pct <- (Mb * (1 - silt_silty - clay_silty) ) + (Ma * (1 - silt_clayey - clay_clayey) )
+
+  final_OD_clay_pct <- (1- final_OD_sand_pct) / (1 + R)
+
+  final_OD_silt_pct <- 1 - final_OD_sand_pct - final_OD_clay_pct
+
+  sand_multiplier <- 1 + ( final_OD_sand_pct / (1 - final_OD_sand_pct))
+
+
+  # the masses above are all on an oven-dry basis, so correct for
+  # hygroscopic water contents
+
+  Mb_air_dry_uncorrected <- Mb * (1 + w_clayey)
+  Ma_air_dry_uncorrected <- Ma * (1 + w_silty)
+
+  Mb_air_dry <- Mb_air_dry_uncorrected * sand_multiplier * final_OD_kg
+  Ma_air_dry <- Ma_air_dry_uncorrected * sand_multiplier * final_OD_kg
+
+  return_tibble <- tibble::tibble(
+    air_dry_kg_A = Ma_air_dry,
+    air_dry_kg_B = Mb_air_dry
+  )
+
+  return(return_tibble)
+
+}
+
+# some test data
+#
+# scr_mix_calcs(
+#   final_OD_kg = 100,
+#   scr = 2,
+#   silt_silty = 0.9,
+#   clay_silty = 0.06,
+#   silt_clayey = 0.43,
+#   clay_clayey = 0.54,
+#   w_silty = 0.001,
+#   w_clayey = 0.04
+# )
