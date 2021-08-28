@@ -143,6 +143,7 @@ hygroscopic_water_contents <- common_datafiles$hygroscopic_corrections %>%
     "12" = compute_pipette_fines_pct_passing(...),
     "13" = compute_pipette_fines_pct_passing(...),
     "14" = wash_through_fines_df( ...),
+    "15" = compute_pipette_fines_pct_passing(...),
     stop("Can't find the protocol... unable to compute % fines for protocol_ID ", protocol_ID, call. = T)
   )
 
@@ -245,6 +246,7 @@ hygroscopic_water_contents <- common_datafiles$hygroscopic_corrections %>%
   "11" = insufficient_fines_sampling(),
   "13" = pipette_20_to_0.2_only(),
   "14" = insufficient_fines_sampling(),
+  "15" = SSSA_pipette_bins(),
   stop("Could not find any info for psa_protocol ID ", protocol_ID, ". Can't compute sub-bins.", call. = T)
 )
 
@@ -287,6 +289,7 @@ hygroscopic_water_contents <- common_datafiles$hygroscopic_corrections %>%
      "12" = insufficient_coarse_sampling(),
      "13" = USGA_bins(),
      "14" = insufficient_coarse_sampling(),
+     "15" = USGA_bins(),
      stop("Could not find any info for psa_protocol ID ", protocol_ID, ". Can't compute any sub-bins for sand-size parcticles.", call. = T)
    )
 
@@ -381,6 +384,7 @@ method_metadata <-switch (protocol_ID,
     "12" = psa_protocols[["12"]],
     "13" = psa_protocols[["13"]],
     "14" = psa_protocols[["14"]],
+    "15" = psa_protocols[["15"]],
     stop("Could not find any metadata for psa_protocol number ", protocol_ID, call. = T))
 
 

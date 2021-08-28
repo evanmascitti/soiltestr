@@ -75,7 +75,8 @@ fines_sub_bin_invoking_protocol_IDs <-psa_protocols %>%
   map("fines_diameters_sampled") %>%
   flatten() %>%
   keep(~length(.) >= 3)  %>%
-    names()
+  names()
+
 cat('fines_sub_bin_invoking_protocol_IDs are', fines_sub_bin_invoking_protocol_IDs, sep = "\n")
 
 # for the coarse measurements, same concept except there must be **more**

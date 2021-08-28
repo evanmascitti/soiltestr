@@ -284,7 +284,7 @@ blank_correction <- mean(blanks_df$calgon_in_beaker, na.rm = TRUE)
 #'
 wash_through_coarse_grains <- function(){
 
-   # browser()
+  browser()
 
   # find simple bins data frame
 
@@ -319,7 +319,7 @@ compute_sieves_percent_passing <- function(){
 
   # find required objects from calling environment
 
- # browser()
+  browser()
 
   needed_objs <- mget(x = c("method_specific_datafiles", "OD_specimen_masses"),
                       envir = rlang::caller_env())
