@@ -66,13 +66,10 @@
 #'  cm\ifelse{html}{\out{<sup>3</sup>}}{\eqn{^3}{^3}}. Used to compute compacted
 #'  volume of soil plus 0.25" of "over-pack" extending above the top of the
 #'  4.5"-high mold.
-#'@param spray_flo_rate_cm3_sec flow rate of bottle sprayer in
-#'  cm\ifelse{html}{\out{<sup>3</sup>}}{\eqn{^3}{^3}}/second
-#'
 #'
 #'@return A tibble with one row per aliquot. If there are soils with water
 #'  content exceeding the minimum value desired, a negative number will populate
-#'  the `w_to_add_g` and `time_to_spray` output columns.
+#'  the `w_to_add_g` column.
 #'@export
 #'
 #'@example inst/examples/proctor_prep_example.R
@@ -84,8 +81,7 @@
 #'@references \href{https://www.astm.org/Standards/D698.htm}{ASTMc D698-12e2}
 
 proctor_prep <- function(df, date, w_int = 0.015, assumed_d_max = 2.20,
-                           cylinder_volume_cm3 = 937.4,
-                           spray_flo_rate_cm3_sec = 2.40){
+                           cylinder_volume_cm3 = 940){
 
   # error messages if required arguments are not present
   if(missing(df)){
@@ -118,35 +114,50 @@ proctor_prep <- function(df, date, w_int = 0.015, assumed_d_max = 2.20,
 
   # generate new data frame
 
-  newdf <- df %>%
+  new_df <- df %>%
     dplyr::group_by(.data$sample_name, .data$effort) %>%
-    dplyr::mutate(aliquots =
-                    purrr::pmap(
-                      .l= list(w_extant = .data$w_extant, est_w_opt = .data$est_w_opt),
-                      .f= ~tibble(date= lubridate::as_date(date),
-                                  cylinder_number = 1:5,
-                                  w_target= c(est_w_opt - w_int*2,
-                                              est_w_opt - w_int,
-                                              est_w_opt,
-                                              est_w_opt + w_int,
-                                              est_w_opt + w_int*2 ),
-                                  OD_soil_to_use = cylinder_volume_cm3*assumed_d_max*(4.75/4.5),
-                                  delta_w = .data$w_target - w_extant,
-                                  moist_soil_to_use_g = .data$OD_soil_to_use*(1+w_extant),
-                                  w_target_g = .data$w_target*.data$OD_soil_to_use,
-                                  w_already_present = .data$moist_soil_to_use_g - .data$OD_soil_to_use,
-                                  w_to_add_g = .data$w_target_g - .data$w_already_present,
-                                  sec_to_spray= round(.data$w_to_add_g/spray_flo_rate_cm3_sec, 0),
-                                  sec_to_spray_period= lubridate::as.period(lubridate::as.duration(.data$sec_to_spray)),
-                                  time_to_spray= sprintf('%02d:%02d',
-                                                         lubridate::minute(.data$sec_to_spray_period),
-                                                         lubridate::second(.data$sec_to_spray_period)
-    ) ) ) ) %>%
+    dplyr::mutate(
+      aliquots =
+        purrr::pmap(
+          .l = list(
+            w_extant = .data$w_extant,
+            est_w_opt = .data$est_w_opt
+          ),
+          .f = ~ tibble::tibble(
+            date = lubridate::as_date(date),
+            cylinder_number = 1:5,
+            w_target = c(
+              est_w_opt - w_int * 2,
+              est_w_opt - w_int,
+              est_w_opt,
+              est_w_opt + w_int,
+              est_w_opt + w_int * 2
+            ),
+            OD_soil_to_use = cylinder_volume_cm3 *
+              assumed_d_max * (4.75 / 4.5),
+            delta_w = .data$w_target - w_extant,
+            moist_soil_to_use_g = .data$OD_soil_to_use *
+              (1 + w_extant),
+            w_target_g = .data$w_target * .data$OD_soil_to_use,
+            w_already_present = .data$moist_soil_to_use_g - .data$OD_soil_to_use,
+            w_to_add_g = .data$w_target_g - .data$w_already_present
+          )
+        ) ) %>%
     tidyr::unnest(.data$aliquots) %>%
     dplyr::ungroup() %>%
     dplyr::select(
-      .data$effort, .data$sample_name, .data$date, .data$moist_soil_to_use_g, .data$w_to_add_g, .data$cylinder_number, .data$w_target, .data$time_to_spray )
+      .data$sample_name,
+      .data$effort,
+      .data$date,
+      .data$w_target,
+      .data$cylinder_number,
+      .data$moist_soil_to_use_g,
+      .data$w_to_add_g) %>%
+    dplyr::mutate(
+      moist_soil_to_use_g = round(moist_soil_to_use_g, digits = -2),
+      w_to_add_g = round(w_to_add_g, digits = -1)
+      )
 
-  return(newdf)
+  return(new_df)
 }
 

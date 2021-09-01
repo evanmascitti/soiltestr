@@ -23,10 +23,6 @@
 #'   and to prepare 6 "chunk" cylinders (3 each at standard and modified compaction
 #'   effort), with a 10% extra estimate to allow for PSA, Atterberg limits,
 #'   and a margin for error.
-#' @param w_final a numeric vector of the same length as `expt_mix_nums`
-#'   (if the mixes are to have different water contents), or a single numeric
-#'   value (if all mixes are to have the same final water content). Defaults to
-#'   0.05 which is the lowest water content typically used in a compaction test.
 #' @param sand_pct_in_sand a numeric vector of length 1 representing the
 #'   fraction of the "sand" component which is >53 &mu;m sieve diameter, on an
 #'   oven-dry mass basis (decimal form).
@@ -37,6 +33,11 @@
 #'   in decimal form.
 #' @param w_clay The gravimetric water content of the air-dry "clay" component,
 #'   in decimal form.
+#' @param w_final a numeric vector of the same length as `expt_mix_nums`
+#'   (if the mixes are to have different water contents), or a single numeric
+#'   value (if all mixes are to have the same final water content). Defaults to
+#'   0.05 which is the lowest water content typically used in a compaction test.
+#' @param compute_w_to_add Logical. Calculate the water required to bring mixture to w_final?
 #'
 #' @usage mix_calcs(mix_date, expt_mix_nums, sand_name, clay_name,
 #'  final_sand_pcts, final_OD_kg= 43, w_final= 0.05, sand_pct_in_sand,
@@ -73,9 +74,10 @@
 #'
 
 mix_calcs <- function(mix_date, expt_mix_nums, sand_name, clay_name,
-                              final_sand_pcts, final_OD_kg= 43, w_final= 0.05,
-                              sand_pct_in_sand, sand_pct_in_clay, w_sand= 0.001,
-                              w_clay=0.02) {
+                      final_sand_pcts, final_OD_kg= 43, sand_pct_in_sand,
+                      sand_pct_in_clay, w_sand= 0.001,
+                      w_clay=0.02, w_final= 0.05,
+                      compute_w_to_add = FALSE) {
   mix_ref <-   tibble::tibble(
     mix_date= lubridate::as_date(mix_date),
     expt_mix_nums = expt_mix_nums,
@@ -90,14 +92,18 @@ mix_calcs <- function(mix_date, expt_mix_nums, sand_name, clay_name,
     kg_air_dry_sand_component = .data$kg_OD_sand_component*(1+w_sand),
     kg_air_dry_clay_component = .data$kg_OD_clay_component*(1+w_clay),
     kg_water_already_present = ( (w_sand * .data$kg_OD_sand_component) + (w_clay * .data$kg_OD_clay_component) ),
+    new_mix_w = kg_water_already_present / final_OD_kg,
     kg_water_desired_after_mixing = w_final * final_OD_kg,
     kg_water_to_add = .data$kg_water_desired_after_mixing - .data$kg_water_already_present) %>%
     dplyr::select(mix_date, expt_mix_nums, sand_name, clay_name, .data$sand_pct,
                   .data$kg_air_dry_sand_component, .data$kg_air_dry_clay_component,
+                  .data$new_mix_w,
                   .data$kg_water_to_add) %>%
-    dplyr::mutate(sand_pct= 100*.data$sand_pct,
-                  kg_air_dry_sand_component= .data$kg_air_dry_sand_component,
-                  kg_air_dry_clay_component = .data$kg_air_dry_clay_component)  %>%
+    dplyr::mutate(
+      sand_pct = 100 * .data$sand_pct,
+      new_mix_w = round(new_mix_w, digits = 3),
+      kg_air_dry_sand_component = round(.data$kg_air_dry_sand_component, digits = 1),
+      kg_air_dry_clay_component = round(.data$kg_air_dry_clay_component, digits = 1)) %>%
     dplyr::rename(`Mix Date`=  mix_date,
                   `Mix number` = expt_mix_nums,
                   `Sand name` = sand_name,
@@ -105,6 +111,12 @@ mix_calcs <- function(mix_date, expt_mix_nums, sand_name, clay_name,
                   `Final % sand-size` = .data$sand_pct,
                   `kg sand component`= .data$kg_air_dry_sand_component,
                   `kg clay component`= .data$kg_air_dry_clay_component,
+                  `Mix water content` = .data$new_mix_w,
                   `kg water to add`= .data$kg_water_to_add)
+
+  if(!compute_w_to_add){
+    mix_ref <- dplyr::select(mix_ref, -`kg water to add`)
+  }
+
   return(mix_ref)
 }

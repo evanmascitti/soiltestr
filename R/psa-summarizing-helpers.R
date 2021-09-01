@@ -73,7 +73,7 @@ summarize_psa <- function(df){
     dplyr::select(-c(.data$replication, .data$batch_sample_number)) %>%
     dplyr::summarise(
       dplyr::across(.col = tidyselect::vars_select_helpers$where(is.numeric),
-                    .fns = mean), .groups = 'drop')
+                    .fns = ~mean(., na.rm = TRUE)), .groups = 'drop')
 }
 
 

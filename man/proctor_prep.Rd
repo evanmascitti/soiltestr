@@ -9,8 +9,7 @@ proctor_prep(
   date,
   w_int = 0.015,
   assumed_d_max = 2.2,
-  cylinder_volume_cm3 = 937.4,
-  spray_flo_rate_cm3_sec = 2.4
+  cylinder_volume_cm3 = 940
 )
 }
 \arguments{
@@ -29,14 +28,11 @@ g/cm\ifelse{html}{\out{<sup>3</sup>}}{\eqn{^3}{^3}}}
 cm\ifelse{html}{\out{<sup>3</sup>}}{\eqn{^3}{^3}}. Used to compute compacted
 volume of soil plus 0.25" of "over-pack" extending above the top of the
 4.5"-high mold.}
-
-\item{spray_flo_rate_cm3_sec}{flow rate of bottle sprayer in
-cm\ifelse{html}{\out{<sup>3</sup>}}{\eqn{^3}{^3}}/second}
 }
 \value{
 A tibble with one row per aliquot. If there are soils with water
 content exceeding the minimum value desired, a negative number will populate
-the \code{w_to_add_g} and \code{time_to_spray} output columns.
+the \code{w_to_add_g} column.
 }
 \description{
 Pass in a tibble of specimen information and compute the amount

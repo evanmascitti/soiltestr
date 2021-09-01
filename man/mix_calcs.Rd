@@ -32,11 +32,6 @@ and to prepare 6 "chunk" cylinders (3 each at standard and modified compaction
 effort), with a 10\% extra estimate to allow for PSA, Atterberg limits,
 and a margin for error.}
 
-\item{w_final}{a numeric vector of the same length as \code{expt_mix_nums}
-(if the mixes are to have different water contents), or a single numeric
-value (if all mixes are to have the same final water content). Defaults to
-0.05 which is the lowest water content typically used in a compaction test.}
-
 \item{sand_pct_in_sand}{a numeric vector of length 1 representing the
 fraction of the "sand" component which is >53 μm sieve diameter, on an
 oven-dry mass basis (decimal form).}
@@ -50,6 +45,13 @@ in decimal form.}
 
 \item{w_clay}{The gravimetric water content of the air-dry "clay" component,
 in decimal form.}
+
+\item{w_final}{a numeric vector of the same length as \code{expt_mix_nums}
+(if the mixes are to have different water contents), or a single numeric
+value (if all mixes are to have the same final water content). Defaults to
+0.05 which is the lowest water content typically used in a compaction test.}
+
+\item{compute_w_to_add}{Logical. Calculate the water required to bring mixture to w_final?}
 }
 \value{
 A ready-to-print table of values with an appropriate number of

@@ -12,8 +12,10 @@ dir <- get(x = "dir", envir = rlang::caller_env())
   # note that in this function the protocol is being read as a character column
   # to facilitate easy use of `switch()` later on
 
-metadata_file <- readr::read_csv(list.files(path = dir, pattern = "metadata", full.names = T),
-                                   col_types = "Dccciic")
+metadata_file <- readr::read_csv(
+  list.files(
+    path = dir, pattern = "metadata", full.names = T),
+  col_types = "Dccciic", na = "-")
 
   protocol_ID <- as.character(unique(metadata_file$protocol_ID))
 
@@ -89,7 +91,9 @@ divide_psa_datafiles <- function(){
 #'
 import_psa_datafile <- function(x){
 
-  nm <- stringr::str_remove(basename(x), pattern = c("\\.csv$")) %>%
+ #  browser()
+
+  nm <- tools::file_path_sans_ext(basename(x)) %>%
     stringr::str_remove(pattern = c("^psa-") ) %>%
     stringr::str_remove(pattern = c("_\\d{4}-\\d{2}-\\d{2}") ) %>%
     stringr::str_remove(pattern = c("-data$") ) %>%
@@ -117,12 +121,12 @@ import_psa_datafile <- function(x){
   # coerce the relevant columns to character types and _then_ parse the
   # number
 
-  # browser()
+ #   browser()
 
-  x %>%
+return_dfs <-   x %>%
     purrr::set_names(nm) %>%
     purrr::map(readr::read_csv,
-               col_types = readr::cols(),
+               show_col_types = FALSE,
                na = "-",
                trim_ws = TRUE,
                skip_empty_rows = TRUE) %>%
@@ -143,6 +147,8 @@ import_psa_datafile <- function(x){
                               match = "^tin_w_\\w*_sample$"),
                             .fns = ~readr::parse_number(as.character(.)))))
 
+
+return(return_dfs)
 
   }
 
@@ -214,7 +220,7 @@ compute_pipette_fines_pct_passing <- function(...){
 
 # inherit the datafiles and OD_specimen masses from the parent function environment
 
-# browser()
+#  browser()
 
 needed_objs <- mget(x = c("method_specific_datafiles", "OD_specimen_masses", "beaker_tares"),
                     envir = rlang::caller_env())
@@ -284,7 +290,7 @@ blank_correction <- mean(blanks_df$calgon_in_beaker, na.rm = TRUE)
 #'
 wash_through_coarse_grains <- function(){
 
-  browser()
+  # browser()
 
   # find simple bins data frame
 
@@ -319,7 +325,7 @@ compute_sieves_percent_passing <- function(){
 
   # find required objects from calling environment
 
-  browser()
+ #  browser()
 
   needed_objs <- mget(x = c("method_specific_datafiles", "OD_specimen_masses"),
                       envir = rlang::caller_env())

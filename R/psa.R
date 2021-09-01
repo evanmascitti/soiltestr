@@ -56,7 +56,10 @@ psa <- function(dir, bouyoucos_cylinder_dims = NULL, tin_tares = NULL,
 # read all the files in; this returns a list of length 2; each element
 # is also a list containing the appropriate data frames (tibbles)
 
+ #  browser()
+
 datafiles <- purrr::map(all_datafile_paths, import_psa_datafile)
+
 
 # assign the contents of the datafiles list to the current environment
 
@@ -127,7 +130,7 @@ hygroscopic_water_contents <- common_datafiles$hygroscopic_corrections %>%
 
   # now that the correct specimen mass is known, compute the fines % passing
 
- #  browser()
+ #   browser()
   fines_percent_passing <- switch (protocol_ID,
     "1" = compute_pipette_fines_pct_passing(...),
     "2" = compute_152H_hydrometer_fines_pct_passing(...),
@@ -165,6 +168,7 @@ hygroscopic_water_contents <- common_datafiles$hygroscopic_corrections %>%
     "12" = compute_sieves_percent_passing(),
     "13" = compute_sieves_percent_passing(),
     "14" = compute_sieves_percent_passing(),
+    "15" = compute_sieves_percent_passing(),
     stop(
       "Can't find the protocol - unable to compute % coarse particles for protocol_ID ",
       protocol_ID,
