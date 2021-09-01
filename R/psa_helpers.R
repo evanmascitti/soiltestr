@@ -218,11 +218,12 @@ check_pretreatment_correction <- function(){
 #'
 compute_pipette_fines_pct_passing <- function(...){
 
-# inherit the datafiles and OD_specimen masses from the parent function environment
+  # inherit the existing objects needed for computation
+  # from the parent function environment
 
 #  browser()
 
-needed_objs <- mget(x = c("method_specific_datafiles", "OD_specimen_masses", "beaker_tares"),
+needed_objs <- mget(x = c("method_specific_datafiles", "OD_specimen_masses", "beaker_tares", "coarse_percent_passing", "protocol_ID"),
                     envir = rlang::caller_env())
 
 # make them available in the current function call
@@ -250,7 +251,45 @@ blank_correction <- mean(blanks_df$calgon_in_beaker, na.rm = TRUE)
 
   # calculate % passing for each size
 
+
+# if the > 53 micron fraction was not washed through the 270
+# sieve prior to pipetting, the volume of liquid is less than
+# 1000 mL. Compute the actual volume of liquid and use as a
+# multiplier to the soil contained in the beaker
+# assume a specific gravity of 2.65 g/cm3. If the sample was washed
+# through the 270 before pipetting, just multiply the sample mass in
+# the beaker by 40
+
+
 # browser()
+
+if(protocol_ID %in% internal_data$after_fines_sampling_wash_through_protocol_IDs){
+
+
+  mass_multipliers <- coarse_percent_passing %>%
+    dplyr::group_by(.data$sample_name, .data$batch_sample_number) %>%
+    dplyr::filter(dplyr::near(.data$microns, 53)) %>%
+    dplyr::summarise(sand_plus_gravel = 1 - .data$percent_passing) %>%
+    dplyr::left_join(
+      OD_specimen_masses,
+      by = c("sample_name",
+             "batch_sample_number")) %>%
+    dplyr::mutate(
+      coarse_particles_mass = sand_plus_gravel * OD_specimen_mass,
+      coarse_particles_volume = coarse_particles_mass / 2.65,
+      mass_multiplier = (1000 - coarse_particles_volume) / 25
+    ) %>%
+    dplyr::select(sample_name, batch_sample_number, mass_multiplier)
+
+} else{
+  # here a table of the same dimensions is made, but the multipliers are
+  # all 40, which is a 25 mL pipette sample scaled to 1000 mL
+  mass_multipliers <-  coarse_percent_passing %>%
+    dplyr::distinct(sample_name, batch_sample_number) %>%
+    dplyr::mutate(mass_multiplier = 40)
+  }
+
+
   fines_percent_passing <- method_specific_datafiles$pipetting %>%
     dplyr::left_join(
       beaker_tares,
@@ -259,10 +298,20 @@ blank_correction <- mean(blanks_df$calgon_in_beaker, na.rm = TRUE)
       OD_specimen_masses,
       by = c("date", "experiment_name",
              "sample_name", "replication", "batch_sample_number")) %>%
-    dplyr::mutate(total_g_in_beaker = .data$beaker_mass_w_OD_sample - .data$beaker_empty_mass,
-                  soil_in_beaker = .data$total_g_in_beaker - blank_correction,
-                  percent_passing = 40 * .data$soil_in_beaker / .data$OD_specimen_mass) %>%
+    dplyr::left_join(
+      mass_multipliers,
+      by = c("sample_name","batch_sample_number")) %>%
+    dplyr::mutate(
+      total_g_in_beaker = .data$beaker_mass_w_OD_sample - .data$beaker_empty_mass,
+      soil_in_beaker = .data$total_g_in_beaker - blank_correction,
+      percent_passing = (mass_multiplier * .data$soil_in_beaker) / .data$OD_specimen_mass) %>%
     dplyr::select(.data$date:.data$batch_sample_number, .data$microns, percent_passing)
+
+
+
+
+
+
 
   return(fines_percent_passing)
 }

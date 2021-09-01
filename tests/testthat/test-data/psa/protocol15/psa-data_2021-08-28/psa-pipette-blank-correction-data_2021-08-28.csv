@@ -1,0 +1,5 @@
+date,experiment_name,protocol_ID,blank_replication,bouyoucos_cylinder_number,beaker_tare_set,beaker_number,beaker_mass_w_OD_sample,comments
+2021-08-28,sandClay1,15,1,13,2021-01-15,49,48.949,-
+2021-08-28,sandClay1,15,2,13,2021-01-15,50,50.677,-
+2021-08-28,sandClay1,15,3,13,2021-01-15,51,50.184,-
+2021-08-28,sandClay1,15,4,13,2021-01-15,52,50.29,-

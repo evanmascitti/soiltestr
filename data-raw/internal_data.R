@@ -115,9 +115,16 @@ equipment_instructions <- function(equipment_type) {
 
 }
 
+# identify protocols that wash the sample through the #270 sieve
+# _after_ pipette or hydrometer sampling
+
+after_fines_sampling_wash_through_protocol_IDs <- psa_protocols_summary %>%
+  dplyr::filter(wash_thru_270_time == 'after') %>%
+  purrr::pluck("protocol_ID")
+cat('after_fines_sampling_wash_through_protocol_IDs are', after_fines_sampling_wash_through_protocol_IDs, sep = "\n")
+
 
 # identify protocols that use a wash-through procedure for computing total fines
-
 
 wash_through_protocol_IDs <- psa_protocols_summary %>%
   dplyr::filter(fines_method == "wash-through") %>%

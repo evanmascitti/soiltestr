@@ -110,3 +110,59 @@ browser()
   expect_true(clay_check)
 
   })
+
+
+# protocol 15 -------------------------------------------------------------
+
+
+test_that("PSA protocol 15", {
+
+  # set options for equipment
+
+  options(soiltestr.bouyoucos_cylinder_dims = asi468::bouyoucos_cylinders,
+          soiltestr.tin_tares = asi468::tin_tares,
+          soiltestr.hydrometer_dims = asi468::astm_152H_hydrometers,
+          soiltestr.beaker_tares = asi468::psa_beaker_tares)
+
+
+
+  suppressPackageStartupMessages(library(tidyverse))
+
+  # set current working directory for clarity and less typing
+
+  setwd(here::here("tests", "testthat", "test-data", "psa", "protocol15"))
+
+
+
+  # create psa object
+  psa15 <- psa(dir = 'psa-data_2021-08-28')
+
+
+
+  # check values of each component of the list ------------------------------
+
+  # all 3 values of total sand
+  sand_rounded <- purrr::map_dbl(psa15$averages$simple_bins$sand, round, 1)
+  expect_equal(object = sand_rounded, expected = c(97.8, 13.4, 4))
+
+  # all 3 values of fine silt
+  expect_equal(object = round(psa15$averages$sub_bins$fine_silt, digits = 1),
+               expected = c(0.2, 16.8, 11.8))
+
+ # make sure all plots exist
+  expect_equal(length(psa15$psd_plots), 12)
+
+  # all bins add to 100%
+  # one has missing data, so there should only be 11 values
+
+  sums <- psa15$sub_bins %>%
+    dplyr::select((where(is.numeric))) %>%
+    dplyr::mutate(across(c(replication, batch_sample_number), .fns = as.factor)) %>%
+    tidyr::pivot_longer((where(is.numeric)), values_to =  'percent_in_bin') %>%
+    dplyr::group_by(across(where(is.factor))) %>%
+    dplyr::summarize(percent_in_bin = sum(percent_in_bin), .groups = 'drop') %>%
+    purrr::pluck("percent_in_bin")
+
+  expect_equal(sums[!is.na(sums)], rep(100, 11))
+
+})

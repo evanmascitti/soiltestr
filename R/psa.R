@@ -128,7 +128,38 @@ hygroscopic_water_contents <- common_datafiles$hygroscopic_corrections %>%
     pretreatment_loss <- NULL
 
 
-  # now that the correct specimen mass is known, compute the fines % passing
+  # now that the correct specimen mass is known, compute the coarse
+  # percent passing
+
+  # browser()
+  # compute the coarse particles % passing
+
+coarse_percent_passing <- switch (
+  protocol_ID,
+  "1" = compute_sieves_percent_passing(),
+  "2" = compute_sieves_percent_passing(),
+  "3" = compute_sieves_percent_passing(),
+  "4" = compute_sieves_percent_passing(),
+  "5" = compute_sieves_percent_passing(),
+  "6" = compute_sieves_percent_passing(),
+  "7" = compute_sieves_percent_passing(),
+  "8" = compute_sieves_percent_passing(),
+  "9" = compute_sieves_percent_passing(),
+  "10" = compute_sieves_percent_passing(),
+  "11" = compute_sieves_percent_passing(),
+  "12" = compute_sieves_percent_passing(),
+  "13" = compute_sieves_percent_passing(),
+  "14" = compute_sieves_percent_passing(),
+  "15" = compute_sieves_percent_passing(),
+  stop(
+    "Can't find the protocol - unable to compute % coarse particles for protocol_ID ",
+    protocol_ID,
+    call. = T
+  )
+)
+
+
+# next compute  the fines % passing
 
  #   browser()
   fines_percent_passing <- switch (protocol_ID,
@@ -150,33 +181,7 @@ hygroscopic_water_contents <- common_datafiles$hygroscopic_corrections %>%
     stop("Can't find the protocol... unable to compute % fines for protocol_ID ", protocol_ID, call. = T)
   )
 
-  # browser()
-# next compute the coarse particles % passing
-
-  coarse_percent_passing <- switch (protocol_ID,
-    "1" = compute_sieves_percent_passing(),
-    "2" = compute_sieves_percent_passing(),
-    "3" = compute_sieves_percent_passing(),
-    "4" = compute_sieves_percent_passing(),
-    "5" = compute_sieves_percent_passing(),
-    "6" = compute_sieves_percent_passing(),
-    "7" = compute_sieves_percent_passing(),
-    "8" = compute_sieves_percent_passing(),
-    "9" = compute_sieves_percent_passing(),
-    "10" = compute_sieves_percent_passing(),
-    "11" = compute_sieves_percent_passing(),
-    "12" = compute_sieves_percent_passing(),
-    "13" = compute_sieves_percent_passing(),
-    "14" = compute_sieves_percent_passing(),
-    "15" = compute_sieves_percent_passing(),
-    stop(
-      "Can't find the protocol - unable to compute % coarse particles for protocol_ID ",
-      protocol_ID,
-      call. = T
-    )
-  )
-
-  # bind coarse and fine data frames together
+# bind coarse and fine data frames together
 
  #  browser()
   cumulative_percent_passing <- dplyr::bind_rows(fines_percent_passing,
@@ -327,9 +332,12 @@ if(length(all_sub_bins != 0)){
 
 # make the ggplots for each sample and replication ---------------------
 
+# browser()
+
 base_plots <- cumulative_percent_passing %>%
   dplyr::left_join(psa_protocols_summary, by = "protocol_ID") %>%
   dplyr::group_by(.data$batch_sample_number) %>%
+  dplyr::arrange(.data$batch_sample_number) %>%
   tidyr::nest() %>%
   dplyr::mutate(plot = purrr::map(data, ggpsd)) %>%
   purrr::pluck("plot")
@@ -343,7 +351,8 @@ plots_extra_stuff <- cumulative_percent_passing %>%
   dplyr::left_join(psa_protocols_summary, by = "protocol_ID") %>%
   dplyr::mutate(subtitle = paste(
   " Sample name: ", .data$sample_name, "\n",
-  "Replication ", .data$replication, "\n") )
+  "Replication ", .data$replication, "\n") ) %>%
+  dplyr::arrange(.data$batch_sample_number)
 
 # this was some extra stuff I was going to include right on the plot
 # but I think it clutters it too much

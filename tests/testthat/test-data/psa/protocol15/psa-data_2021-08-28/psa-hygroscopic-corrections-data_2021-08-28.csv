@@ -1,0 +1,13 @@
+date,experiment_name,sample_name,replication,batch_sample_number,tin_tare_set,tin_number,tin_w_wet_sample,tin_w_OD_sample,comments
+2021-08-28,sandClay1,promound-partac,1,1,2021-03-04,1,10.276,10.147,-
+2021-08-28,sandClay1,promound-partac,2,2,2021-03-04,2,8.764,8.665,-
+2021-08-28,sandClay1,promound-partac,3,3,2021-03-04,3,5.548,5.484,-
+2021-08-28,sandClay1,promound-partac,4,4,2021-03-04,4,9.483,9.378,-
+2021-08-28,sandClay1,duraedge-fs90,1,5,2021-03-04,5,7.915,7.850,-
+2021-08-28,sandClay1,duraedge-fs90,2,6,2021-03-04,6,11.390,11.266,-
+2021-08-28,sandClay1,duraedge-fs90,3,7,2021-03-04,7,11.539,11.405,-
+2021-08-28,sandClay1,duraedge-fs90,4,8,2021-03-04,8,9.562,9.449,-
+2021-08-28,sandClay1,boyd-20-80-aug-2021,1,9,2021-03-04,9,18.311,18.303,-
+2021-08-28,sandClay1,boyd-20-80-aug-2021,2,10,2021-03-04,10,12.653,12.647,-
+2021-08-28,sandClay1,boyd-20-80-aug-2021,3,11,2021-03-04,11,12.158,12.154,-
+2021-08-28,sandClay1,boyd-20-80-aug-2021,4,12,2021-03-04,12,13.516,13.512,-

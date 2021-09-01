@@ -1,0 +1,13 @@
+date,experiment_name,sample_name,replication,batch_sample_number,protocol_ID,comments
+2021-08-28,sandClay1,promound-partac,1,1,15,-
+2021-08-28,sandClay1,promound-partac,2,2,15,-
+2021-08-28,sandClay1,promound-partac,3,3,15,-
+2021-08-28,sandClay1,promound-partac,4,4,15,-
+2021-08-28,sandClay1,duraedge-fs90,1,5,15,-
+2021-08-28,sandClay1,duraedge-fs90,2,6,15,-
+2021-08-28,sandClay1,duraedge-fs90,3,7,15,-
+2021-08-28,sandClay1,duraedge-fs90,4,8,15,-
+2021-08-28,sandClay1,boyd-20-80-aug-2021,1,9,15,-
+2021-08-28,sandClay1,boyd-20-80-aug-2021,2,10,15,-
+2021-08-28,sandClay1,boyd-20-80-aug-2021,3,11,15,-
+2021-08-28,sandClay1,boyd-20-80-aug-2021,4,12,15,-
