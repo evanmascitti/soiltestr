@@ -1,7 +1,11 @@
 #' Produce a soil with a known silt-to-clay ratio
-#' \loadmathjax
+#'
 #' Compute air-dry component masses to use based on silt-size and clay-size mass
 #' percentages and extant water contents
+
+#'\loadmathjax In general, the return value of this function will be further
+#'processed and passed to `mix_calcs()`. This would be useful when blending with
+#'sand to yield a 3-component mixture with known sand content and SCR
 #'
 #' @param final_OD_kg oven-dry mass of particles < 53 microns in final mixture (in kg)
 #' @param scr silt-to clay ratio, computed as \mjeqn{\frac{percent silt-size}{percent clay-size}}{}
@@ -15,7 +19,9 @@
 #' @return a tibble with two columns; the air-dry mass of component A (the silty soil) and component B (the clayey soil)
 #' @export
 #'
-scr_mix_calcs <- function(final_OD_kg, scr, silt_silty, clay_silty, silt_clayey, clay_clayey, w_silty, w_clayey){
+#' @example ./R/examples/scr_mix_calcs.R
+#'
+scr_mix_calcs <- function(final_OD_kg, scr, silt_silty, clay_silty, silt_clayey, clay_clayey, w_silty, w_clayey, include_sand_contents = FALSE, include_OD_masses = FALSE){
 
   # browser()
 
@@ -27,6 +33,9 @@ scr_mix_calcs <- function(final_OD_kg, scr, silt_silty, clay_silty, silt_clayey,
   # the "extra" mass of sand that is simply "along for the ride",
   # just as potassium might be when applying N-P-K fertilizer at
   # an N-based rate.
+
+  # the user has the option to return only the air-dry component
+  # masses or to also include the oven-dry masses and the sand content
 
   # the convention will be to consider soil A
   # the siltier material.
@@ -64,24 +73,25 @@ scr_mix_calcs <- function(final_OD_kg, scr, silt_silty, clay_silty, silt_clayey,
   Mb_air_dry <- Mb_air_dry_uncorrected * sand_multiplier * final_OD_kg
   Ma_air_dry <- Ma_air_dry_uncorrected * sand_multiplier * final_OD_kg
 
-  return_tibble <- tibble::tibble(
-    air_dry_kg_A = Ma_air_dry,
-    air_dry_kg_B = Mb_air_dry
+# compute water content of final mix
+  total_contained_water <- sum(Mb_air_dry, Ma_air_dry) - (sand_multiplier * final_OD_kg)
+  final_mix_w <- total_contained_water/ (sand_multiplier * final_OD_kg)
+
+
+  # compile everything to return
+
+  return_list <- list(
+    air_dry_component_masses = tibble::tibble(
+      air_dry_kg_silty = Ma_air_dry,
+      air_dry_kg_clayey = Mb_air_dry),
+    OD_component_ratios = tibble::tibble(
+      OD_kg_silty = Ma,
+      OD_kg_clayey = Mb),
+    final_OD_sand_pct = final_OD_sand_pct,
+    final_mix_w = final_mix_w
   )
 
-  return(return_tibble)
+  return(return_list)
 
 }
 
-# some test data
-#
-# scr_mix_calcs(
-#   final_OD_kg = 100,
-#   scr = 2,
-#   silt_silty = 0.9,
-#   clay_silty = 0.06,
-#   silt_clayey = 0.43,
-#   clay_clayey = 0.54,
-#   w_silty = 0.001,
-#   w_clayey = 0.04
-# )

@@ -2,10 +2,7 @@
 % Please edit documentation in R/scr_mix_calcs.R
 \name{scr_mix_calcs}
 \alias{scr_mix_calcs}
-\title{Produce a soil with a known silt-to-clay ratio
-\loadmathjax
-Compute air-dry component masses to use based on silt-size and clay-size mass
-percentages and extant water contents}
+\title{Produce a soil with a known silt-to-clay ratio}
 \usage{
 scr_mix_calcs(
   final_OD_kg,
@@ -15,7 +12,9 @@ scr_mix_calcs(
   silt_clayey,
   clay_clayey,
   w_silty,
-  w_clayey
+  w_clayey,
+  include_sand_contents = FALSE,
+  include_OD_masses = FALSE
 )
 }
 \arguments{
@@ -39,8 +38,25 @@ scr_mix_calcs(
 a tibble with two columns; the air-dry mass of component A (the silty soil) and component B (the clayey soil)
 }
 \description{
-Produce a soil with a known silt-to-clay ratio
-\loadmathjax
 Compute air-dry component masses to use based on silt-size and clay-size mass
 percentages and extant water contents
+\loadmathjax In general, the return value of this function will be further
+processed and passed to \code{mix_calcs()}. This would be useful when blending with
+sand to yield a 3-component mixture with known sand content and SCR
+}
+\examples{
+
+# this generates component masses which yield 100 kg of
+# combined silt-size and clay-size particles.
+
+new_fines_mix_data <- scr_mix_calcs(
+  final_OD_kg = 100,
+  scr = 2,
+  silt_silty = 0.9,
+  clay_silty = 0.06,
+  silt_clayey = 0.43,
+  clay_clayey = 0.54,
+  w_silty = 0.001,
+  w_clayey = 0.04
+)
 }
