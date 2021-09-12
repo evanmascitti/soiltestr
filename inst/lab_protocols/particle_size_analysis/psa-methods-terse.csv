@@ -15,3 +15,4 @@ protocol_ID,OM_removal,carbonate_removal,iron_oxide_removal,mechanical_dispersio
 14,-,-,-,milkshake_5,calgon_5,50,wash-through,gravel+sand,-,total fines computed from #270 wash-through; no split between silt and clay....goal is to compute sand + gravel vs. fines,
 15,-,-,-,milkshake_5,calgon_5,50,pipette,USGA_sieves,after,-,
 16,-,-,-,overnight_shaker,calgon_5,50,pipette,USGA_sieves,after,-,
+17,-,-,-,ultrasonics-01,calgon_0.5,10,pipette,USGA_sieves,after,-,

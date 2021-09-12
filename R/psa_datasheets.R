@@ -64,6 +64,9 @@ psa_datasheets <- function(
 
 # argument checking  ------------------------------------------------------
 
+  if(!fs::is_dir(dir)){
+    stop("Directory", dir, "does not exist.")
+  }
 
   # coerce protocol ID to character type in case user supplies it as an integer
 

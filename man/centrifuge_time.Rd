@@ -5,15 +5,17 @@
 \title{\lifecycle{experimental}}
 \usage{
 centrifuge_time(
+  diameter,
   water_temp_c,
   center_to_liquid_surface = 7,
   sampling_depth = 7,
   rpm = 2000,
-  diameter,
   Gs = 2.7
 )
 }
 \arguments{
+\item{diameter}{particle diameter (Stokes' ESD), in microns}
+
 \item{water_temp_c}{Water temp in deg. C}
 
 \item{center_to_liquid_surface}{distance in cm from center of rotation to liquid surface}
@@ -22,12 +24,11 @@ centrifuge_time(
 
 \item{rpm}{centrifuge revolutions per minuite}
 
-\item{diameter}{particle diameter (Stokes' ESD), in microns}
-
-\item{Gs}{specific gravity of soil solids (usually taken as 2.5 g/cm3 due to}
+\item{Gs}{specific gravity of soil solids (usually taken as 2.5 g/cm3 due to
+non-negligible volume of adsorbed water at particle surface)}
 }
 \value{
-
+Double of length 1.
 }
 \description{
 Compute particle settling time in a centrifuge

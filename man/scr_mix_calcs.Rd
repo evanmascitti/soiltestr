@@ -59,4 +59,5 @@ new_fines_mix_data <- scr_mix_calcs(
   w_silty = 0.001,
   w_clayey = 0.04
 )
+new_fines_mix_data
 }

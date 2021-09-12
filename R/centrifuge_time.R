@@ -10,37 +10,42 @@
 #' @param rpm centrifuge revolutions per minuite
 #' @param diameter particle diameter (Stokes' ESD), in microns
 #' @param Gs specific gravity of soil solids (usually taken as 2.5 g/cm3 due to
-# non-negligible volume of adsorbed water at particle surface)
+#'  non-negligible volume of adsorbed water at particle surface)
 #'
-#' @return
+#' @return Double of length 1.
 #' @export
 #'
-centrifuge_time <- function(water_temp_c, center_to_liquid_surface = 7,
+centrifuge_time <- function(diameter,
+                            water_temp_c,
+                            center_to_liquid_surface = 7,
                             sampling_depth = 7,
-                            rpm = 2000, diameter, Gs = 2.7){
+                            rpm = 2000,
+                            Gs = 2.7){
 
 
 # Need to double check all these calcs ------------------------------------
 
 
-# This is for removing all the silt-sized particles, leaving only  --------
+# This is normally used for removing all the silt-sized particles, leaving only
+# the fraction < x microns in suspension --------
+  # It can also be used to compute settling time for fine clay or for any arbitrary
+  # particle ESD.
 
 
-
+#  browser()
 
 
   # set temperature and viscosity
-water_properties <- soiltestr::h2o_properties_w_temp_c
+water_density <- purrr::flatten_dbl(
+  h2o_properties_w_temp_c[h2o_properties_w_temp_c$water_temp_c == water_temp_c, 'water_density_Mg_m3']
+)
 
-water_density <- dplyr::filter(water_properties,
-                               .data$water_temp_c == water_temp_c) %>%
-  .$water_density_Mg_m3 %>%
-  .[1]
 
-viscosity <- dplyr::filter(water_properties,
-                    .data$water_temp_c == water_temp_c) %>%
-  .$water_absolute_viscosity_poises %>%
-  .[1]
+viscosity <- purrr::flatten_dbl(
+  h2o_properties_w_temp_c[h2o_properties_w_temp_c$water_temp_c == water_temp_c, 'water_absolute_viscosity_poises']
+)
+
+
 
 # set the desired parameters for the centrifuge
 # and the sampling depth
@@ -64,7 +69,7 @@ viscosity <- dplyr::filter(water_properties,
 
 r <- center_to_liquid_surface + sampling_depth
 
-centrifuge_t_min <- ((63*10^8)*viscosity*log10(r/center_to_liquid_surface)) /
+centrifuge_t_min <- ((63*10^8)*viscosity*log10(r/ center_to_liquid_surface)) /
   ((rpm^2)*(diameter^2)*(Gs - water_density))
 
 return(centrifuge_t_min)
