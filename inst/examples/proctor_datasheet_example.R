@@ -26,8 +26,8 @@ prep_sheet <- w_extant_values %>%
   proctor_prep(date = Sys.Date())
 
 # write file to disk
-generate_proctor_datasheet(prep_sheet, dir= paste0(tempdir(), "/") )
+proctor_datasheet(prep_sheet, dir= paste0(tempdir(), "/") )
 
 # alternatively, return the data sheet as a tibble
-generate_proctor_datasheet(prep_sheet, write = FALSE)
+proctor_datasheet(prep_sheet, write = FALSE)
 

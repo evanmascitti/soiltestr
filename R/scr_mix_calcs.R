@@ -55,7 +55,7 @@ scr_mix_calcs <- function(final_OD_kg, scr, silt_silty, clay_silty, silt_clayey,
   # soil so that the total mass of soil contains the needed
   # mass of OD fines
 
-  final_OD_sand_pct <- (Mb * (1 - silt_silty - clay_silty) ) + (Ma * (1 - silt_clayey - clay_clayey) )
+  final_OD_sand_pct <- (Mb * (1 - silt_clayey - clay_clayey) ) + (Ma * (1 - silt_silty - clay_silty) )
 
   final_OD_clay_pct <- (1- final_OD_sand_pct) / (1 + R)
 

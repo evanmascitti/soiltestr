@@ -1,0 +1,49 @@
+---
+title: "Proctor data collection"
+date: "Table generated `r Sys.Date()`"
+mainfont: Roboto
+output: 
+  pdf_document:
+    latex_engine: xelatex
+    includes:
+      in_header: preamble.tex
+params:
+  rds_file: "."
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+\begin{landscape }
+
+
+
+```{r}
+printable_datasheet_tbl <- readr::read_rds(params$rds_file) %>% 
+  proctor_datasheet(write = FALSE) 
+
+hlines <- printable_datasheet_tbl %>% 
+  dplyr::group_by(sample_name, effort) %>% 
+  dplyr::group_split() %>% 
+  length()
+
+
+hline_indices <- vector("double")
+
+for (i in 1:hlines) {
+ hline_indices[[i]] <- 5 * i
+}
+
+printable_datasheet_tbl %>% 
+  kableExtra::kbl(format = 'latex') %>% 
+  kableExtra::collapse_rows(columns = 2) %>% 
+  kableExtra::row_spec(row = hline_indices, hline_after = TRUE) %>%
+  kableExtra::row_spec(row = 0, bold = TRUE) %>% 
+  kableExtra::kable_styling(
+    latex_options = 'scale_down'
+  )
+```
+
+
+\end{landscape }

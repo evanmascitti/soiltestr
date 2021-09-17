@@ -7,7 +7,8 @@
 #'data frame, i.e each row. Output can be easily piped to `ggproctor()` for
 #'plotting purposes.
 #'
-#'@param df a data frame containing relevant specimen data, see **Details**
+#' @param df a data frame containing relevant specimen data, see **Details**
+#' @param mold_dimensions data frame containing metadata about molds used in tests. If not supplied, looks for global option `soiltestr.proctor_molds`.
 #'
 #'@details The data passed in via `df` must contain specific gravity values (in
 #'  a column named `Gs`), gravimetric water contents in a column named
@@ -25,7 +26,7 @@
 #'@return mutated data frame with new columns, see details
 #'@export
 #'
-add_physical_properties <- function(df){
+add_physical_properties <- function(df, mold_dimensions = NULL){
 
   # look up density of water at specified temperature
 
@@ -33,6 +34,14 @@ add_physical_properties <- function(df){
     dplyr::filter(.data$water_temp_c == round(unique(df$ambient_temp_c), 1)) %>%
     .$water_density_Mg_m3 %>%
     .[1]
+
+
+  # find proctor cylinders lookup
+
+  mold_dimensions <- mold_dimensions %||% getOption('soiltestr.proctor_molds') %||% internal_data$equipment_instructions("proctor_molds")
+
+
+# browser()
 
   # add a line to re-name the columns from a chunk cylinder test
   # into names compatible with this function. They mean the same thing,
@@ -43,22 +52,28 @@ add_physical_properties <- function(df){
   if("cyl_w_plug_mass" %in% names(df) && "cyl_w_plug_volume" %in% names(df)){
 
   df <- df %>%
-    dplyr::rename(empty_cylinder_mass_g = cyl_w_plug_mass,
-                  cylinder_vol_cm3 = cyl_w_plug_volume)
+    dplyr::rename(empty_mold_mass_g = cyl_w_plug_mass,
+                  mold_vol_cm3 = cyl_w_plug_volume)
   }
 
+# add assumed Gs value if data frame does not already contain one
+
+if(!"Gs" %in% names(df)){
+  df$Gs <- 2.7
+}
 
   # perform calculations on the data frame
 
   newdf <- df %>%
+    dplyr::left_join(mold_dimensions, by = "mold_ID") %>%
     dplyr::mutate(
-      moist_soil_g =.data$filled_cylinder_mass_g - .data$empty_cylinder_mass_g,
+      moist_soil_g =.data$filled_mold_g - .data$empty_mold_mass_g,
       OD_soil_g = .data$moist_soil_g / (1 + .data$water_content),
-      moist_density = .data$moist_soil_g / .data$cylinder_vol_cm3,
-      dry_density = .data$OD_soil_g / .data$cylinder_vol_cm3,
+      moist_density = .data$moist_soil_g / .data$mold_vol_cm3,
+      dry_density = .data$OD_soil_g / .data$mold_vol_cm3,
       total_porosity = 1 - (.data$dry_density / .data$Gs),
       void_ratio = 1 / (1 - .data$total_porosity),
-      volumetric_water_content = (.data$water_content*.data$OD_soil_g/water_density) / .data$cylinder_vol_cm3,
+      volumetric_water_content = (.data$water_content*.data$OD_soil_g/water_density) / .data$mold_vol_cm3,
       Se = (.data$water_content * .data$dry_density / water_density) / .data$total_porosity
     )
 

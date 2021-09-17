@@ -30,10 +30,11 @@ test_that("scr mix of 2 yields correct results", {
     1
   )
 
-  # final mix has 3.5% sand by OD mass
+  # final mix has 3.54% sand by OD mass
   expect_equal(
     object = scr2$final_OD_sand_pct,
-    expected = 0.03545455
+    expected = 0.03454545,
+    tolerance = 0.0001
   )
 
   # final mix has water content of 2.2%

@@ -102,8 +102,8 @@ mix_calcs <- function(mix_date, expt_mix_nums, sand_name, clay_name,
     dplyr::mutate(
       sand_pct = 100 * .data$sand_pct,
       new_mix_w = round(new_mix_w, digits = 3),
-      kg_air_dry_sand_component = round(.data$kg_air_dry_sand_component, digits = 1),
-      kg_air_dry_clay_component = round(.data$kg_air_dry_clay_component, digits = 1)) %>%
+      kg_air_dry_sand_component = round(.data$kg_air_dry_sand_component, digits = 2),
+      kg_air_dry_clay_component = round(.data$kg_air_dry_clay_component, digits = 2)) %>%
     dplyr::rename(`Mix Date`=  mix_date,
                   `Mix number` = expt_mix_nums,
                   `Sand name` = sand_name,

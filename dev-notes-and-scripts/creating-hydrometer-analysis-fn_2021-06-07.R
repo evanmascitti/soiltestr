@@ -7,7 +7,8 @@ blank_correction_data <- readr::read_csv(
   col_types = 'Dccciidccccccdddc',
   na = '-',
   trim_ws = TRUE,
-  skip_empty_rows = TRUE
+  skip_empty_rows = TRUE,
+  lazy = FALSE
 )%>%
   dplyr::transmute(approx_ESD = approx_ESD, blank_hydrometer_reading = hydrometer_reading)
 blank_correction_data
@@ -17,7 +18,8 @@ hydrometer_data <- readr::read_csv(
   col_types = 'Dccciiiiddccccccdddc',
   na = '-',
   trim_ws = TRUE,
-  skip_empty_rows = TRUE
+  skip_empty_rows = TRUE,
+  lazy = FALSE
 ) %>%
   dplyr::left_join(blank_correction_data) %>%
   dplyr::left_join(asi468::bouyoucos_cylinders) %>%
@@ -31,7 +33,8 @@ specimen_masses <- readr::read_csv(
   col_types = 'Dcciidc',
   na = '-',
   skip_empty_rows = TRUE,
-  trim_ws = TRUE
+  trim_ws = TRUE,
+  lazy = FALSE
 ) %>%
   soiltestr:::clean_g()
 
@@ -42,7 +45,8 @@ hygroscopic_corrections <- readr::read_csv(
   col_types = 'Dcciiccccc',
   na = '-',
   skip_empty_rows = TRUE,
-  trim_ws = TRUE
+  trim_ws = TRUE,
+  lazy = FALSE
 ) %>%
   soiltestr:::clean_g() %>%
   dplyr::left_join(tin_tares) %>%

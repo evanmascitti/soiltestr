@@ -9,8 +9,9 @@ suppressPackageStartupMessages({library(tidyverse)})
 # but R takes care of this when bringing them into a lists
 # Anyway, I think it is too late to change this now, and not that important.
 
-protocol_summaries <- readr::read_csv(here::here("inst/lab_protocols/particle_size_analysis/psa-methods-terse.csv"),
-                col_types = cols(.default = "c"), na= "-")
+protocol_summaries <- readr::read_csv(
+  here::here("inst/lab_protocols/particle_size_analysis/psa-methods-terse.csv"),
+  col_types = cols(.default = "c"), na= "-", lazy = FALSE)
 
 ##########
 
@@ -48,7 +49,7 @@ references_table <- references_file %>%
 
 details_list <- details_files %>%
   purrr::set_names(clean_psa_details_file_name(.)) %>%
-  purrr::map(readr::read_csv, col_types = readr::cols(.default = 'c'))
+  purrr::map(readr::read_csv, col_types = readr::cols(.default = 'c'), lazy = FALSE)
 
 
 # couldn't figure out how to do this with tidyverse `reduce`, etc

@@ -15,7 +15,7 @@ dir <- get(x = "dir", envir = rlang::caller_env())
 metadata_file <- readr::read_csv(
   list.files(
     path = dir, pattern = "metadata", full.names = T),
-  col_types = "Dccciic", na = "-")
+  col_types = "Dccciic", na = "-", lazy = FALSE)
 
   protocol_ID <- as.character(unique(metadata_file$protocol_ID))
 
@@ -129,7 +129,8 @@ return_dfs <-   x %>%
                show_col_types = FALSE,
                na = "-",
                trim_ws = TRUE,
-               skip_empty_rows = TRUE) %>%
+               skip_empty_rows = TRUE,
+               lazy = FALSE) %>%
     purrr::modify_if(.p = ~any(names(.) %in% "protocol_ID"),
                      .f = ~dplyr::mutate(. , protocol_ID = as.character(protocol_ID))) %>%
     purrr::modify_if(.p = ~any(names(.) %in% "beaker_tare_set"),
@@ -235,10 +236,6 @@ beaker_tares <- beaker_tares %||% getOption('soiltestr.beaker_tares') %||% inter
 
 # locate beaker tare set from data files
 
-  #beaker_tare_set <- unique(method_specific_datafiles$pipetting$beaker_tare_set)
-
- # beaker_tares <- asi468::psa_beaker_tares[[beaker_tare_set]]
-
   # compute blank correction
 
   # browser()
@@ -276,7 +273,7 @@ if(protocol_ID %in% internal_data$after_fines_sampling_wash_through_protocol_IDs
              "batch_sample_number")) %>%
     dplyr::mutate(
       coarse_particles_mass = sand_plus_gravel * OD_specimen_mass,
-      coarse_particles_volume = coarse_particles_mass / 2.65,
+      coarse_particles_volume = coarse_particles_mass / 2.7,
       mass_multiplier = (1000 - coarse_particles_volume) / 25
     ) %>%
     dplyr::select(sample_name, batch_sample_number, mass_multiplier)

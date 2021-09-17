@@ -5,7 +5,9 @@
 # just for interactive use; help with autocomplee
 # setwd(here::here('tests/testthat/'))
 
-LL_data <- readr::read_csv('test-data/att-lims/atterberg-limits_2021-06-03/LL-raw-data_2021-06-03.csv', col_types = 'cDcciiiddcc', na = '-') |>
+LL_data <- readr::read_csv(
+  file = 'test-data/att-lims/atterberg-limits_2021-06-03/LL-raw-data_2021-06-03.csv', col_types = 'cDcciiiddcc', na = '-',
+  lazy = FALSE) |>
   dplyr::left_join(asi468::tin_tares, by = c('tin_tare_set', 'tin_number')) |>
   add_w()
 

@@ -21,11 +21,11 @@ hygroscopic_w <- function(dir, tin_tares = NULL){
 
   raw_data <- readr::read_csv(
     hygroscopic_file_path,
-    lazy = FALSE,
     skip_empty_rows = TRUE,
     na = "-",
-    col_types = 'Dcciiciddc'
-  )
+    col_types = 'Dcciiciddc',
+    lazy = FALSE
+    )
 
   hygroscopic_summary <- raw_data %>%
     dplyr::left_join(tin_tares, by = c("tin_tare_set", "tin_number")) %>%

@@ -38,6 +38,15 @@ psa <- function(dir, bouyoucos_cylinder_dims = NULL, tin_tares = NULL,
 
   # browser()
 
+  # error message if directory does not exist
+
+  if(!dir.exists(dir)){
+    stop("Directory ", dir, "does not exist. Did you supply the full path?")
+  }
+
+
+
+
   # determine which protocol was used and assign to a local variable
 
   protocol_ID <- find_protocol_ID()
@@ -381,6 +390,7 @@ add_subtitle <- function(plot, text) {
     ggplot2::theme(plot.subtitle = ggplot2::element_text(size = 8))
 }
 
+# browser()
 
 psd_plots <- purrr::map2(base_plots, plot_subtitles, add_subtitle) %>%
   purrr::set_names(plot_names)

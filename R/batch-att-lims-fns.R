@@ -43,23 +43,25 @@ AL_or_PL_batch_analysis <- function(type){
     stop(glue::glue("\nNo {type} data file found in this directory."))
   }
 
-  data_file <- readr::read_csv(data_file_path,
-                               col_types = readr::cols(
-                                 test_type = readr::col_character(),
-                                 date = readr::col_date(),
-                                 experiment_name = readr::col_character(),
-                                 sample_name = readr::col_factor(),
-                                 batch_sample_number = readr::col_integer(),
-                                 replication = readr::col_integer(),
-                                 tin_number = readr::col_integer(),
-                                 tin_w_wet_sample = readr::col_character(),
-                                 tin_w_OD_sample = readr::col_character(),
-                                 tin_tare_set = readr::col_character(),
-                                 comments = readr::col_character()
-                               ),
-                               na = '-',
-                               trim_ws = T,
-                               skip_empty_rows = TRUE) %>%
+  data_file <- readr::read_csv(
+    data_file_path,
+    col_types = readr::cols(
+      test_type = readr::col_character(),
+      date = readr::col_date(),
+      experiment_name = readr::col_character(),
+      sample_name = readr::col_factor(),
+      batch_sample_number = readr::col_integer(),
+      replication = readr::col_integer(),
+      tin_number = readr::col_integer(),
+      tin_w_wet_sample = readr::col_character(),
+      tin_w_OD_sample = readr::col_character(),
+      tin_tare_set = readr::col_character(),
+      comments = readr::col_character()
+    ),
+    na = '-',
+    trim_ws = T,
+    skip_empty_rows = TRUE,
+    lazy = FALSE) %>%
     dplyr::mutate(dplyr::across(
       .cols = dplyr::matches("^tin_w.*sample$"),
       .fns = readr::parse_number))
@@ -219,22 +221,26 @@ LL_batch_analysis <- function(dir, tin_tares = NULL){
 
   data_file_path <- list.files(path = dir, pattern = "LL[_-]raw[_-]data", full.names = T)
 
-  data_file <- readr::read_csv(data_file_path,
-                               col_types = readr::cols(
-                                 test_type = readr::col_character(),
-                                 date = readr::col_date(),
-                                 experiment_name = readr::col_character(),
-                                 sample_name = readr::col_factor(),
-                                 batch_sample_number = readr::col_double(),
-                                 tin_number = readr::col_integer(),
-                                 blow_count = readr::col_double(),
-                                 tin_w_wet_sample = readr::col_double(),
-                                 tin_w_OD_sample = readr::col_double(),
-                                 tin_tare_set = readr::col_character(),
-                                 comments = readr::col_character()),
-                               na = "-",
-                               trim_ws = TRUE,
-                               skip_empty_rows = TRUE)
+  data_file <- readr::read_csv(
+    data_file_path,
+    col_types = readr::cols(
+      test_type = readr::col_character(),
+      date = readr::col_date(),
+      experiment_name = readr::col_character(),
+      sample_name = readr::col_factor(),
+      batch_sample_number = readr::col_double(),
+      tin_number = readr::col_integer(),
+      blow_count = readr::col_double(),
+      tin_w_wet_sample = readr::col_double(),
+      tin_w_OD_sample = readr::col_double(),
+      tin_tare_set = readr::col_character(),
+      comments = readr::col_character()
+    ),
+    na = "-",
+    trim_ws = TRUE,
+    skip_empty_rows = TRUE,
+    lazy = FALSE
+  )
 
   specimen_index <- tibble::tibble(
     date = unique(data_file$date),

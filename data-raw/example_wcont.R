@@ -6,7 +6,9 @@
 
 set.seed(10)
 
-example_wcont <- readr::read_csv('inst/extdata/example_wcont-raw-data.csv') %>%
+example_wcont <- readr::read_csv(
+  'inst/extdata/example_wcont-raw-data.csv',
+  lazy = FALSE) %>%
   tibble::as_tibble() %>%
   dplyr::select(tin_w_wet_sample, tin_w_OD_sample, tin_tare) %>%
   tidyr::drop_na() %>%
