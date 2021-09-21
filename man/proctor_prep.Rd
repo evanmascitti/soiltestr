@@ -5,15 +5,15 @@
 \title{Simplify the process of adding water to soil compaction specimens}
 \usage{
 proctor_prep(
-  df,
+  x,
   date,
-  w_int = 0.015,
+  w_int = 0.02,
   assumed_d_max = 2.2,
   cylinder_volume_cm3 = 940
 )
 }
 \arguments{
-\item{df}{a data frame, see Details for required columns}
+\item{x}{a data frame, see Details for required columns}
 
 \item{date}{date of actual compaction test}
 
@@ -68,7 +68,7 @@ Note that \code{w_opt} for the standard effort is commonly ~ 90\% of the plastic
 limit. \code{w_opt} for the modified effort is typically 3-4 \% below that for the
 standard effort.
 
-The data frame passed to \code{df} can be easily prepared using
+The data frame passed to \code{x} can be easily prepared using
 \code{\link[dplyr:mutate-joins]{dplyr::left_join()}} if the data are already in R, as demonstrated in
 the examples, or by using \code{\link[tidyr:expand]{tidyr::crossing()}} to generate all combinations
 of \code{effort} and \code{sample_name}, then adding a data frame column containing the
@@ -137,5 +137,5 @@ mix_03 \%>\%
 \href{https://www.astm.org/Standards/D698.htm}{ASTMc D698-12e2}
 }
 \seealso{
-\code{\link[=proctor_fit]{proctor_fit()}}, \code{\link[=mix_calcs]{mix_calcs()}}, \code{\link[=generate_proctor_datasheet]{generate_proctor_datasheet()}}
+\code{\link[=proctor_fit]{proctor_fit()}}, \code{\link[=mix_calcs]{mix_calcs()}}, \code{\link[=proctor_datasheet]{proctor_datasheet()}}
 }

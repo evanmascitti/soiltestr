@@ -11,6 +11,12 @@
 hygroscopic_w <- function(dir, tin_tares = NULL){
 
 
+
+  if(!dir.exists(dir)){
+    stop("Directory ", dir, "does not exist. Did you supply the full path?")
+  }
+
+
   tin_tares <- tin_tares %||% getOption('soiltestr.tin_tares') %||% internal_data$equipment_instructions("tin_tares")
 
   hygroscopic_file_path <- list.files(
@@ -18,6 +24,12 @@ hygroscopic_w <- function(dir, tin_tares = NULL){
     pattern = "hygroscopic.*\\.csv$",
     full.names = TRUE
   )
+
+
+  if(!file.exists(hygroscopic_file_path)){
+    stop("File ", hygroscopic_file_path , "does not exist. Did you supply the correct directory?")
+  }
+
 
   raw_data <- readr::read_csv(
     hygroscopic_file_path,

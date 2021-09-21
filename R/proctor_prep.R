@@ -32,7 +32,7 @@
 #'  limit. `w_opt` for the modified effort is typically 3-4 % below that for the
 #'  standard effort.
 #'
-#'  The data frame passed to `df` can be easily prepared using
+#'  The data frame passed to `x` can be easily prepared using
 #'  [`dplyr::left_join()`] if the data are already in R, as demonstrated in
 #'  the examples, or by using [`tidyr::crossing()`] to generate all combinations
 #'  of `effort` and `sample_name`, then adding a data frame column containing the
@@ -55,7 +55,7 @@
 #'  water content. All the aliquots use the same oven-dry soil mass for mixing
 #'  purposes; more soil will be left over for points very dry or wet of optimum.
 #'
-#'@param df a data frame, see Details for required columns
+#'@param x a data frame, see Details for required columns
 #'@param date date of actual compaction test
 #'@param w_int water content interval between successive compaction points,
 #'  defaults to 0.015 (i.e. 1.5%)
@@ -74,18 +74,18 @@
 #'
 #'@example inst/examples/proctor_prep_example.R
 #'
-#'@seealso [`proctor_fit()`], [`mix_calcs()`], [`generate_proctor_datasheet()`]
+#'@seealso [`proctor_fit()`], [`mix_calcs()`], [`proctor_datasheet()`]
 #'
 #'@export
 #'
 #'@references \href{https://www.astm.org/Standards/D698.htm}{ASTMc D698-12e2}
 
-proctor_prep <- function(df, date, w_int = 0.015, assumed_d_max = 2.20,
+proctor_prep <- function(x, date, w_int = 0.02, assumed_d_max = 2.20,
                            cylinder_volume_cm3 = 940){
 
   # error messages if required arguments are not present
-  if(missing(df)){
-    stop('\n\nNo data frame provided in `df` argument.')
+  if(missing(x)){
+    stop('\n\nNo data frame provided in `x` argument.')
   }
 
   if(missing(date)){
@@ -96,25 +96,25 @@ proctor_prep <- function(df, date, w_int = 0.015, assumed_d_max = 2.20,
     stop('\n\n `date` argument not understood, did you forget quotation marks?')
   }
 
-  if(! "effort" %in% names(df)){
-    stop('\n\nNo `effort` column present in `df`.')
+  if(! "effort" %in% names(x)){
+    stop('\n\nNo `effort` column present in `x`.')
   }
 
-  if(! "sample_name" %in% names(df)){
-    stop('\n\nNo `sample_name` column present in `df`.')
+  if(! "sample_name" %in% names(x)){
+    stop('\n\nNo `sample_name` column present in `x`.')
   }
 
-  if(! "w_extant" %in% names(df)){
-    stop('\n\nNo `w_extant` value present in `df`.')
+  if(! "w_extant" %in% names(x)){
+    stop('\n\nNo `w_extant` value present in `x`.')
   }
 
-  if(! "est_w_opt" %in% names(df)){
-    stop('\n\nNo `est_w_opt` present in `df`.')
+  if(! "est_w_opt" %in% names(x)){
+    stop('\n\nNo `est_w_opt` present in `x`.')
   }
 
   # generate new data frame
 
-  new_df <- df %>%
+  new_df <- x %>%
     dplyr::group_by(.data$sample_name, .data$effort) %>%
     dplyr::mutate(
       aliquots =
