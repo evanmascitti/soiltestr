@@ -9,6 +9,7 @@
 #'
 #' @param df a data frame containing relevant specimen data, see **Details**
 #' @param mold_dimensions data frame containing metadata about molds used in tests. If not supplied, looks for global option `soiltestr.proctor_molds`.
+#' @param cleat_mark Logical. Is this analysis for cleat-mark cylinders?
 #'
 #'@details The data passed in via `df` must contain specific gravity values (in
 #'  a column named `Gs`), gravimetric water contents in a column named
@@ -26,7 +27,7 @@
 #'@return mutated data frame with new columns, see details
 #'@export
 #'
-add_physical_properties <- function(df, mold_dimensions = NULL){
+add_physical_properties <- function(df, mold_dimensions = NULL, cleat_mark = FALSE){
 
   # look up density of water at specified temperature
 
@@ -38,31 +39,52 @@ add_physical_properties <- function(df, mold_dimensions = NULL){
 
   # find proctor cylinders lookup
 
+
   mold_dimensions <- mold_dimensions %||% getOption('soiltestr.proctor_molds') %||% internal_data$equipment_instructions("proctor_molds")
 
 
-# browser()
+ # browser()
 
-  # add a line to re-name the columns from a chunk cylinder test
+  # add a line to re-name the columns from a cleat-mark cylinder test
   # into names compatible with this function. They mean the same thing,
   # but the names in the chunk cyl dims object are different to reflect
   # the fact that they also account for the mass and volume of the
   # resin plug in the bottom
 
-  if("cyl_w_plug_mass" %in% names(df) && "cyl_w_plug_volume" %in% names(df)){
+  # In this special case, the `cylinder_ID` column in the
+  # mold_dimensions data frame also needs to be re-named.
 
-  df <- df %>%
-    dplyr::rename(empty_mold_mass_g = cyl_w_plug_mass,
-                  mold_vol_cm3 = cyl_w_plug_volume)
+  if(cleat_mark){
+
+    df <- dplyr::rename_with(
+      df,
+      .fn = ~stringr::str_replace(
+        string = .,
+        pattern = "cylinder",
+        replacement = "mold"
+    ))
+
+  mold_dimensions <- dplyr::rename(
+    mold_dimensions,
+    mold_ID = cylinder_ID,
+    empty_mold_mass_g = cyl_w_plug_mass,
+    mold_vol_cm3 = cyl_w_plug_volume
+  )
+
   }
 
 # add assumed Gs value if data frame does not already contain one
 
 if(!"Gs" %in% names(df)){
   df$Gs <- 2.7
+  warning("No Gs value specified in data frame. Defaulting to 2.7.", call. = FALSE)
 }
 
+
+ # browser()
+
   # perform calculations on the data frame
+  # join with mold dimensions data frame
 
   newdf <- df %>%
     dplyr::left_join(mold_dimensions, by = "mold_ID") %>%

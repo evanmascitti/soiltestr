@@ -4,12 +4,14 @@
 \alias{add_physical_properties}
 \title{Calculate physical properties of a soil specimen}
 \usage{
-add_physical_properties(df, mold_dimensions = NULL)
+add_physical_properties(df, mold_dimensions = NULL, cleat_mark = FALSE)
 }
 \arguments{
 \item{df}{a data frame containing relevant specimen data, see \strong{Details}}
 
 \item{mold_dimensions}{data frame containing metadata about molds used in tests. If not supplied, looks for global option \code{soiltestr.proctor_molds}.}
+
+\item{cleat_mark}{Logical. Is this analysis for cleat-mark cylinders?}
 }
 \value{
 mutated data frame with new columns, see details
