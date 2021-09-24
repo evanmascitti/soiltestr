@@ -80,9 +80,15 @@
 #'
 #'@references \href{https://www.astm.org/Standards/D698.htm}{ASTMc D698-12e2}
 
-proctor_prep <- function(x, date, w_int = 0.02, assumed_d_max = 2.20,
+proctor_prep <- function(date,
+                         sample_name,
+                         effort = c('standard', 'modified'),
+                         w_extant,
+                         est_w_opt,
+                         w_int = 0.02,
+                         assumed_d_max = 2.20,
                          n_cylinders = 5,
-                           cylinder_volume_cm3 = 940){
+                         cylinder_volume_cm3 = 940){
 
   # error messages if required arguments are not present
   if(missing(x)){
@@ -113,67 +119,169 @@ proctor_prep <- function(x, date, w_int = 0.02, assumed_d_max = 2.20,
     stop('\n\nNo `est_w_opt` present in `x`.')
   }
 
-  # generate new data frame
 
-
-  w_targets <- list(
-    five_cyls = c(
-      est_w_opt - w_int * 2,
-      est_w_opt - w_int,
-      est_w_opt,
-      est_w_opt + w_int,
-      est_w_opt + w_int * 2
-    ),
-    six_cyls = c(
-      est_w_opt - w_int * 3,
-      est_w_opt - w_int * 2,
-      est_w_opt,
-      est_w_opt + w_int,
-      est_w_opt + w_int * 2,
-      est_w_opt + w_int * 3)
+  std_est_w_opts <- tibble::tibble(
+    sample_name = sample_name,
+    w_extant,
+    std_est_w_opt  = est_w_opt
   )
 
-  new_df <- x %>%
-    dplyr::group_by(.data$sample_name, .data$effort) %>%
-    dplyr::mutate(
-      aliquots =
-        purrr::pmap(
-          .l = list(
-            w_extant = .data$w_extant,
-            est_w_opt = .data$est_w_opt
-          ),
-          .f = ~ tibble::tibble(
-            date = lubridate::as_date(date),
-            cylinder_number = 1:n_cylinders,
-            w_target = dplyr::case_when(
-              n_cylinders == 5 ~ w_targets$five_cyls,
-              n_cylinders == 6 ~ w_targets$six_cyls
-            ),
-            OD_soil_to_use = cylinder_volume_cm3 *
-              assumed_d_max * (4.75 / 4.5),
-            delta_w = .data$w_target - w_extant,
-            moist_soil_to_use_g = .data$OD_soil_to_use *
-              (1 + w_extant),
-            w_target_g = .data$w_target * .data$OD_soil_to_use,
-            w_already_present = .data$moist_soil_to_use_g - .data$OD_soil_to_use,
-            w_to_add_g = .data$w_target_g - .data$w_already_present
-          )
-        ) ) %>%
-    tidyr::unnest(.data$aliquots) %>%
-    dplyr::ungroup() %>%
-    dplyr::select(
-      .data$sample_name,
-      .data$effort,
-      .data$date,
-      .data$w_target,
-      .data$cylinder_number,
-      .data$moist_soil_to_use_g,
-      .data$w_to_add_g) %>%
-    dplyr::mutate(
-      moist_soil_to_use_g = round(moist_soil_to_use_g, digits = -2),
-      w_to_add_g = round(w_to_add_g, digits = -1)
+
+   base_df <-tidyr::crossing(
+     sample_name = sample_name,
+     effort = effort) %>%
+     dplyr::left_join(std_est_w_opts, by = 'sample_name') %>%
+     dplyr::group_by(sample_name, effort) %>%
+     tidyr::nest()
+
+
+
+   make_w_spread <- function(x, n_cyls = n_cylinders){
+
+    if(n_cyls == 5L){
+      new_water_contents <-  c(
+        x$std_est_w_opt - w_int * 2,
+        x$std_est_w_opt - w_int,
+        x$std_est_w_opt,
+        x$std_est_w_opt + w_int,
+        x$std_est_w_opt + w_int * 2
+      )} else {
+      if(n_cyls == 6L){
+        new_water_contents <- c(
+          x$std_est_w_opt - w_int * 3,
+          x$std_est_w_opt - w_int * 2,
+          x$std_est_w_opt,
+          x$std_est_w_opt + w_int,
+          x$std_est_w_opt + w_int * 2,
+          x$std_est_w_opt + w_int * 3)
+
+      } else{
+        stop("`n_cyls` argument is ", n_cyls, "but it must be either 5 or 6.",
+             call. = FALSE)}
+      }
+
+     # build tibble by recycling arguments that originally
+     # came from the one-row tibble fed to this
+     # function and tacking on the new target water contents vector
+     w_spread_tbl <- tibble::tibble(
+       w_extant = x$w_extant,
+       std_est_w_opt = x$std_est_w_opt,
+       w_target = new_water_contents
+     )
+
+     return(w_spread_tbl)
+   }
+
+
+   # generate the new water contents with the helper function above,
+   # then alter the reduced or modified water content as needed
+
+   w_targets_tbl <- base_df %>%
+     dplyr::mutate(
+       w_targets_df = purrr::map(make_w_spread)
+     ) %>%
+     dplyr::ungroup() %>%
+     tidyr::unnest(w_targets_df) %>%
+     dplyr::mutate(
+       w_target = dplyr::case_when(
+         effort == 'modified' ~ 0.75 * w_target, # typically the modified w_opt is about 70-75% of that for the standard effort
+         effort == 'reduced' ~ 1.25 * w_target, # w_opt will be larger for reduced effort
+         effort == 'standard' ~ w_target
+       )
+     )
+
+n_tests <- length(sample_name) * length(effort)
+
+
+   new_df <- w_targets_tbl %>%
+     dplyr::mutate(
+       cylinder_number = rep(1:cylinder_number, times = n_tests),
+       OD_soil_to_use = cylinder_volume_cm3 * assumed_d_max * (4.75 / 4.5),
+       delta_w = .data$w_target - w_extant,
+       moist_soil_to_use_g = .data$OD_soil_to_use * (1 + w_extant),
+       w_target_g = .data$w_target * .data$OD_soil_to_use,
+       w_already_present = .data$moist_soil_to_use_g - .data$OD_soil_to_use,
+       w_to_add_g = .data$w_target_g - .data$w_already_present
+       ) %>%
+     dplyr::select(
+       .data$sample_name,
+       .data$effort,
+       .data$date,
+       .data$w_target,
+       .data$cylinder_number,
+       .data$moist_soil_to_use_g,
+       .data$w_to_add_g) %>%
+     dplyr::mutate(
+       moist_soil_to_use_g = round(moist_soil_to_use_g, digits = -2),
+       w_to_add_g = round(w_to_add_g, digits = -1)
+
+
+# leaving off for today (2021-09-24)
+
+gi
+
+# create new water contents based on number of cylinders and water content interval
+
+  # w_targets <- list(
+  #   five_cyls = c(
+  #     est_w_opt - w_int * 2,
+  #     est_w_opt - w_int,
+  #     est_w_opt,
+  #     est_w_opt + w_int,
+  #     est_w_opt + w_int * 2
+  #   ),
+  #   six_cyls = c(
+  #     est_w_opt - w_int * 3,
+  #     est_w_opt - w_int * 2,
+  #     est_w_opt,
+  #     est_w_opt + w_int,
+  #     est_w_opt + w_int * 2,
+  #     est_w_opt + w_int * 3)
+  # )
+
+
+  # generate new data frame
+  # new_df <- x %>%
+  #   dplyr::group_by(.data$sample_name, .data$effort) %>%
+  #   dplyr::mutate(
+  #     aliquots =
+  #       purrr::pmap(
+  #         .l = list(
+  #           w_extant = .data$w_extant,
+  #           est_w_opt = .data$est_w_opt
+  #         ),
+  #         .f = ~ tibble::tibble(
+  #           date = lubridate::as_date(date),
+  #           cylinder_number = 1:n_cylinders,
+  #           w_target = dplyr::case_when(
+  #             n_cylinders == 5 ~ w_targets$five_cyls,
+  #             n_cylinders == 6 ~ w_targets$six_cyls
+  #           ),
+  #           OD_soil_to_use = cylinder_volume_cm3 *
+  #             assumed_d_max * (4.75 / 4.5),
+  #           delta_w = .data$w_target - w_extant,
+  #           moist_soil_to_use_g = .data$OD_soil_to_use *
+  #             (1 + w_extant),
+  #           w_target_g = .data$w_target * .data$OD_soil_to_use,
+  #           w_already_present = .data$moist_soil_to_use_g - .data$OD_soil_to_use,
+  #           w_to_add_g = .data$w_target_g - .data$w_already_present
+  #         )
+  #       ) ) %>%
+  #   tidyr::unnest(.data$aliquots) %>%
+  #   dplyr::ungroup() %>%
+  #   dplyr::select(
+  #     .data$sample_name,
+  #     .data$effort,
+  #     .data$date,
+  #     .data$w_target,
+  #     .data$cylinder_number,
+  #     .data$moist_soil_to_use_g,
+  #     .data$w_to_add_g) %>%
+  #   dplyr::mutate(
+  #     moist_soil_to_use_g = round(moist_soil_to_use_g, digits = -2),
+  #     w_to_add_g = round(w_to_add_g, digits = -1)
       )
 
-  return(new_df)
+  return(structure(new_df, class = "proctor_prep_sheet"))
 }
 

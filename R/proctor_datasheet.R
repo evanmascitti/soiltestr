@@ -12,58 +12,104 @@
 #'
 #'
 #' @param prep_sheet A data frame. It is recommended to pipe this argument
-#'   directly from [`proctor_prep()`]. Includes sample metadata such as test
+#'   directly from [`proctor_prep()`]. Must be of class `proctor_prep_sheet`. Includes sample metadata such as test
 #'   date, mix names, efforts, etc.
-#' @param dir Directory in which to save the file, should end with `"/"`
-#' @param path If `"auto"`, constructs a file name from the date column of `df`
+#' @param tin_tare_set Character string (length 1) which identifies the set of tin tare
+#'   measurements to use during subsequent data analyses. If `NULL` (the default), an empty string is used.
+#' @param tin_numbers Numeric. Length must equal total number of experimental units in `prep_sheet`. If `NULL` (the default), an empty string is used.
+#' @param write Defaults to `TRUE` and saves empty data sheet as a `.csv` file. Will not over-write an
+#'  existing file.
+#' @param dir Directory in which to save the file.
+#' @param path If `"auto"`, constructs a file name from the date column of `prep_sheet`
 #'   and the `dir` argument; otherwise specify a path to save the file
 #'   (including relative directory)
-#' @param write Defaults to `TRUE` and saves data sheet as a .csv; if set to
-#'   `FALSE`, returns a tibble instead of writing to disk
-#' @param printable Logical. Whether to also create a printable pdf version of the data sheet for use during data collection (i.e. pen and paper)
-#' @param empty_cylinder_mass_g Mass of compaction mold
 #' @param ambient_temp_c Ambient temperature during the test in &deg;C. Used
 #'   to compute water density during data analysis (see
-#'   [`add_physical_properties()`]). Defaults to 22&deg;C for filling data sheet; user
+#'   [`add_physical_properties()`]). Defaults to 20&deg;C for filling data sheet; user
 #'   should measure temperature during test and input before data collection. Be
 #'   careful to record only one value during the test or
 #'   [`add_physical_properties()`] will fail.
-#' @param tin_tares_set quoted string which identifies the set of tin tare
-#'   measurements to use during subsequent data analyses. These are not used by
-#'   this function, but including this information in the raw data file saves a
-#'   step later in the analysis pipeline.
 #'
-#' @return Writes file to disk if `write = TRUE`; returns a tibble if `write =
-#'   FALSE` .
+#' @return A tibble of relevant data. Also writes file to disk when `write = TRUE`.
 #' @example /inst/examples/proctor_datasheet_example.R
 #' @export
 #'
 
-proctor_datasheet <- function(prep_sheet,
-                              dir,
+proctor_datasheet <- function(prep_sheet = NULL,
                               tin_tare_set = NULL,
                               tin_numbers = NULL,
-                              path = "auto",
-                              ambient_temp_c = 22,
+                              ambient_temp_c = 20,
                               write = TRUE,
-                              printable = TRUE) {
+                              dir = NULL,
+                              path = "auto",
+                              ) {
 
+
+  # require user to provide a prep sheet
+
+  if(!class(prep_sheet) %in% 'proctor_prep_sheet'){
+    stop("Argument supplied to `prep_sheet` is not a `proctor_prep_sheet` object. Use `soiltestr::proctor_prep()` to construct this argument.")
+  }
+
+  # if(is.null(prep_sheet) & all(is.null(sample_name, effort, est_w_opt))){
+  #   stop("All arguments are null; please provide either a `prep_sheet` object or supply all of `sample_name`, `effort`, and `est_w_opt`.")
+  # }
 
   # browser()
 
-  # error message if required field is left blank
-
-  if (missing(prep_sheet)) {
-    stop('\n\nNo prep sheet provided.')
-  }
+# assign variables for anything that is used whether the table is passed in
+  # as a proctor_pep object or not
 
   tin_tare_set <- tin_tare_set %||% ""
   tin_numbers <- tin_numbers %||% ""
 
 
-  # Build tibble
+  # if (!is.null(prep_sheet)) {
 
-    data_tibble <- prep_sheet %>%
+
+    # obeject-oriented stuff
+    # check class, etc.
+    # then mutate the sheet into what is needed
+
+
+    #   }
+
+
+
+  # Build tibble if prep sheet object not supplied
+
+
+   # effort <- match.arg(
+   #      arg = effort,
+   #      choices = c('reduced', 'standard', 'modified'),
+   #      several.ok = TRUE)
+   #
+   #   # tibble::tibble(
+   #   #   sample_name = rep(sample_name, each = length(effort) * n_cylinders),
+   #   #   effort = rep(effort, each = length(sample_name) * n_cylinders
+   #   # )
+   #
+   # est_w_opts <- tibble::tibble(
+   #   sample_name = sample_name,
+   #   est_std_w_opt = est_w_opt
+   # )
+   #
+   # tidyr::crossing(
+   #   sample_name = sample_name,
+   #   effort = effort
+   # ) %>%
+   #   dplyr::left_join(est_w_opts, by = 'sample_name') %>%
+   #   dplyr::mutate(
+   #     w_target = dplyr::if_else()
+   #   )
+
+
+
+    ###################
+
+
+
+  data_tibble <- prep_sheet %>%
      dplyr::mutate(
         ambient_temp_c = ambient_temp_c,
         tin_tare_set = tin_tare_set,
@@ -168,3 +214,22 @@ proctor_datasheet <- function(prep_sheet,
   return(data_tibble)
 
 } # end of function
+
+
+
+
+#' Format a data sheet for use in R Markdown documents
+#'
+#' @param x a proctor data sheet
+#' @param ... arguments passed to `kableExtra::kbl()`
+#'
+#' @return A `kableExtra` kable object
+#' @export
+#'
+format_proctor_datasheet <- function(x, format = 'latex', ...) {
+
+  x %>%
+    kableExtra::kbl(format = format, ...)
+
+
+}
