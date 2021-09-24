@@ -154,7 +154,7 @@ generalized_finer_D_x <- function(df, d_microns){
 
 percent_finer_D_x <- function(df, d_microns) {
 
-  browser()
+  # browser()
 
 
   mget(c("df", "d_microns"), envir = rlang::caller_env()) %>%
@@ -228,7 +228,7 @@ percent_finer_D_x <- function(df, d_microns) {
 # now use a loop to do the same operation for all diameters listed in
 # the initial function call
 
-browser()
+# browser()
 
 dfs_list <- vector(mode = "list",
                    length = length(d_microns))

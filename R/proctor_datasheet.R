@@ -115,8 +115,19 @@ proctor_datasheet <- function(prep_sheet,
         proctor_file_path <- path
       }
 
-    readr::write_csv(x= data_tibble,
-                     file = proctor_file_path)
+    # write file to disk but
+    # only if it does not already exist
+    # if it _does_ exist, warn user and don't write
+
+    if(!file.exists(proctor_file_path)){
+      readr::write_csv(x= data_tibble,
+                       file = proctor_file_path)
+      message(crayon::green("Please verify that file", proctor_file_path, "was correctly written to disk."))
+    } else{
+      warning("File ", proctor_file_path, "already exists. Nothing written to disk.")
+      }
+
+
   }
 
 # if(printable == TRUE){
@@ -154,6 +165,6 @@ proctor_datasheet <- function(prep_sheet,
 
     # return message if file was written to disk and return tibble if not
 
-  return(if(write == TRUE) {message(crayon::green("Please verify that file was correctly written to disk."))} else {data_tibble})
+  return(data_tibble)
 
 } # end of function

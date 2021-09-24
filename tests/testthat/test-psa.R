@@ -74,7 +74,7 @@ test_that("PSA protocol 8", {
                psa_names_check())
 
   # check some extra values for this specific protocol ------------------------------
-browser()
+# browser()
 
   # all 10 values of total sand
   sand_rounded <- round(psa_obj_8$simple_bins$sand, 2)

@@ -6,22 +6,22 @@
 
 \loadmathjax}
 \usage{
-mix_calcs(mix_date, expt_mix_nums, sand_name, clay_name,
- final_sand_pcts, final_OD_kg= 43, w_final= 0.05, sand_pct_in_sand,
- sand_pct_in_clay, w_sand= 0.001, w_clay=0.02, backpack_flo_rate_g_per_sec= 28.3)
+mix_calcs(mix_date, expt_mix_nums, sandy_name, clayey_name,
+ final_sand_pct, final_OD_kg= 43, w_final= 0.05, sand_sandy,
+ sand_clayey, w_sandy= 0.001, w_clayey=0.02)
 }
 \arguments{
 \item{mix_date}{Date the mixture is being produced in yyyy-mm-dd}
 
-\item{expt_mix_nums}{Character or numeric vector of the unique mix identifiers}
+\item{sample_name}{Character vector of the unique mix identifiers}
 
-\item{sand_name}{Unique name assigned to the particular sand material (for
+\item{sandy_name}{Unique name assigned to the particular sand material (for
 example, "Boyd's Fine").}
 
-\item{clay_name}{Unique name assigned to the particular sand material (for
+\item{clayey_name}{Unique name assigned to the particular sand material (for
 example, "LA black gumbo).}
 
-\item{final_sand_pcts}{Numeric vector of equal length to
+\item{final_sand_pct}{Numeric vector of final sand contents (decimal form)
 \code{expt.mix.nums}. It corresponds to the final desired \% of sand-size
 particles in the soil mixture on an oven-dry mass basis.}
 
@@ -32,29 +32,27 @@ and to prepare 6 "chunk" cylinders (3 each at standard and modified compaction
 effort), with a 10\% extra estimate to allow for PSA, Atterberg limits,
 and a margin for error.}
 
-\item{sand_pct_in_sand}{a numeric vector of length 1 representing the
+\item{sand_sandy}{a numeric vector of length 1 representing the
 fraction of the "sand" component which is >53 μm sieve diameter, on an
 oven-dry mass basis (decimal form).}
 
-\item{sand_pct_in_clay}{a numeric vector of length 1 representing the
+\item{sand_clayey}{a numeric vector of length 1 representing the
 fraction of the "clay" component which is >53 μm sieve diameter, on an
 oven-dry mass basis (decimal form).}
 
-\item{w_sand}{The gravimetric water content of the air-dry "sand" component,
+\item{w_sandy}{The gravimetric water content of the air-dry "sand" component,
 in decimal form.}
 
-\item{w_clay}{The gravimetric water content of the air-dry "clay" component,
+\item{w_clayey}{The gravimetric water content of the air-dry "clay" component,
 in decimal form.}
 
 \item{w_final}{a numeric vector of the same length as \code{expt_mix_nums}
 (if the mixes are to have different water contents), or a single numeric
 value (if all mixes are to have the same final water content). Defaults to
 0.05 which is the lowest water content typically used in a compaction test.}
-
-\item{compute_w_to_add}{Logical. Calculate the water required to bring mixture to w_final?}
 }
 \value{
-A ready-to-print table of values with an appropriate number of
+A table of values with an appropriate number of
 significant figures.
 }
 \description{
@@ -87,9 +85,9 @@ m_{clayey~(air-dry)}~=~\left\lbrack(1~-~\left(\frac{S_f~-~S_{clayey}}
 \examples{
 mix_calcs(mix_date="2020-10-12", expt_mix_nums=c(1:5),
                   sand_name="concrete_sand", clay_name='brown_gumbo',
-                  final_sand_pcts=c(0.057, seq(0.2, 0.8, length.out = 4) ),
-                  final_OD_kg= 43, w_final= 0.05, sand_pct_in_sand= 0.978,
-                  sand_pct_in_clay= 0.057, w_sand= 0.0011, w_clay= 0.039)
+                  final_sand_pct=c(0.057, seq(0.2, 0.8, length.out = 4) ),
+                  final_OD_kg= 43, w_final= 0.05, sand_sandy= 0.978,
+                  sand_clayey= 0.057, w_sand= 0.0011, w_clay= 0.039)
 
 
 }

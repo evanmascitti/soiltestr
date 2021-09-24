@@ -36,16 +36,13 @@ psa <- function(dir, bouyoucos_cylinder_dims = NULL, tin_tares = NULL,
                 beaker_tares = NULL,
                 hydrometer_dims = NULL, ...){
 
-  # browser()
+#  browser()
 
   # error message if directory does not exist
 
   if(!dir.exists(dir)){
     stop("Directory ", dir, "does not exist. Did you supply the full path?")
   }
-
-
-
 
   # determine which protocol was used and assign to a local variable
 

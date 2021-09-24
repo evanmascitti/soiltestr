@@ -12,9 +12,7 @@ scr_mix_calcs(
   silt_clayey,
   clay_clayey,
   w_silty,
-  w_clayey,
-  include_sand_contents = FALSE,
-  include_OD_masses = FALSE
+  w_clayey
 )
 }
 \arguments{
@@ -35,7 +33,13 @@ scr_mix_calcs(
 \item{w_clayey}{gravimetric water content of clayey soil (decimal)}
 }
 \value{
-a tibble with two columns; the air-dry mass of component A (the silty soil) and component B (the clayey soil)
+a list of length 4. Elements include:
+\enumerate{
+\item tibble with two columns: the air-dry mass of component A (the silty soil) and component B (the clayey soil)
+\item A tibble with two columns: the oven-dry mass fraction of each component comprising the new mix (summing to 1)
+\item The sand-size content (as a decimal) of the new mixture on an oven-dry basis
+\item The gravimetric water content (as a decimal) of the new mix.
+}
 }
 \description{
 Compute air-dry component masses to use based on silt-size and clay-size mass

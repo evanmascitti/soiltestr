@@ -9,6 +9,7 @@ proctor_prep(
   date,
   w_int = 0.02,
   assumed_d_max = 2.2,
+  n_cylinders = 5,
   cylinder_volume_cm3 = 940
 )
 }
@@ -18,10 +19,10 @@ proctor_prep(
 \item{date}{date of actual compaction test}
 
 \item{w_int}{water content interval between successive compaction points,
-defaults to 0.015 (i.e. 1.5\%)}
+defaults to 0.02 (i.e. 2\%)}
 
 \item{assumed_d_max}{a conservatively high estimate of the maximum density
-that will be achieved in this test. Defaults to 2.25
+that will be achieved in this test. Defaults to 2.25.
 g/cm\ifelse{html}{\out{<sup>3</sup>}}{\eqn{^3}{^3}}}
 
 \item{cylinder_volume_cm3}{volume of the compaction mold in
@@ -55,11 +56,11 @@ Multiple tests are often performed in the same day and at multiple
 compaction efforts. For this reason, the data frame passed to
 \code{proctor_prep()} should contain the following columns:
 \itemize{
-\item \code{effort}: a character string specifying the type of compactive effort,
-i.e. "standard", "modified", or "reduced"
 \item \code{sample_name} a unique identifier
 between the samples tested, i.e. mix number or name - \code{w_extant} the current
 water content of the soil (g/g)
+\item \code{effort}: a character string specifying the type of compactive effort,
+i.e. "standard", "modified", or "reduced"
 \item \code{est_w_opt} the estimated optimum water
 content for the compaction effort to be tested.
 }

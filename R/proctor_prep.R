@@ -19,11 +19,11 @@
 #'  compaction efforts. For this reason, the data frame passed to
 #'  `proctor_prep()` should contain the following columns:
 #'
-#'  - `effort`: a character string specifying the type of compactive effort,
-#'  i.e. "standard", "modified", or "reduced"
 #'  - `sample_name` a unique identifier
 #'  between the samples tested, i.e. mix number or name - `w_extant` the current
 #'  water content of the soil (g/g)
+#'  - `effort`: a character string specifying the type of compactive effort,
+#'  i.e. "standard", "modified", or "reduced"
 #'  - `est_w_opt` the estimated optimum water
 #'  content for the compaction effort to be tested.
 #'
@@ -58,9 +58,9 @@
 #'@param x a data frame, see Details for required columns
 #'@param date date of actual compaction test
 #'@param w_int water content interval between successive compaction points,
-#'  defaults to 0.015 (i.e. 1.5%)
+#'  defaults to 0.02 (i.e. 2%)
 #'@param assumed_d_max a conservatively high estimate of the maximum density
-#'  that will be achieved in this test. Defaults to 2.25
+#'  that will be achieved in this test. Defaults to 2.25.
 #'  g/cm\ifelse{html}{\out{<sup>3</sup>}}{\eqn{^3}{^3}}
 #'@param cylinder_volume_cm3 volume of the compaction mold in
 #'  cm\ifelse{html}{\out{<sup>3</sup>}}{\eqn{^3}{^3}}. Used to compute compacted
@@ -81,6 +81,7 @@
 #'@references \href{https://www.astm.org/Standards/D698.htm}{ASTMc D698-12e2}
 
 proctor_prep <- function(x, date, w_int = 0.02, assumed_d_max = 2.20,
+                         n_cylinders = 5,
                            cylinder_volume_cm3 = 940){
 
   # error messages if required arguments are not present
@@ -114,6 +115,24 @@ proctor_prep <- function(x, date, w_int = 0.02, assumed_d_max = 2.20,
 
   # generate new data frame
 
+
+  w_targets <- list(
+    five_cyls = c(
+      est_w_opt - w_int * 2,
+      est_w_opt - w_int,
+      est_w_opt,
+      est_w_opt + w_int,
+      est_w_opt + w_int * 2
+    ),
+    six_cyls = c(
+      est_w_opt - w_int * 3,
+      est_w_opt - w_int * 2,
+      est_w_opt,
+      est_w_opt + w_int,
+      est_w_opt + w_int * 2,
+      est_w_opt + w_int * 3)
+  )
+
   new_df <- x %>%
     dplyr::group_by(.data$sample_name, .data$effort) %>%
     dplyr::mutate(
@@ -125,13 +144,10 @@ proctor_prep <- function(x, date, w_int = 0.02, assumed_d_max = 2.20,
           ),
           .f = ~ tibble::tibble(
             date = lubridate::as_date(date),
-            cylinder_number = 1:5,
-            w_target = c(
-              est_w_opt - w_int * 2,
-              est_w_opt - w_int,
-              est_w_opt,
-              est_w_opt + w_int,
-              est_w_opt + w_int * 2
+            cylinder_number = 1:n_cylinders,
+            w_target = dplyr::case_when(
+              n_cylinders == 5 ~ w_targets$five_cyls,
+              n_cylinders == 6 ~ w_targets$six_cyls
             ),
             OD_soil_to_use = cylinder_volume_cm3 *
               assumed_d_max * (4.75 / 4.5),

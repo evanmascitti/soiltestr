@@ -16,12 +16,23 @@
 #' @param w_silty gravimetric water content of silty soil (decimal)
 #' @param w_clayey gravimetric water content of clayey soil (decimal)
 #'
-#' @return a tibble with two columns; the air-dry mass of component A (the silty soil) and component B (the clayey soil)
+#' @return a list of length 4. Elements include:
+#' 1. tibble with two columns: the air-dry mass of component A (the silty soil) and component B (the clayey soil)
+#' 2. A tibble with two columns: the oven-dry mass fraction of each component comprising the new mix (summing to 1)
+#' 3. The sand-size content (as a decimal) of the new mixture on an oven-dry basis
+#' 4. The gravimetric water content (as a decimal) of the new mix.
 #' @export
 #'
 #' @example ./R/examples/scr_mix_calcs.R
 #'
-scr_mix_calcs <- function(final_OD_kg, scr, silt_silty, clay_silty, silt_clayey, clay_clayey, w_silty, w_clayey, include_sand_contents = FALSE, include_OD_masses = FALSE){
+scr_mix_calcs <- function(final_OD_kg, scr, silt_silty, clay_silty, silt_clayey, clay_clayey, w_silty, w_clayey){
+
+
+  # decided NOT to allow user to decide on including the extra list elements....
+  # better to always have return value have consistent structure.
+
+  # param include_sand_content Logical, whether to also report the oven-dry sand content of the new mixture
+
 
   # browser()
 
@@ -73,8 +84,11 @@ scr_mix_calcs <- function(final_OD_kg, scr, silt_silty, clay_silty, silt_clayey,
   Mb_air_dry <- Mb_air_dry_uncorrected * sand_multiplier * final_OD_kg
   Ma_air_dry <- Ma_air_dry_uncorrected * sand_multiplier * final_OD_kg
 
+
+  browser()
+
 # compute water content of final mix
-  total_contained_water <- sum(Mb_air_dry, Ma_air_dry) - (sand_multiplier * final_OD_kg)
+  total_contained_water <- (Mb_air_dry + Ma_air_dry) - (sand_multiplier * final_OD_kg)
   final_mix_w <- total_contained_water/ (sand_multiplier * final_OD_kg)
 
 

@@ -9,12 +9,12 @@
 #'sand-size particles. See **Details** for more info on the calculations.
 #'
 #' @param mix_date Date the mixture is being produced in yyyy-mm-dd
-#' @param expt_mix_nums Character or numeric vector of the unique mix identifiers
-#' @param sand_name Unique name assigned to the particular sand material (for
+#' @param sample_name Character vector of the unique mix identifiers
+#' @param sandy_name Unique name assigned to the particular sand material (for
 #'   example, "Boyd's Fine").
-#' @param clay_name Unique name assigned to the particular sand material (for
+#' @param clayey_name Unique name assigned to the particular sand material (for
 #'   example, "LA black gumbo).
-#' @param final_sand_pcts Numeric vector of equal length to
+#' @param final_sand_pct Numeric vector of final sand contents (decimal form)
 #'   \code{expt.mix.nums}. It corresponds to the final desired % of sand-size
 #'   particles in the soil mixture on an oven-dry mass basis.
 #' @param final_OD_kg  desired mass of mixed soil to obtain, on an oven-dry mass
@@ -23,28 +23,27 @@
 #'   and to prepare 6 "chunk" cylinders (3 each at standard and modified compaction
 #'   effort), with a 10% extra estimate to allow for PSA, Atterberg limits,
 #'   and a margin for error.
-#' @param sand_pct_in_sand a numeric vector of length 1 representing the
+#' @param sand_sandy a numeric vector of length 1 representing the
 #'   fraction of the "sand" component which is >53 &mu;m sieve diameter, on an
 #'   oven-dry mass basis (decimal form).
-#' @param sand_pct_in_clay a numeric vector of length 1 representing the
+#' @param sand_clayey a numeric vector of length 1 representing the
 #'   fraction of the "clay" component which is >53 &mu;m sieve diameter, on an
 #' oven-dry mass basis (decimal form).
-#' @param w_sand The gravimetric water content of the air-dry "sand" component,
+#' @param w_sandy The gravimetric water content of the air-dry "sand" component,
 #'   in decimal form.
-#' @param w_clay The gravimetric water content of the air-dry "clay" component,
+#' @param w_clayey The gravimetric water content of the air-dry "clay" component,
 #'   in decimal form.
 #' @param w_final a numeric vector of the same length as `expt_mix_nums`
 #'   (if the mixes are to have different water contents), or a single numeric
 #'   value (if all mixes are to have the same final water content). Defaults to
 #'   0.05 which is the lowest water content typically used in a compaction test.
-#' @param compute_w_to_add Logical. Calculate the water required to bring mixture to w_final?
 #'
-#' @usage mix_calcs(mix_date, expt_mix_nums, sand_name, clay_name,
-#'  final_sand_pcts, final_OD_kg= 43, w_final= 0.05, sand_pct_in_sand,
-#'  sand_pct_in_clay, w_sand= 0.001, w_clay=0.02, backpack_flo_rate_g_per_sec= 28.3)
+#' @usage mix_calcs(mix_date, expt_mix_nums, sandy_name, clayey_name,
+#'  final_sand_pct, final_OD_kg= 43, w_final= 0.05, sand_sandy,
+#'  sand_clayey, w_sandy= 0.001, w_clayey=0.02)
 #'
 #'
-#'@return A ready-to-print table of values with an appropriate number of
+#'@return A table of values with an appropriate number of
 #'  significant figures.
 #'
 #'@details
@@ -71,52 +70,93 @@
 #'
 #'@export
 #'
+#' @importFrom rlang `%||%`
 #'
 
-mix_calcs <- function(mix_date, expt_mix_nums, sand_name, clay_name,
-                      final_sand_pcts, final_OD_kg= 43, sand_pct_in_sand,
-                      sand_pct_in_clay, w_sand= 0.001,
-                      w_clay=0.02, w_final= 0.05,
-                      compute_w_to_add = FALSE) {
-  mix_ref <-   tibble::tibble(
-    mix_date= lubridate::as_date(mix_date),
-    expt_mix_nums = expt_mix_nums,
-    sand_name = sand_name,
-    clay_name = clay_name,
-    sand_pct = final_sand_pcts,
-    final_OD_kg = final_OD_kg,
-    OD_sand_size_mass_in_final_mix = final_OD_kg*.data$sand_pct,
-    OD_non_sand_size_mass_in_final_mix = final_OD_kg - .data$OD_sand_size_mass_in_final_mix,
-    kg_OD_sand_component = ( final_OD_kg * (.data$sand_pct - sand_pct_in_clay) / (sand_pct_in_sand - sand_pct_in_clay) ),
-    kg_OD_clay_component = final_OD_kg - .data$kg_OD_sand_component,
-    kg_air_dry_sand_component = .data$kg_OD_sand_component*(1+w_sand),
-    kg_air_dry_clay_component = .data$kg_OD_clay_component*(1+w_clay),
-    kg_water_already_present = ( (w_sand * .data$kg_OD_sand_component) + (w_clay * .data$kg_OD_clay_component) ),
-    new_mix_w = kg_water_already_present / final_OD_kg,
-    kg_water_desired_after_mixing = w_final * final_OD_kg,
-    kg_water_to_add = .data$kg_water_desired_after_mixing - .data$kg_water_already_present) %>%
-    dplyr::select(mix_date, expt_mix_nums, sand_name, clay_name, .data$sand_pct,
-                  .data$kg_air_dry_sand_component, .data$kg_air_dry_clay_component,
-                  .data$new_mix_w,
-                  .data$kg_water_to_add) %>%
-    dplyr::mutate(
-      sand_pct = 100 * .data$sand_pct,
-      new_mix_w = round(new_mix_w, digits = 3),
-      kg_air_dry_sand_component = round(.data$kg_air_dry_sand_component, digits = 2),
-      kg_air_dry_clay_component = round(.data$kg_air_dry_clay_component, digits = 2)) %>%
-    dplyr::rename(`Mix Date`=  mix_date,
-                  `Mix number` = expt_mix_nums,
-                  `Sand name` = sand_name,
-                  `Clay name`= clay_name,
-                  `Final % sand-size` = .data$sand_pct,
-                  `kg sand component`= .data$kg_air_dry_sand_component,
-                  `kg clay component`= .data$kg_air_dry_clay_component,
-                  `Mix water content` = .data$new_mix_w,
-                  `kg water to add`= .data$kg_water_to_add)
+mix_calcs <- function(mix_date, sample_name = NULL, sandy_name, clayey_name,
+                      final_sand_pct, final_OD_kg= 43, sand_sandy,
+                      sand_clayey, w_sandy,
+                      w_clayey, format_names = FALSE) {
 
-  if(!compute_w_to_add){
-    mix_ref <- dplyr::select(mix_ref, -`kg water to add`)
+  browser()
+
+
+  if(any(final_sand_pct > 1)){
+    stop('`final_sand_pct` must be supplied as a decimal. Did you supply a percent?',
+         call. = FALSE)
   }
 
-  return(mix_ref)
+  if(any(w_sandy > 1 | w_clayey > 1)){
+    stop('Water contents must be supplied as decimals. Did you supply a percent?',
+         call. = FALSE)
+  }
+
+# check that vectors of length > 1 are of same length
+  # currently disabled to allow recycling of vectors having length 1....there
+  # is another way to check this but for now I will just let the tibble
+  # package take care of it
+  # vector_args <- list(
+  #   mix_date = mix_date,
+  #   sample_name = sample_name,
+  #   sandy_name = sandy_name,
+  #   clayey_name = clayey_name,
+  #   final_sand_pct = final_sand_pct
+  #   )
+  #
+  # vector_lengths <- purrr::map_int(vector_args, length)
+  #
+  # length_check <- purrr::map2_lgl(vector_lengths, vector_lengths[[1]], identical)
+
+ # if(!all(length_check)){
+ #    stop("Lengths of vector arguments are not equal.")
+ #  }
+
+  # if sample name not specified, create it from the sand name, clay name, and
+  # final sand content
+
+  sample_name <- sample_name %||% paste(sandy_name, clayey_name, as.character(100 * final_sand_pct), sep = "_")
+
+
+  # browser()
+
+  mix_ref <-   tibble::tibble(
+    mix_date = lubridate::as_date(mix_date),
+    sample_name = sample_name,
+    sandy_name = sandy_name,
+    clayey_name = clayey_name,
+    final_sand_pct = final_sand_pct,
+    final_OD_kg = final_OD_kg,
+    OD_sand_size_mass_in_final_mix = final_OD_kg*.data$final_sand_pct,
+    OD_non_sand_size_mass_in_final_mix = final_OD_kg - .data$OD_sand_size_mass_in_final_mix,
+   kg_OD_sand_component = ( final_OD_kg * (.data$final_sand_pct - sand_clayey) / (sand_sandy - sand_clayey) ),
+    kg_OD_clay_component = final_OD_kg - .data$kg_OD_sand_component,
+    kg_air_dry_sand_component = .data$kg_OD_sand_component*(1+w_sandy),
+    kg_air_dry_clay_component = .data$kg_OD_clay_component*(1+w_clayey),
+    kg_water_already_present = ( (w_sandy * .data$kg_OD_sand_component) + (w_clayey * .data$kg_OD_clay_component) ),
+    new_mix_w = kg_water_already_present / final_OD_kg) %>%
+    dplyr::select(mix_date, sample_name, sandy_name, clayey_name, .data$final_sand_pct,
+                  .data$kg_air_dry_sand_component, .data$kg_air_dry_clay_component,
+                  .data$new_mix_w) %>%
+    dplyr::mutate(
+      final_sand_pct = round(100 * .data$final_sand_pct, digits = 0),
+      new_mix_w = round(new_mix_w, digits = 3),
+      kg_air_dry_sand_component = round(.data$kg_air_dry_sand_component, digits = 2),
+      kg_air_dry_clay_component = round(.data$kg_air_dry_clay_component, digits = 2))
+
+  # re-format the column titles if this is for printing
+  if(format_names){
+    mix_ref <- mix_ref %>%
+    dplyr::rename(`Mix date`=  mix_date,
+                  `Sample name` = sample_name,
+                  `Sand name` = sandy_name,
+                  `Clay name`= clayey_name,
+                  `Final % sand-size` = .data$final_sand_pct,
+                  `kg sand component`= .data$kg_air_dry_sand_component,
+                  `kg clay component`= .data$kg_air_dry_clay_component,
+                  `Mix water content` = .data$new_mix_w)
+  }
+
+
+return(mix_ref)
 }
+
