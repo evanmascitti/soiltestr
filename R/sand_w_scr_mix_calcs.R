@@ -96,7 +96,7 @@ sand_w_scr_mix_calcs <- function(
     sep = "_")
 
 
-   browser()
+   # browser()
 
 
   sand_w_new_fines_mix_components <- mix_calcs(
@@ -127,6 +127,23 @@ sand_w_scr_mix_calcs <- function(
 
   air_dry_sandy_mass <- sand_w_new_fines_mix_components$kg_air_dry_sand_component
 
+  # compute water content of new mixture
+
+  # browser()
+
+  ####################
+
+  sandy_water_contributions <- w_sandy * air_dry_sandy_mass
+
+  silty_water_contributions <- w_silty * air_dry_silty_mass
+
+  clayey_water_contributions <- w_clayey * air_dry_clayey_mass
+
+  total_water_present <- sandy_water_contributions + silty_water_contributions + clayey_water_contributions
+
+  total_air_dry_mass <- air_dry_sandy_mass + air_dry_silty_mass + air_dry_clayey_mass
+
+  new_mix_water_contents <- total_water_present / total_air_dry_mass
 
   return_tbl <- tibble::tibble(
     sample_name = sample_name,
@@ -135,6 +152,7 @@ sand_w_scr_mix_calcs <- function(
     air_dry_sandy_mass = air_dry_sandy_mass,
     air_dry_silty_mass = air_dry_silty_mass,
     air_dry_clayey_mass = air_dry_clayey_mass,
+    final_mix_w = round(new_mix_water_contents, digits = 3)
   ) %>%
     dplyr::mutate(
       dplyr::across(

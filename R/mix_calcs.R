@@ -78,7 +78,7 @@ mix_calcs <- function(mix_date, sample_name = NULL, sandy_name, clayey_name,
                       sand_clayey, w_sandy,
                       w_clayey, format_names = FALSE) {
 
-  browser()
+  # browser()
 
 
   if(any(final_sand_pct > 1)){
