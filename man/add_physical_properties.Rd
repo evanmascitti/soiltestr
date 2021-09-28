@@ -4,10 +4,10 @@
 \alias{add_physical_properties}
 \title{Calculate physical properties of a soil specimen}
 \usage{
-add_physical_properties(df, mold_dimensions = NULL, cleat_mark = FALSE)
+add_physical_properties(x, mold_dimensions = NULL, cleat_mark = FALSE)
 }
 \arguments{
-\item{df}{a data frame containing relevant specimen data, see \strong{Details}}
+\item{x}{a data frame containing relevant specimen data, see \strong{Details}}
 
 \item{mold_dimensions}{data frame containing metadata about molds used in tests. If not supplied, looks for global option \code{soiltestr.proctor_molds}.}
 
@@ -25,7 +25,7 @@ plotting purposes.
 \lifecycle{experimental}
 \loadmathjax
 
-The data passed in via \code{df} must contain specific gravity values (in
+The data passed in via \code{x} must contain specific gravity values (in
 a column named \code{Gs}), gravimetric water contents in a column named
 \code{water_content}, and the ambient test temperature (°C) in a column named
 \code{ambient_temp_c}. Water contents can be easily computed with \code{\link[=add_w]{add_w()}}.

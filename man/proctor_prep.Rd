@@ -5,25 +5,39 @@
 \title{Simplify the process of adding water to soil compaction specimens}
 \usage{
 proctor_prep(
-  x,
-  date,
-  w_int = 0.02,
-  assumed_d_max = 2.2,
-  n_cylinders = 5,
+  x = NULL,
+  pl = NULL,
+  date = Sys.Date(),
+  sample_name,
+  w_extant = NULL,
+  effort = c("standard", "modified"),
+  w_int = 0.015,
+  assumed_d_max = 2.25,
+  n_cylinders = 6,
   cylinder_volume_cm3 = 940
 )
 }
 \arguments{
-\item{x}{a data frame, see Details for required columns}
+\item{x}{S3 object of class \code{sand_scr_mix_tbl}}
 
-\item{date}{date of actual compaction test}
+\item{pl}{Plastic limit values. If \code{x} is provided, \code{pl} should be a data frame having two columns: the same sample names and a column titled \code{pl}. If \code{x} is \code{NULL}, \code{pl} should be a numeric vector of the same length as\code{sample_name}.}
 
-\item{w_int}{water content interval between successive compaction points,
-defaults to 0.02 (i.e. 2\%)}
+\item{date}{Date of mixing or testing.}
 
-\item{assumed_d_max}{a conservatively high estimate of the maximum density
-that will be achieved in this test. Defaults to 2.25.
-g/cm\ifelse{html}{\out{<sup>3</sup>}}{\eqn{^3}{^3}}}
+\item{sample_name}{Character vector of unique sample identifiers.}
+
+\item{w_extant}{Existing water content values. If \code{x} is provided, can be ignored. If \code{x} is \code{NULL} (the default), should be a numeric vector of same length as \code{sample_name}.}
+
+\item{effort}{Character vector of compaction efforts. May be one or more of 'standard', 'modified', or 'reduced'.}
+
+\item{w_int}{Gravimetric water content interval between successive compaction points. Defaults to 0.015 (1.5\%)}
+
+\item{assumed_d_max}{A conservatively high estimate of the maximum density
+that will be achieved in this test. Defaults to 2.25
+g/cm\ifelse{html}{\out{<sup>3</sup>}}{\eqn{^3}{^3}} to ensure enough soil is
+wetted for all aliquots.}
+
+\item{n_cylinders}{Number of specimens to prepare per test. Defaults to 6. 5 specimens is considered the minimum, but more or tighter-spaced cylinders can better define the compaction curve.}
 
 \item{cylinder_volume_cm3}{volume of the compaction mold in
 cm\ifelse{html}{\out{<sup>3</sup>}}{\eqn{^3}{^3}}. Used to compute compacted
@@ -31,13 +45,11 @@ volume of soil plus 0.25" of "over-pack" extending above the top of the
 4.5"-high mold.}
 }
 \value{
-A tibble with one row per aliquot. If there are soils with water
-content exceeding the minimum value desired, a negative number will populate
-the \code{w_to_add_g} column.
+A tibble with one row per aliquot (tidy format). If there are soils with extant water contents above the lowest required for the test, these cases will populate with negative values for \code{water_to_add_g}
 }
 \description{
 Pass in a tibble of specimen information and compute the amount
-of water to add via bulk addition or spray bottle.
+of water to add for each aliquot.
 }
 \details{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
@@ -49,77 +61,25 @@ tested will bracket the optimum water content and be spaced along a roughly
 equal range. Some \emph{a priori} knowledge about the soil is needed to predict
 what this range will be. \code{proctor_prep()} allows the user to specify
 the interval between 5 successive water contents to use along with the
-anticipated maximum density. Returned table contains information about the
-mass of soil to prepare and how much water to add.
-
-Multiple tests are often performed in the same day and at multiple
-compaction efforts. For this reason, the data frame passed to
-\code{proctor_prep()} should contain the following columns:
-\itemize{
-\item \code{sample_name} a unique identifier
-between the samples tested, i.e. mix number or name - \code{w_extant} the current
-water content of the soil (g/g)
-\item \code{effort}: a character string specifying the type of compactive effort,
-i.e. "standard", "modified", or "reduced"
-\item \code{est_w_opt} the estimated optimum water
-content for the compaction effort to be tested.
-}
-
-Note that \code{w_opt} for the standard effort is commonly ~ 90\% of the plastic
-limit. \code{w_opt} for the modified effort is typically 3-4 \% below that for the
-standard effort.
-
-The data frame passed to \code{x} can be easily prepared using
-\code{\link[dplyr:mutate-joins]{dplyr::left_join()}} if the data are already in R, as demonstrated in
-the examples, or by using \code{\link[tidyr:expand]{tidyr::crossing()}} to generate all combinations
-of \code{effort} and \code{sample_name}, then adding a data frame column containing the
-water contents. The standard \code{w_opt} can be estimated in one of two ways:
-\itemize{
-\item Gradually add water to a ~ 25 mL soil specimen until it appears close to
-the optimum water content. Take a representative sample and measure the
-water content via oven-drying
-\href{https://www.astm.org/Standards/D2216.htm}{ASTM 2216 - 19}
-\item Perform a plastic limit test and estimate \code{w_opt} as 90\% of this value.
-This routine is demonstrated in the examples.
-}
-
-Using a battery-powered spray bottle increases the uniformity of water
-throughout the soil, and improves the efficiency of the process. The
-\code{spray_flo_rate_cm3_sec} argument allows the user to specify the flow rate
-of the bottle, if used.
-
-The \code{assumed_d_max} argument is used to ensure enough soil is mixed for each
-water content. All the aliquots use the same oven-dry soil mass for mixing
-purposes; more soil will be left over for points very dry or wet of optimum.
+anticipated maximum density and the plastic limit of the soil. The maximum
+density for the standard effort test is estimated as 95\% of w~~opt~~.
+w~~opt~~ for the modified test is estimated as 0.75 x w~~opt standard~~.
+Returned table contains information about the mass of soil to prepare and
+how much water to add.
 }
 \examples{
-# prepare tibble from existing water contents and estimated w_opt values (these
-# should be estimated visually and confirmed w, but are simply typed here for demonstration)
+# prepare tibble from existing water contents and estimated w_opt values
 library(tibble)
-library(dplyr)
-library(tidyr)
 
-w_extant_values <- tibble(
+y <- tibble(
   sample_name = paste0("mix_0", 1:3),
-  w_extant = c(0.048, 0.057, 0.062))
-
-PL_values <- tibble(
-  sample_name = paste0("mix_0", 1:3),
-  PL= c(0.095, 0.10, 0.14),
-  standard = 0.9*PL,
-  modified= standard - 0.03)
-
-w_info <- w_extant_values \%>\%
-  left_join(PL_values) \%>\%
-  select(-PL) \%>\%
-  pivot_longer(cols= c(standard:modified),
-               names_to =  'effort',
-               values_to = 'est_w_opt')\%>\%
-  select(sample_name, effort, everything()) \%>\%
-  arrange(desc(effort))
+  w_extant = c(0.048, 0.027, 0.052),
+  PL= c(0.095, 0.10, 0.14))
 
 # generate the reference table
-proctor_prep(df= w_info, date= Sys.Date())
+proctor_prep(sample_name = y$sample_name,
+             w_extant = y$w_extant,
+             pl = y$PL)
 
 # widen the interval for a clayey soil
 mix_03 <- w_info \%>\%

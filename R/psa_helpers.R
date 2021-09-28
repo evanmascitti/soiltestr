@@ -44,6 +44,14 @@ divide_psa_datafiles <- function(){
     pattern = "^psa-.*\\d{4}-\\d{2}-\\d{2}\\.csv$",
     full.names = T)
 
+  # if user has supplied a directory in which no psa files exist,
+  # halt function to give a better error message than R will on
+  # its own
+  if(length(all_datafile_paths) < 1){
+    stop("No psa data files found in directory `", dir, "`. Did you supply the full path?", call. = FALSE)
+  }
+
+
   datafile_names <- stringr::str_remove(
     string = basename(all_datafile_paths),
     pattern = "_\\d{4}-\\d{2}-\\d{2}\\.csv$") %>%

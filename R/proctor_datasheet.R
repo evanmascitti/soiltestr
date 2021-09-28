@@ -41,7 +41,7 @@ proctor_datasheet <- function(prep_sheet = NULL,
                               ambient_temp_c = 20,
                               write = TRUE,
                               dir = NULL,
-                              path = "auto",
+                              path = "auto"
                               ) {
 
 

@@ -5,48 +5,43 @@
 \title{Generate a table to hold raw data in compaction tests.}
 \usage{
 proctor_datasheet(
-  prep_sheet,
-  dir,
+  prep_sheet = NULL,
   tin_tare_set = NULL,
   tin_numbers = NULL,
-  path = "auto",
-  ambient_temp_c = 22,
+  ambient_temp_c = 20,
   write = TRUE,
-  printable = TRUE
+  dir = NULL,
+  path = "auto"
 )
 }
 \arguments{
 \item{prep_sheet}{A data frame. It is recommended to pipe this argument
-directly from \code{\link[=proctor_prep]{proctor_prep()}}. Includes sample metadata such as test
+directly from \code{\link[=proctor_prep]{proctor_prep()}}. Must be of class \code{proctor_prep_sheet}. Includes sample metadata such as test
 date, mix names, efforts, etc.}
 
-\item{dir}{Directory in which to save the file, should end with \code{"/"}}
+\item{tin_tare_set}{Character string (length 1) which identifies the set of tin tare
+measurements to use during subsequent data analyses. If \code{NULL} (the default), an empty string is used.}
 
-\item{path}{If \code{"auto"}, constructs a file name from the date column of \code{df}
-and the \code{dir} argument; otherwise specify a path to save the file
-(including relative directory)}
+\item{tin_numbers}{Numeric. Length must equal total number of experimental units in \code{prep_sheet}. If \code{NULL} (the default), an empty string is used.}
 
 \item{ambient_temp_c}{Ambient temperature during the test in °C. Used
 to compute water density during data analysis (see
-\code{\link[=add_physical_properties]{add_physical_properties()}}). Defaults to 22°C for filling data sheet; user
+\code{\link[=add_physical_properties]{add_physical_properties()}}). Defaults to 20°C for filling data sheet; user
 should measure temperature during test and input before data collection. Be
 careful to record only one value during the test or
 \code{\link[=add_physical_properties]{add_physical_properties()}} will fail.}
 
-\item{write}{Defaults to \code{TRUE} and saves data sheet as a .csv; if set to
-\code{FALSE}, returns a tibble instead of writing to disk}
+\item{write}{Defaults to \code{TRUE} and saves empty data sheet as a \code{.csv} file. Will not over-write an
+existing file.}
 
-\item{printable}{Logical. Whether to also create a printable pdf version of the data sheet for use during data collection (i.e. pen and paper)}
+\item{dir}{Directory in which to save the file.}
 
-\item{empty_cylinder_mass_g}{Mass of compaction mold}
-
-\item{tin_tares_set}{quoted string which identifies the set of tin tare
-measurements to use during subsequent data analyses. These are not used by
-this function, but including this information in the raw data file saves a
-step later in the analysis pipeline.}
+\item{path}{If \code{"auto"}, constructs a file name from the date column of \code{prep_sheet}
+and the \code{dir} argument; otherwise specify a path to save the file
+(including relative directory)}
 }
 \value{
-Writes file to disk if \code{write = TRUE}; returns a tibble if \code{write = FALSE} .
+A tibble of relevant data. Also writes file to disk when \code{write = TRUE}.
 }
 \description{
 Generating a skeleton file permits a consistent data structure

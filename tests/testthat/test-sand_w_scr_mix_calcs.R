@@ -73,7 +73,7 @@ test_that("3-way mixtures are computed accurately",{
 
   # check new mix water contents
     expect_equal(
-    object = x$final_mix_w,
+    object = x$w_extant,
     expected = c(0.009, 0.011),
     tolerance = 0.0001
   )

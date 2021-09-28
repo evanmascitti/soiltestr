@@ -44,6 +44,8 @@ psa <- function(dir, bouyoucos_cylinder_dims = NULL, tin_tares = NULL,
     stop("Directory ", dir, "does not exist. Did you supply the full path?")
   }
 
+
+
   # determine which protocol was used and assign to a local variable
 
   protocol_ID <- find_protocol_ID()
@@ -58,6 +60,7 @@ psa <- function(dir, bouyoucos_cylinder_dims = NULL, tin_tares = NULL,
   test_date <- stringr::str_extract(string = dir, pattern = "\\d{4}-\\d{2}-\\d{2}")
 
   all_datafile_paths <- divide_psa_datafiles()
+
 
 # read all the files in; this returns a list of length 2; each element
 # is also a list containing the appropriate data frames (tibbles)

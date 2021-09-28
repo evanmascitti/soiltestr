@@ -39,7 +39,7 @@ test_that("scr mix of 2 yields correct results", {
 
   # final mix has water content of 2.2%
   expect_equal(
-    object = scr2$final_mix_w,
+    object = scr2$w_extant,
     expected = 0.02227273,
     tolerance = 0.0001
   )

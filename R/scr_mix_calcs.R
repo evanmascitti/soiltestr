@@ -89,7 +89,7 @@ scr_mix_calcs <- function(final_OD_kg, scr, silt_silty, clay_silty, silt_clayey,
 
 # compute water content of final mix
   total_contained_water <- (Mb_air_dry + Ma_air_dry) - (sand_multiplier * final_OD_kg)
-  final_mix_w <- total_contained_water/ (sand_multiplier * final_OD_kg)
+  w_extant <- total_contained_water/ (sand_multiplier * final_OD_kg)
 
 
   # compile everything to return
@@ -102,7 +102,7 @@ scr_mix_calcs <- function(final_OD_kg, scr, silt_silty, clay_silty, silt_clayey,
       OD_kg_silty = Ma,
       OD_kg_clayey = Mb),
     final_OD_sand_pct = final_OD_sand_pct,
-    final_mix_w = final_mix_w
+    w_extant = w_extant
   )
 
   return(return_list)

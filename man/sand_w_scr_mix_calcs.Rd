@@ -5,6 +5,7 @@
 \title{Calculate component masses for a 3-way soil mixture}
 \usage{
 sand_w_scr_mix_calcs(
+  x = NULL,
   mix_date,
   final_OD_kg,
   sample_name = NULL,
@@ -29,6 +30,8 @@ sand_w_scr_mix_calcs(
 )
 }
 \arguments{
+\item{x}{data frame containing the relevant columns. If \code{NULL} (the default), user must supply each argument below.}
+
 \item{mix_date}{Character.}
 
 \item{final_OD_kg}{Numeric. Final oven-dry mass of mixture.}

@@ -1,30 +1,15 @@
-# prepare tibble from existing water contents and estimated w_opt values (these
-# should be estimated visually and confirmed w, but are simply typed here for demonstration)
+# prepare tibble from existing water contents and estimated w_opt values
 library(tibble)
-library(dplyr)
-library(tidyr)
 
-w_extant_values <- tibble(
+y <- tibble(
   sample_name = paste0("mix_0", 1:3),
-  w_extant = c(0.048, 0.057, 0.062))
-
-PL_values <- tibble(
-  sample_name = paste0("mix_0", 1:3),
-  PL= c(0.095, 0.10, 0.14),
-  standard = 0.9*PL,
-  modified= standard - 0.03)
-
-w_info <- w_extant_values %>%
-  left_join(PL_values) %>%
-  select(-PL) %>%
-  pivot_longer(cols= c(standard:modified),
-               names_to =  'effort',
-               values_to = 'est_w_opt')%>%
-  select(sample_name, effort, everything()) %>%
-  arrange(desc(effort))
+  w_extant = c(0.048, 0.027, 0.052),
+  PL= c(0.095, 0.10, 0.14))
 
 # generate the reference table
-proctor_prep(df= w_info, date= Sys.Date())
+proctor_prep(sample_name = y$sample_name,
+             w_extant = y$w_extant,
+             pl = y$PL)
 
 # widen the interval for a clayey soil
 mix_03 <- w_info %>%
