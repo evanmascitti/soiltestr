@@ -45,7 +45,7 @@ a list of length 4. Elements include:
 Compute air-dry component masses to use based on silt-size and clay-size mass
 percentages and extant water contents
 \loadmathjax In general, the return value of this function will be further
-processed and passed to \code{mix_calcs()}. This would be useful when blending with
+processed and passed to \code{sand_w_scr_mix_calcs()}. This would be useful when blending with
 sand to yield a 3-component mixture with known sand content and SCR
 }
 \examples{

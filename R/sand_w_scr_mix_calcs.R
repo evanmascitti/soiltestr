@@ -28,6 +28,9 @@
 #' @return
 #' @export
 #'
+#'
+#' @example inst/examples/sand_w_scr_mix_calcs_example.R
+#'
 sand_w_scr_mix_calcs <- function(
   x = NULL,
   mix_date,
@@ -53,7 +56,7 @@ sand_w_scr_mix_calcs <- function(
   ...
 ){
 
-  # browser()
+ #  browser()
 
   if(any(final_sand_pct > 1)){
     stop('`final_sand_pct` must be supplied as a decimal. Did you supply a percent?',
@@ -88,7 +91,7 @@ sand_w_scr_mix_calcs <- function(
         as.character(round(100 * x$final_sand_pct), digits = 0)),
       sep = "_")
 
-    sand_w_new_fines_mix_components <- mix_calcs(
+    sand_w_new_fines_mix_components <- sand_clay_mix_calcs(
       mix_date = x$mix_date,
       sample_name = x$sample_name,
       sandy_name = x$sandy_name,
@@ -98,8 +101,7 @@ sand_w_scr_mix_calcs <- function(
       sand_sandy = x$sand_sandy,
       sand_clayey = new_fines_components$final_OD_sand_pct,
       w_sandy = x$w_sandy,
-      w_clayey = new_fines_components$w_extant,
-      format_names = FALSE)
+      w_clayey = new_fines_components$w_extant)
 
 
 
@@ -198,7 +200,7 @@ sand_w_scr_mix_calcs <- function(
    # browser()
 
 
-  sand_w_new_fines_mix_components <- mix_calcs(
+  sand_w_new_fines_mix_components <- sand_clay_mix_calcs(
     mix_date = mix_date,
     sample_name = sample_name,
     sandy_name = sandy_name,
@@ -208,15 +210,17 @@ sand_w_scr_mix_calcs <- function(
     sand_sandy = sand_sandy,
     sand_clayey = new_fines_components$final_OD_sand_pct,
     w_sandy = w_sandy,
-    w_clayey = new_fines_components$w_extant,
-    format_names = FALSE)
+    w_clayey = new_fines_components$w_extant
+    )
+
+  browser()
 
   # from the new fines list and the required mass of fines, compute the air-dry
   # masses of silty and clayey soils
   # this is done in a vectorized i.e. row-wise way. Do NOT use the `sum` function as this will sum the whole vector, which will be correct if only
   # one mixture is being made, but will NOT be correct if multiple mixes are held in the tibble.
 
-  air_dry_fines_mass <- unlist(sand_w_new_fines_mix_components$kg_air_dry_clay_component)
+  air_dry_fines_mass <- unlist(sand_w_new_fines_mix_components$kg_air_dry_clayey_component)
 
   air_dry_silty_mass <- air_dry_fines_mass * (new_fines_components$air_dry_component_masses$air_dry_kg_silty / (new_fines_components$air_dry_component_masses$air_dry_kg_silty + new_fines_components$air_dry_component_masses$air_dry_kg_clayey))
 
@@ -224,7 +228,7 @@ sand_w_scr_mix_calcs <- function(
 
  # also assign a variable for the air-dry mass of sandy soil to use.
 
-  air_dry_sandy_mass <- sand_w_new_fines_mix_components$kg_air_dry_sand_component
+  air_dry_sandy_mass <- sand_w_new_fines_mix_components$kg_air_dry_sandy_component
 
   # compute water content of new mixture
 
@@ -245,14 +249,14 @@ sand_w_scr_mix_calcs <- function(
   new_mix_water_contents <- total_water_present / total_air_dry_mass
 
   return_tbl <- tibble::tibble(
-    sample_name = c(sample_name = sample_name),
-    final_sand_pct = c(final_sand_pct = final_sand_pct),
-    final_scr = c(final_scr = final_scr),
-    air_dry_sandy_mass = c(air_dry_sandy_mass = air_dry_sandy_mass),
-    air_dry_silty_mass = c(air_dry_silty_mass = air_dry_silty_mass),
-    air_dry_clayey_mass = c(air_dry_clayey_mass =air_dry_clayey_mass),
-    w_extant = c(new_mix_water_contents = round(new_mix_water_contents, digits = 3)
-  )) %>%
+    sample_name = sample_name,
+    final_sand_pct = final_sand_pct,
+    final_scr = final_scr,
+    air_dry_sandy_mass = air_dry_sandy_mass,
+    air_dry_silty_mass = air_dry_silty_mass,
+    air_dry_clayey_mass = air_dry_clayey_mass,
+    w_extant = round(new_mix_water_contents, digits = 3)
+  ) %>%
     dplyr::mutate(
       dplyr::across(
         .cols = dplyr::matches("air_dry_(sandy|silty|clayey)_mass"),
@@ -262,7 +266,7 @@ sand_w_scr_mix_calcs <- function(
 
   # browser()
 
-  return(structure(return_tbl, class = c(class(return_tbl), 'sand_scr_mix_tbl' )))
+  return(structure(return_tbl, class = c(class(return_tbl), 'soiltestr_mix_calcs' )))
 
 
 }

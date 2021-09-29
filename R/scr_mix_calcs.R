@@ -4,7 +4,7 @@
 #' percentages and extant water contents
 
 #'\loadmathjax In general, the return value of this function will be further
-#'processed and passed to `mix_calcs()`. This would be useful when blending with
+#'processed and passed to `sand_w_scr_mix_calcs()`. This would be useful when blending with
 #'sand to yield a 3-component mixture with known sand content and SCR
 #'
 #' @param final_OD_kg oven-dry mass of particles < 53 microns in final mixture (in kg)
