@@ -132,23 +132,27 @@ sand_clay_mix_calcs <- function(
     kg_air_dry_sandy_component = .data$kg_OD_sandy_component*(1+w_sandy),
     kg_air_dry_clayey_component = .data$kg_OD_clayey_component*(1+w_clayey),
     kg_water_already_present = ( (w_sandy * .data$kg_OD_sandy_component) + (w_clayey * .data$kg_OD_clayey_component) ),
-    new_mix_w = kg_water_already_present / final_OD_kg,
+    w_extant = kg_water_already_present / final_OD_kg,
    kg_air_dry_silty_component = NA_real_) %>%
     dplyr::select(
       mix_date, sample_name, sandy_name, clayey_name, .data$final_sand_pct,
       .data$kg_air_dry_sandy_component,
       .data$kg_air_dry_silty_component,
       .data$kg_air_dry_clayey_component,
-      .data$new_mix_w) %>%
+      .data$w_extant) %>%
     dplyr::mutate(
       final_sand_pct = round(100 * .data$final_sand_pct, digits = 0),
-      new_mix_w = round(new_mix_w, digits = 3),
+      w_extant = round(w_extant, digits = 3),
       kg_air_dry_sandy_component = round(.data$kg_air_dry_sandy_component, digits = 2),
       .data$kg_air_dry_silty_component,
       kg_air_dry_clayey_component = round(.data$kg_air_dry_clayey_component, digits = 2))
 
+# for later if I learn more about inheritance
+  # and S3 classes
 
-  return(structure(mix_ref, class = c(class(mix_ref), 'soiltestr_mix_calcs')))
+  # return(structure(mix_ref, class = c(class(mix_ref), 'soiltestr_mix_calcs')))
+
+  return(mix_ref)
 
 }
 

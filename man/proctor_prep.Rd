@@ -6,7 +6,7 @@
 \usage{
 proctor_prep(
   x = NULL,
-  pl = NULL,
+  PLs = NULL,
   date = Sys.Date(),
   sample_name,
   w_extant = NULL,
@@ -18,9 +18,9 @@ proctor_prep(
 )
 }
 \arguments{
-\item{x}{S3 object of class \code{sand_scr_mix_tbl}}
+\item{x}{Data frame containing columns \code{sample_name}, \code{w_extant}, and \code{effort}. May also contain a column of plastic limit values, named \code{PL}. # S3 object of class \code{sand_scr_mix_tbl}}
 
-\item{pl}{Plastic limit values. If \code{x} is provided, \code{pl} should be a data frame having two columns: the same sample names and a column titled \code{pl}. If \code{x} is \code{NULL}, \code{pl} should be a numeric vector of the same length as\code{sample_name}.}
+\item{PLs}{Plastic limit values. If \code{x} contains a \code{PL} column, may be \code{NULL} (the default). If \code{x} is provided but does \emph{not} contain a \code{PL} column, \code{PLs} should be a data frame having two columns: the same sample names and a column titled \code{PLs}. If \code{x} is \code{NULL}, \code{PLs} should be a numeric vector of the same length as\code{sample_name}.}
 
 \item{date}{Date of mixing or testing.}
 
@@ -45,7 +45,7 @@ volume of soil plus 0.25" of "over-pack" extending above the top of the
 4.5"-high mold.}
 }
 \value{
-A tibble with one row per aliquot (tidy format). If there are soils with extant water contents above the lowest required for the test, these cases will populate with negative values for \code{water_to_add_g}
+A tibble with one row per aliquot (tidy format). If there are soils with extant water contents above the lowest required for the test, these cases will populate with negative values for \code{water_to_add_g}. Soil masses are rounded to the nearest 100 g and water additions are rounded to the nearest 10 g.
 }
 \description{
 Pass in a tibble of specimen information and compute the amount
@@ -54,7 +54,10 @@ of water to add for each aliquot.
 \details{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 
-When preparing soil for compaction testing, it is often desired to
+The simplest way to use this function for splitting soil mixtures is to generate two tables.
+
+The rationale for this function is efficient Proctor testing of soil mixtures.
+When preparing samples for compaction testing, it is often desired to
 mix the specimens to known water contents, rather than "eyeballing" the
 water additions. This ensures the water contents of the test specimens
 tested will bracket the optimum water content and be spaced along a roughly
@@ -68,29 +71,63 @@ Returned table contains information about the mass of soil to prepare and
 how much water to add.
 }
 \examples{
-# prepare tibble from existing water contents and estimated w_opt values
-library(tibble)
+# Recommended approach: provide the `x` argument as a full table of required data
 
-y <- tibble(
+# first prepare three tables - the efforts to test, the existing water contents, and the plastic limits
+
+w_extants <- tibble::tibble(
   sample_name = paste0("mix_0", 1:3),
   w_extant = c(0.048, 0.027, 0.052),
-  PL= c(0.095, 0.10, 0.14))
+)
 
-# generate the reference table
-proctor_prep(sample_name = y$sample_name,
-             w_extant = y$w_extant,
-             pl = y$PL)
+pl_values <- tibble::tibble(
+  sample_name = w_extants$sample_name,
+  PL = c(0.095, 0.10, 0.14))
+
+efforts <- tidyr::crossing(
+  sample_name = paste0("mix_0", 1:3),
+  effort = c('reduced', 'standard', 'modified')
+)
+
+full_args <- list(efforts, w_extants, pl_values) \%>\%
+  purrr::reduce(dplyr::left_join, by= 'sample_name')
+
+# now pass the complete table to `protor_prep()`
+proctor_prep(x = full_args)
+
+# An alternative approach is to provide the x argument (which can be piped directly from `sand_clay_mix_calcs()` _and_ a data frame
+# having PL values
+
+component_masses <- sand_clay_mix_calcs(
+  mix_date = Sys.Date(),
+  sample_name = NULL,
+  sandy_name = "concrete-sand",
+  clayey_name = 'brown-gumbo',
+  final_sand_pct = seq(0.2, 0.8, by = 0.2),
+  final_OD_kg = 30,
+  sand_sandy = 0.97,
+  sand_clayey = 0.06,
+  w_sand = 0.001,
+  w_clay = 0.02)
+
+pl_df2 <- tibble::tibble(
+  sample_name = component_masses$sample_name,
+  PL = (1 - 0.01*component_masses$final_sand_pct) * 0.18
+)
+
+proctor_prep(component_masses, PLs = pl_df2)
+
+
+# Alternatively, provide individual 'loose" vectors
+proctor_prep(sample_name = w_extants$sample_name,
+             w_extant = w_extants$w_extant,
+             PLs = pl_values$PL)
+
 
 # widen the interval for a clayey soil
-mix_03 <- w_info \%>\%
-  filter(sample_name == 'mix_03')
-proctor_prep(df= mix_03, date= Sys.Date(), w_int = 0.025)
-
-# the function works fine with only one compaction effort but be sure this is
-# still one of the columns
-mix_03 \%>\%
-  filter(effort == 'modified') \%>\%
-  proctor_prep(date= Sys.Date())
+mix_03 <- dplyr::filter(full_args, sample_name == 'mix_03', effort == 'standard')
+proctor_prep(x = mix_03, PLs = pl_values,
+             date= Sys.Date(), w_int = 0.025)
 
 
 }

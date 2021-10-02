@@ -5,7 +5,13 @@
 #'@description Pass in a tibble of specimen information and compute the amount
 #'  of water to add for each aliquot.
 #'
-#'@details When preparing soil for compaction testing, it is often desired to
+#'@details The simplest way to use this function for splitting soil mixtures is to generate two tables.
+# The first is generated using `sand_clay_mix_calcs()` or
+# `sand_w_scr_mix_calcs()`. The second should contain the sample name and their
+# plastic limits. These are passed to the `x` and `PLs` arguments. Other approaches are shown in the examples.
+#'
+#' The rationale for this function is efficient Proctor testing of soil mixtures.
+#' When preparing samples for compaction testing, it is often desired to
 #'  mix the specimens to known water contents, rather than "eyeballing" the
 #'  water additions. This ensures the water contents of the test specimens
 #'  tested will bracket the optimum water content and be spaced along a roughly
@@ -19,8 +25,8 @@
 #'  how much water to add.
 #'
 #'
-#'@param x S3 object of class `sand_scr_mix_tbl`
-#' @param pl Plastic limit values. If `x` is provided, `pl` should be a data frame having two columns: the same sample names and a column titled `pl`. If `x` is `NULL`, `pl` should be a numeric vector of the same length as`sample_name`.
+#'@param x Data frame containing columns `sample_name`, `w_extant`, and `effort`. May also contain a column of plastic limit values, named `PL`. # S3 object of class `sand_scr_mix_tbl`
+#' @param PLs Plastic limit values. If `x` contains a `PL` column, may be `NULL` (the default). If `x` is provided but does _not_ contain a `PL` column, `PLs` should be a data frame having two columns: the same sample names and a column titled `PLs`. If `x` is `NULL`, `PLs` should be a numeric vector of the same length as`sample_name`.
 #'@param date Date of mixing or testing.
 #'@param sample_name Character vector of unique sample identifiers.
 #'@param w_extant Existing water content values. If `x` is provided, can be ignored. If `x` is `NULL` (the default), should be a numeric vector of same length as `sample_name`.
@@ -36,7 +42,7 @@
 #'  volume of soil plus 0.25" of "over-pack" extending above the top of the
 #'  4.5"-high mold.
 #'
-#'@return A tibble with one row per aliquot (tidy format). If there are soils with extant water contents above the lowest required for the test, these cases will populate with negative values for `water_to_add_g`
+#'@return A tibble with one row per aliquot (tidy format). If there are soils with extant water contents above the lowest required for the test, these cases will populate with negative values for `water_to_add_g`. Soil masses are rounded to the nearest 100 g and water additions are rounded to the nearest 10 g.
 #'@export
 #'
 #'@example inst/examples/proctor_prep_example.R
@@ -48,7 +54,7 @@
 #'@references \href{https://www.astm.org/Standards/D698.htm}{ASTMc D698-12e2}
 
 proctor_prep <- function(x = NULL,
-                         pl = NULL,
+                         PLs = NULL,
                          date = Sys.Date(),
                          sample_name,
                          w_extant = NULL,
@@ -59,7 +65,7 @@ proctor_prep <- function(x = NULL,
                          cylinder_volume_cm3 = 940){
 
 
- #  browser()
+   # browser()
 
 
   # Some error messages to check for arguments if an object is not
@@ -83,7 +89,7 @@ proctor_prep <- function(x = NULL,
 
 if(!is.null(x)){
 
-  if(missing(pl)){
+  if(missing(PLs) & ! 'PL' %in% names(x)){
     stop("No data frame provided for `PL` argument.")
   }
 
@@ -95,32 +101,43 @@ if(!is.null(x)){
   )
 
 
- #  browser()
+   # browser()
 
 # having some problems with method inheritance and dplyr::across(), but by converting
 # to a data frame it seems to strip the other classes off (via as.data.frame()), which is fine because the class is no longer needed here....then
 # able to use dplyr verbs again
 
-  w_targets_df <- purrr::reduce(
-    .x = list(base_df, efforts_df, pl),
-    .f = dplyr::left_join,
-    by = 'sample_name'
-  ) %>%
-    as.data.frame() %>%
+  # browser()
+
+
+  # if the x argument already has a column for PL, no need to join
+  # with the PL values data frame. Otherwise, join with data frame
+  # provided in PLs argument
+
+  if('PL' %in% names(x)){
+    w_targets_df <- base_df
+
+      # dplyr::left_join(
+      # base_df, efforts_df, by = 'sample_name')
+    } else{
+      w_targets_df <- dplyr::left_join(
+        base_df, efforts_df, by = 'sample_name') %>%
+        dplyr::left_join(PLs, by = c('sample_name'))
+    }
+
+
+  w_targets_df <-  as.data.frame(w_targets_df) %>%
+    tibble::as_tibble() %>%
     dplyr::select(.data$sample_name, .data$effort, .data$w_extant, .data$PL) %>%
     dplyr::group_by(dplyr::across()) %>%
     dplyr::mutate(
-      w_target = purrr::map(PL, make_w_spread)
+      w_target = purrr::map2(effort, PL, make_w_spread)
     ) %>%
     dplyr::ungroup() %>%
     tidyr::unnest(cols = c(.data$w_target)) %>%
     dplyr::ungroup()
 
-  adjusted_w_targets_df <- adjust_w_targets(x = w_targets_df)
-
- #  browser()
-
-  augmented_w_targets_df <- augment_proctor_w_targets(x = adjusted_w_targets_df)
+  augmented_w_targets_df <- augment_proctor_w_targets(x = w_targets_df)
 
   return(augmented_w_targets_df)
 
@@ -132,41 +149,37 @@ if(!is.null(x)){
 
 # code for when x is NOT provided begins here -----------------------------
 
- # browser()
+#  browser()
 
 
-  if(missing(pl)){
-    stop("No values provided for `pl`. Please provide either a numeric vector of equal length to `sample_name`, or (instead) supply a data frame in `x`.")
+  if(missing(PLs)){
+    stop("No values provided for `PLs`. Please provide either a numeric vector of equal length to `sample_name`, or (instead) supply a data frame in `x`.")
   }
 
 
   pl_df <- tibble::tibble(
     sample_name = unname(sample_name),
     w_extant = unname(w_extant),
-    PL  = unname(pl)
+    PL  = unname(PLs)
   )
 
-
+# browser()
 
   # generate the new water contents with the helper function `make_w_spread()`,
   w_targets_df <- tidyr::crossing(
      sample_name = unname(sample_name),
      effort = effort) %>%
      dplyr::left_join(pl_df, by = 'sample_name') %>%
-     dplyr::group_by(dplyr::across()) %>%
-    dplyr::mutate(w_target = purrr::map(PL, make_w_spread)) %>%
+    dplyr::group_by(dplyr::across()) %>%
+    tidyr::nest() %>%
+    dplyr::mutate(w_target = purrr::map2(effort, PL, make_w_spread)) %>%
     tidyr::unnest(cols = .data$w_target) %>%
     dplyr::ungroup()
 
 
-   # then adjust the reduced or modified water content as needed
+  augmented_w_targets_df <- augment_proctor_w_targets(x = w_targets_df)
 
-  adjusted_w_targets_df <- adjust_w_targets(x = w_targets_df)
-
-
-  augmented_w_targets_df <- augment_proctor_w_targets(x = adjusted_w_targets_df)
-
-   return(augmented_w_targets_df)
+  return(augmented_w_targets_df)
 
 }
 
@@ -174,19 +187,23 @@ if(!is.null(x)){
 
 #' Helper function for generating proctor water contents
 #'
+#' @param effort Character vector of length 1 indicating compaction effort
+#' @param PL Estimated value for plastic limit or (optimum water content, for
+#'   nonplastic soils)
 #' @param n_cyls Number of specimens to prepare
 #'
 #' @return Tibble containing existing water content, anticipated optimum water content for standard test, and target water content for each specimen
 #'
-make_w_spread <- function(PL, n_cyls = NULL){
+make_w_spread <- function(effort, PL, n_cyls = NULL){
 
-  # browser()
+ #  browser()
 
-  # find n_cylinders and w_int arguments from parent call
+  # find n_cylinders and w_int arguments from parent call and re-assign
+  # them in the current environment
 
   n_cyls <- get("n_cylinders", envir = rlang::caller_env(n = 2))
 
-  w_int <- get("w_int", envir = rlang::caller_env(n = 2))
+  w_interval <- get("w_int", envir = rlang::caller_env(n = 2))
 
   if(!n_cyls %in% c(5:6)){
     stop("`n_cyls` argument is ", n_cyls, "but it must be either 5 or 6.",
@@ -194,60 +211,58 @@ make_w_spread <- function(PL, n_cyls = NULL){
   }
 
 
+  est_w_opt <- dplyr::case_when(
+    effort == 'reduced' ~ 1.25 * PL,
+    effort == 'standard' ~ PL,
+    effort == 'modified' ~ 0.75 * PL
+    )
+
+  # This won't work because case_when() evaluates _all_ of the RHS expressions first,
+  # then decides which to use based on the LHS condition. This seems backwards to me
+  # but there must be a good reason for it. Anyway, you evidently can't put error messages
+  # inside this function the same way you can for `switch()`. However in this case
+  # I already have a check for effort using `match.arg()` earlier in the function call,
+  # so no need for the extra check here.
+
+    # ,
+  #   TRUE ~ stop('Compaction effort must be one of "reduced", "standard", or "modified". The estimated optimum water content is derived from the effort and the plastic limit.')
+  # )
+
+#
+#   if(effort == 'modified'){
+#     est_w_opt <- 0.75 * PL
+#   } else{
+#     if(effort == 'standard'){
+#       est_w_opt <- PL
+#     } else{
+#       if(effort == 'reduced'){
+#         est_w_opt <- 1.25 * PL}
+#       }
+#   }
+
+
   if(n_cyls == 5L){
     new_water_contents <-  c(
-      PL - w_int * 2,
-      PL - w_int,
-      PL,
-      PL + w_int,
-      PL + w_int * 2
+      est_w_opt - w_interval * 2,
+      est_w_opt - w_interval,
+      est_w_opt,
+      est_w_opt + w_interval,
+      est_w_opt + w_interval * 2
     )} else {
       if(n_cyls == 6L){
         new_water_contents <- c(
-          PL - (w_int * 3),
-          PL - (w_int * 2),
-          PL - w_int,
-          PL,
-          PL + w_int,
-          PL + (w_int * 2)
+          est_w_opt - (w_interval * 3),
+          est_w_opt - (w_interval * 2),
+          est_w_opt - w_interval,
+          est_w_opt,
+          est_w_opt + w_interval,
+          est_w_opt + (w_interval * 2)
           )
-
       }
     }
 
-  # build tibble by recycling arguments that originally
-  # came from the one-row tibble fed to this
-  # function and tacking on the new target water contents vector
-
-  # w_spread_tbl <- tibble::tibble(
-  #   std_est_w_opt = std_est_w_opt,
-  #   w_target = new_water_contents
-  # )
 
   return(new_water_contents)
-}
-
-
-#' Add the target water contents to a nested data frame
-#'
-#' A helper for `make_w_spread`
-#' @param w_targets_df
-#'
-#' @return An unnested tibble containing the original colums with the correct target water contents for each specimen
-#'
-adjust_w_targets <- function(x){
-
-   w_targets_df <- x %>%
-     dplyr::mutate(
-      w_target = dplyr::case_when(
-        effort == 'modified' ~ 0.75 * w_target, # typically the modified w_opt is about 70-75% of that for the standard effort
-        effort == 'reduced' ~ 1.25 * w_target, # w_opt will be larger for reduced effort
-        effort == 'standard' ~ w_target
-      )
-    )
-
-  return(w_targets_df)
-
 }
 
 
@@ -291,8 +306,8 @@ augment_proctor_w_targets <- function(x){
       .data$moist_soil_to_use_g,
       .data$water_to_add_g)  %>%
     dplyr::mutate(
-        moist_soil_to_use_g = round(moist_soil_to_use_g, digits = 0),
-        water_to_add_g = round(water_to_add_g, digits = 0)
+        moist_soil_to_use_g = round(moist_soil_to_use_g, digits = -2),
+        water_to_add_g = round(water_to_add_g, digits = -1)
       )
 
 

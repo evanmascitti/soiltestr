@@ -4,9 +4,14 @@
 \alias{make_w_spread}
 \title{Helper function for generating proctor water contents}
 \usage{
-make_w_spread(PL, n_cyls = NULL)
+make_w_spread(effort, PL, n_cyls = NULL)
 }
 \arguments{
+\item{effort}{Character vector of length 1 indicating compaction effort}
+
+\item{PL}{Estimated value for plastic limit or (optimum water content, for
+nonplastic soils)}
+
 \item{n_cyls}{Number of specimens to prepare}
 }
 \value{

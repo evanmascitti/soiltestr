@@ -149,8 +149,12 @@ sand_w_scr_mix_calcs <- function(
         )
       )
 
-    return(structure(return_tbl, class = 'sand_scr_mix_tbl'))
+    # for later if I learn more about inheritance
+    # and S3 classes
 
+    # return(structure(return_tbl, class = 'sand_scr_mix_tbl'))
+
+    return(return_tbl)
 
 
     }
@@ -266,7 +270,12 @@ sand_w_scr_mix_calcs <- function(
 
   # browser()
 
-  return(structure(return_tbl, class = c(class(return_tbl), 'soiltestr_mix_calcs' )))
+  # for later if I learn more about inheritance
+  # and S3 classes
 
+  # return(structure(return_tbl, class = c(class(return_tbl), 'soiltestr_mix_calcs' )))
+
+
+  return(return_tbl)
 
 }

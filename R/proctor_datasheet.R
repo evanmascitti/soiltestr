@@ -47,9 +47,9 @@ proctor_datasheet <- function(prep_sheet = NULL,
 
   # require user to provide a prep sheet
 
-  if(!class(prep_sheet) %in% 'proctor_prep_sheet'){
-    stop("Argument supplied to `prep_sheet` is not a `proctor_prep_sheet` object. Use `soiltestr::proctor_prep()` to construct this argument.")
-  }
+  # if(!class(prep_sheet) %in% 'proctor_prep_sheet'){
+  #   stop("Argument supplied to `prep_sheet` is not a `proctor_prep_sheet` object. Use `soiltestr::proctor_prep()` to construct this argument.")
+  # }
 
   # if(is.null(prep_sheet) & all(is.null(sample_name, effort, est_w_opt))){
   #   stop("All arguments are null; please provide either a `prep_sheet` object or supply all of `sample_name`, `effort`, and `est_w_opt`.")
@@ -170,7 +170,7 @@ proctor_datasheet <- function(prep_sheet = NULL,
                        file = proctor_file_path)
       message(crayon::green("Please verify that file", proctor_file_path, "was correctly written to disk."))
     } else{
-      warning("File ", proctor_file_path, "already exists. Nothing written to disk.")
+      warning("File ", proctor_file_path, " already exists. Nothing written to disk.")
       }
 
 
