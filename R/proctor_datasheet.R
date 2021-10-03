@@ -14,6 +14,7 @@
 #' @param prep_sheet A data frame. It is recommended to pipe this argument
 #'   directly from [`proctor_prep()`]. Must be of class `proctor_prep_sheet`. Includes sample metadata such as test
 #'   date, mix names, efforts, etc.
+#'   @param date Date of compaction test. If `NULL` (the default), inherits date from `prep_sheet` argument.
 #' @param tin_tare_set Character string (length 1) which identifies the set of tin tare
 #'   measurements to use during subsequent data analyses. If `NULL` (the default), an empty string is used.
 #' @param tin_numbers Numeric. Length must equal total number of experimental units in `prep_sheet`. If `NULL` (the default), an empty string is used.
@@ -34,8 +35,11 @@
 #' @example /inst/examples/proctor_datasheet_example.R
 #' @export
 #'
+#' @importFrom rlang `%||%`
+#'
 
 proctor_datasheet <- function(prep_sheet = NULL,
+                              date = NULL,
                               tin_tare_set = NULL,
                               tin_numbers = NULL,
                               ambient_temp_c = 20,
@@ -62,7 +66,7 @@ proctor_datasheet <- function(prep_sheet = NULL,
 
   tin_tare_set <- tin_tare_set %||% ""
   tin_numbers <- tin_numbers %||% ""
-
+  new_date <- date %||% unique(prep_sheet$date)
 
   # if (!is.null(prep_sheet)) {
 
@@ -108,15 +112,17 @@ proctor_datasheet <- function(prep_sheet = NULL,
     ###################
 
 
+# browser()
 
   data_tibble <- prep_sheet %>%
      dplyr::mutate(
+       date = new_date,
         ambient_temp_c = ambient_temp_c,
         tin_tare_set = tin_tare_set,
         w_target = as.character(round(.data$w_target, digits = 3)),
         mold_ID = "",
         filled_mold_g = "",
-        tin_number = "",
+        tin_number = tin_numbers,
         tin_w_wet_sample = "",
         tin_w_OD_sample = "",
         comments = "-"

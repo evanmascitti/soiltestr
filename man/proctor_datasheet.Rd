@@ -6,6 +6,7 @@
 \usage{
 proctor_datasheet(
   prep_sheet = NULL,
+  date = NULL,
   tin_tare_set = NULL,
   tin_numbers = NULL,
   ambient_temp_c = 20,
@@ -17,7 +18,8 @@ proctor_datasheet(
 \arguments{
 \item{prep_sheet}{A data frame. It is recommended to pipe this argument
 directly from \code{\link[=proctor_prep]{proctor_prep()}}. Must be of class \code{proctor_prep_sheet}. Includes sample metadata such as test
-date, mix names, efforts, etc.}
+date, mix names, efforts, etc.
+@param date Date of compaction test. If \code{NULL} (the default), inherits date from \code{prep_sheet} argument.}
 
 \item{tin_tare_set}{Character string (length 1) which identifies the set of tin tare
 measurements to use during subsequent data analyses. If \code{NULL} (the default), an empty string is used.}
