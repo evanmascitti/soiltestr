@@ -1,0 +1,13 @@
+date,experiment_name,sample_name,replication,batch_sample_number,bottle_set,bottle_number,air_dry_specimen_mass,filled_bottle_post_boil_mass,water_temp_c,tin_tare_set,tin_number,tin_w_wet_sample,tin_w_OD_sample,comments
+2021-10-06,sandClay1,boyd-20-80,1,1,2020-07-12,1,10.254,142.941,22.5,2021-03-04,109,9.730,9.723,-
+2021-10-06,sandClay1,boyd-20-80,2,2,2020-07-12,2,10.421,140.473,22.5,2021-03-04,110,11.643,11.632,-
+2021-10-06,sandClay1,boyd-20-80,3,3,2020-07-12,3,10.446,151.042,22.5,2021-03-04,111,8.065,8.058,-
+2021-10-06,sandClay1,boyd-20-80,4,4,2020-07-12,4,9.584,147.100,22.5,2021-03-04,112,8.404,8.398,-
+2021-10-06,sandClay1,no-6-tile,1,5,2020-07-12,5,9.938,141.329,22.5,2021-03-04,113,4.288,4.240,-
+2021-10-06,sandClay1,no-6-tile,2,6,2020-07-12,6,9.455,145.152,22.5,2021-03-04,114,4.925,4.866,-
+2021-10-06,sandClay1,no-6-tile,3,7,2020-07-12,7,9.594,168.838,22.5,2021-03-04,115,4.697,4.642,-
+2021-10-06,sandClay1,no-6-tile,4,8,2020-07-12,8,10.486,161.098,22.5,2021-03-04,116,6.410,6.321,-
+2021-10-06,sandClay1,duraedge-fs-90,1,9,2020-07-12,9,10.925,169.634,22.5,2021-03-04,117,8.742,8.541,"boiled sample over rim when placing under vacuum...splashed a bit of soil....not much, but going to re-do this analysis just to be safe. However, I would like to know whether or not these data would have been usable. Therefore keeping here"
+2021-10-06,sandClay1,duraedge-fs-90,2,10,2020-07-12,10,9.564,136.171,22.5,2021-03-04,118,7.721,7.549,"boiled sample over rim when placing under vacuum...splashed a bit of soil....not much, but going to re-do this analysis just to be safe. However, I would like to know whether or not these data would have been usable. Therefore keeping here"
+2021-10-06,sandClay1,duraedge-fs-90,3,11,2020-07-12,11,10.264,168.942,22.5,2021-03-04,119,9.202,8.979,"boiled sample over rim when placing under vacuum...splashed a bit of soil....not much, but going to re-do this analysis just to be safe. However, I would like to know whether or not these data would have been usable. Therefore keeping here"
+2021-10-06,sandClay1,duraedge-fs-90,4,12,2020-07-12,12,10.023,147.784,22.5,2021-03-04,120,10.043,9.799,"boiled sample over rim when placing under vacuum...splashed a bit of soil....not much, but going to re-do this analysis just to be safe. However, I would like to know whether or not these data would have been usable. Therefore keeping here"

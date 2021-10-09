@@ -77,21 +77,10 @@ AL_or_PL_batch_analysis <- function(type){
     batch_sample_number = rep(unique(data_file$batch_sample_number), each = n_reps)
   )
 
-  tin_tare_date <- unique(data_file$tin_tare_set)
-
-# inherit the tin tares data frame from the caller environment
+  # inherit the tin tares data frame from the caller environment
 
   tin_tares <- get("tin_tares", envir = rlang::caller_env())
 
- # old version that definitely works but is tied directly to asi468, therefore
-  # I'd rather not use
-   #
-   # tin_tares <- asi468::tin_tares %>%
-   #  tibble::enframe(name= "date", value = "tin_tares_data") %>%
-   #  tidyr::unnest(.data$tin_tares_data) %>%
-   #  dplyr::filter(date == tin_tare_date) %>%
-   #  dplyr::select(-.data$date) %>%
-   #  dplyr::mutate(tin_number = as.numeric(.data$tin_number))
 
   consistency_limit_raw_data <- data_file %>%
     dplyr::left_join(tin_tares, by = c("tin_number", "tin_tare_set")) %>%
@@ -249,9 +238,7 @@ LL_batch_analysis <- function(dir, tin_tares = NULL){
     batch_sample_number = unique(data_file$batch_sample_number)
   )
 
-  tin_tare_date <- unique(data_file$tin_tare_set)
-
-  tin_tares <- dplyr::bind_rows(asi468::tin_tares)
+  tin_tares <-  tin_tares %||% getOption(x = "soiltestr.tin_tares") %||% internal_data$equipment_instructions('tin_tares')
 
   LL_raw_data <- data_file %>%
     dplyr::left_join(tin_tares, by = c('tin_tare_set',

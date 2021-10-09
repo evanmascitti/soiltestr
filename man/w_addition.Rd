@@ -4,16 +4,16 @@
 \alias{w_addition}
 \title{Compute water addition for an air-dry soil}
 \usage{
-w_addition(x = NULL, OD_mass, w_extant, w_desired, ...)
+w_addition(OD_mass, w_extant, w_desired, x = NULL, ...)
 }
 \arguments{
-\item{x}{List/data frame/tibble. Must contain columns \code{OD_mass}, \code{w_extant}, and \code{w_desired}. If \code{NULL} (the default), each vector must be passed in individually.}
-
 \item{OD_mass}{Double. Oven-dry mass of soil in g or kg}
 
 \item{w_extant}{Double. Existing water content (decimal).}
 
 \item{w_desired}{Double. Desired final water content (decimal)}
+
+\item{x}{List/data frame/tibble. Must contain columns \code{OD_mass}, \code{w_extant}, and \code{w_desired}. If \code{NULL} (the default), each vector must be passed in individually.}
 
 \item{...}{currently ignored}
 }

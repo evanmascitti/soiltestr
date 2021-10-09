@@ -217,7 +217,7 @@ sand_w_scr_mix_calcs <- function(
     w_clayey = new_fines_components$w_extant
     )
 
-  browser()
+ #  browser()
 
   # from the new fines list and the required mass of fines, compute the air-dry
   # masses of silty and clayey soils

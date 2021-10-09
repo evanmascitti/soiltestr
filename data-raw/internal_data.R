@@ -106,11 +106,11 @@ cat('coarse_sub_bin_invoking_protocol_IDs are', coarse_sub_bin_invoking_protocol
 equipment_instructions <- function(equipment_type) {
 
   stop(
-  "No data found on ", equipment_type, "\n",
-  "Please set a global option in your .Rprofile file or provide a data frame as an argument in the call to `psa()`.\n",
+  "No lookup table found for", paste0("`", equipment_type, "`"), ".", "\n",
+  "Please provide a data frame as an argument in the call. \nAlternatively, set a global option at the top of your script, or your .Rprofile file.\n",
   "Editing your .Rprofile is easy with `usethis::edit_r_profile()`.\n",
   "If you do not know what an .Rprofile file is, see https://support.rstudio.com/hc/en-us/articles/360047157094-Managing-R-with-Rprofile-Renviron-Rprofile-site-Renviron-site-rsession-conf-and-repos-conf.",
-  call. = FALSE)
+  call. = F)
 
 
 }

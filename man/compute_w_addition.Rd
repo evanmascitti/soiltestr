@@ -4,16 +4,18 @@
 \alias{compute_w_addition}
 \title{Internal vectorized function which calculates water additions. Wrapped by \code{w_addition()}}
 \usage{
-compute_w_addition(OD_mass, w_extant, w_desired, ...)
+compute_w_addition(..., OD_mass, w_extant, w_desired, x = NULL)
 }
 \arguments{
+\item{...}{currently ignored}
+
 \item{OD_mass}{Double. Oven-dry mass of soil in g or kg}
 
 \item{w_extant}{Double. Existing water content (decimal).}
 
 \item{w_desired}{Double. Desired final water content (decimal)}
 
-\item{...}{currently ignored}
+\item{x}{List/data frame/tibble. Must contain columns \code{OD_mass}, \code{w_extant}, and \code{w_desired}. If \code{NULL} (the default), each vector must be passed in individually.}
 }
 \value{
 Tibble

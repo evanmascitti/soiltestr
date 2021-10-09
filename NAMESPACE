@@ -2,6 +2,8 @@
 
 export("%>%")
 export(AL_batch_analysis)
+export(Gs_batch_analysis)
+export(Gs_datasheets)
 export(LL_batch_analysis)
 export(PL_batch_analysis)
 export(add_physical_properties)
