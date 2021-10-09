@@ -11,7 +11,7 @@ proctor_datasheet(
   tin_numbers = NULL,
   ambient_temp_c = 20,
   write = TRUE,
-  dir = NULL,
+  directory = NULL,
   path = "auto"
 )
 }
@@ -36,10 +36,10 @@ careful to record only one value during the test or
 \item{write}{Defaults to \code{TRUE} and saves empty data sheet as a \code{.csv} file. Will not over-write an
 existing file.}
 
-\item{dir}{Directory in which to save the file.}
+\item{directory}{Directory in which to save the file.}
 
 \item{path}{If \code{"auto"}, constructs a file name from the date column of \code{prep_sheet}
-and the \code{dir} argument; otherwise specify a path to save the file
+and the \code{directory} argument; otherwise specify a path to save the file
 (including relative directory)}
 }
 \value{

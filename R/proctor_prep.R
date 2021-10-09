@@ -93,19 +93,38 @@ if(!is.null(x)){
     stop("No data frame provided for `PL` argument.")
   }
 
-  base_df <- x
+  if('effort' %in% names(x)){
 
-  efforts_df <- tidyr::crossing(
-    sample_name = unname(x$sample_name),
-    effort = effort
-  )
+    base_df <- x
 
+    warning("`effort` column present in `x`; ignoring `effort` argument", call. = FALSE)
 
-   # browser()
+  } else{
 
-# having some problems with method inheritance and dplyr::across(), but by converting
-# to a data frame it seems to strip the other classes off (via as.data.frame()), which is fine because the class is no longer needed here....then
-# able to use dplyr verbs again
+    # need to add the efforts to the base data frame...
+    # do this via joining
+
+    effort <- match.arg(arg = effort, choices = c('reduced', 'standard', 'modified'), several.ok = TRUE)
+
+    efforts_df <- tidyr::crossing(
+      sample_name = unname(x$sample_name),
+      effort = effort
+    )
+
+    base_df <- x %>%
+      dplyr::left_join(efforts_df,
+                       by = c('sample_name'))
+
+    # now that base_df contains the proper
+    # columns, function can continue
+
+    }
+
+# browser()
+
+# having some problems with method inheritance and dplyr::across(), but by stripping the other class off it seems
+  # to work again...need to learn more about method
+  # inheritance ....now able to use dplyr verbs again
 
   # browser()
 
@@ -114,21 +133,27 @@ if(!is.null(x)){
   # with the PL values data frame. Otherwise, join with data frame
   # provided in PLs argument
 
+ #  browser()
+
   if('PL' %in% names(x)){
     w_targets_df <- base_df
-
-      # dplyr::left_join(
-      # base_df, efforts_df, by = 'sample_name')
     } else{
       w_targets_df <- dplyr::left_join(
-        base_df, efforts_df, by = 'sample_name') %>%
-        dplyr::left_join(PLs, by = c('sample_name'))
+        base_df,
+        PLs,
+        by = c('sample_name')
+      )
     }
 
+#  browser()
 
-  w_targets_df <-  as.data.frame(w_targets_df) %>%
+  w_targets_df <-  unclass(w_targets_df) %>%
     tibble::as_tibble() %>%
-    dplyr::select(.data$sample_name, .data$effort, .data$w_extant, .data$PL) %>%
+    dplyr::select(
+      .data$sample_name,
+      .data$effort,
+      .data$w_extant,
+      .data$PL) %>%
     dplyr::group_by(dplyr::across()) %>%
     dplyr::mutate(
       w_target = purrr::map2(effort, PL, make_w_spread)

@@ -20,9 +20,9 @@
 #' @param tin_numbers Numeric. Length must equal total number of experimental units in `prep_sheet`. If `NULL` (the default), an empty string is used.
 #' @param write Defaults to `TRUE` and saves empty data sheet as a `.csv` file. Will not over-write an
 #'  existing file.
-#' @param dir Directory in which to save the file.
+#' @param directory Directory in which to save the file.
 #' @param path If `"auto"`, constructs a file name from the date column of `prep_sheet`
-#'   and the `dir` argument; otherwise specify a path to save the file
+#'   and the `directory` argument; otherwise specify a path to save the file
 #'   (including relative directory)
 #' @param ambient_temp_c Ambient temperature during the test in &deg;C. Used
 #'   to compute water density during data analysis (see
@@ -44,7 +44,7 @@ proctor_datasheet <- function(prep_sheet = NULL,
                               tin_numbers = NULL,
                               ambient_temp_c = 20,
                               write = TRUE,
-                              dir = NULL,
+                              directory = NULL,
                               path = "auto"
                               ) {
 
@@ -67,6 +67,12 @@ proctor_datasheet <- function(prep_sheet = NULL,
   tin_tare_set <- tin_tare_set %||% ""
   tin_numbers <- tin_numbers %||% ""
   new_date <- date %||% unique(prep_sheet$date)
+
+
+  if(nrow(prep_sheet) == 0L){
+    stop("Prep sheet argument has length 0.", call. = FALSE)
+  }
+
 
   # if (!is.null(prep_sheet)) {
 
@@ -153,7 +159,7 @@ proctor_datasheet <- function(prep_sheet = NULL,
 
     # return error message if file path was not supplied
 
-    if(missing(dir) && path == "auto"){
+    if(missing(directory) && path == "auto"){
       stop('\n\nNo directory provided, please specify a directory OR manually provide a full `path`')
     }
 
@@ -161,8 +167,10 @@ proctor_datasheet <- function(prep_sheet = NULL,
       stop('\n\n Multiple dates found in data sheet, cannot write to a single file. Please split `prep_sheet` by date and save separately.')
     }
 
+    # browser()
+
     if(path == "auto"){
-      proctor_file_path <- fs::path(dir, glue::glue("proctor-data_{unique(data_tibble$date)}.csv"))
+      proctor_file_path <- fs::path(directory, glue::glue("proctor-data_{unique(data_tibble$date)}.csv"))
       } else{
         proctor_file_path <- path
       }

@@ -21,7 +21,7 @@ test_that("Proctor prep returns the right aliquot", {
   full_args <- list(efforts, w_extants, pl_values) %>%
     purrr::reduce(dplyr::left_join, by= 'sample_name')
 
-  # now pass the complete table to `protor_prep()`
+  # now pass the complete table to `proctor_prep()`
   all_efforts_aliquots <- proctor_prep(x = full_args)
 
   # An alternative approach is to provide the x argument (which can be piped directly from `sand_clay_mix_calcs()` _and_ a data frame
