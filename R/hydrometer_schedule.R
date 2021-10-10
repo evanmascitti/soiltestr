@@ -121,17 +121,18 @@ hydrometer_schedule <- function(
 #'
 subtract_extra_secs <- function(start_time, clock_time, sample_number){
 
+  # browser()
 
   # exit early if elapsed time is < 3 hours
 
-  if(clock_time - start_time <= 60*60*3){
+  if(as.numeric(lubridate::as.duration(clock_time - start_time)) < 60*60*3){
     return(clock_time)
   }
 
   # if not, figure out the new time based on the sample number
   subtraction_lookup_tbl <- tibble::tibble(
     sample_number = 1:12,
-    secs_to_subtract = c(0, 0, 2:11)
+    secs_to_subtract = 60*c(0, 0, 2, 4, 6, 6, 8, 10, 7, 7, 9, 11)
   )
 
   secs_to_subtract <- unlist(
