@@ -129,11 +129,26 @@ protocol_details$n_coarse_diameters_sampled <- map_dbl(protocol_details$coarse_d
 
 # put all into one condensed list and name with the protocol ID
 
-(psa_protocols <- protocol_details %>%
-  group_by(protocol_ID) %>%
-  nest() %>%
-  .$data %>%
-  set_names(protocol_details$protocol_ID))
+psa_protocols_unordered <- split(protocol_details, ~protocol_ID)
+
+psa_protocols <- tibble::enframe(psa_protocols_unordered) %>%
+  dplyr::arrange(as.numeric(name)) %>%
+  purrr::pluck('value') %>%
+  purrr::set_names(protocol_details$protocol_ID)
+
+  # dplyr::group_by(protocol_ID) %>%
+  # tidyr::nest() %>%
+  # purrr::pluck('data') %>%
+  # purrr::set_names(protocol_details$protocol_ID) %>%
+  # purrr::map(
+  #   dplyr::mutate, protocol_ID = as.character(names(.))
+  # ) %>%
+  # purrr::map(
+  #   dplyr::relocate,
+  #   protocol_ID,
+  #   .before = dplyr::everything
+  # )
+
 
 
 # I was going to separately include the abbreviated protocol info

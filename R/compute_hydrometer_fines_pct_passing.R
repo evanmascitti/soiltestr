@@ -134,7 +134,7 @@ return(fines_percent_passing)
 }
 
 
-# some helpers and wrappers for `compute_hydrometer_fines_pct_pass --------
+# some helpers and wrappers for `compute_hydrometer_fines_pct_passing --------
 
 
 
