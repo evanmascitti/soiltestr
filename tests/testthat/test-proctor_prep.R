@@ -73,11 +73,10 @@ test_that("Proctor prep returns the right aliquot", {
 
   expect_equal(
     object = all_efforts_aliquots$water_to_add_g,
-    expected = c(-50, -20, 20, 50, 90, 120, 10, 40, 70, 110, 140, 170, 20, 50, 80, 120, 150, 190, 60, 90, 120, 160, 190, 220, 120, 150, 190, 220, 250, 290, 170, 210, 240, 270, 310, 340, 0, 40, 70, 100, 140, 170, 60, 100, 130, 160, 200, 230, 100, 130, 160, 200, 230, 260)
+    expected = c(-50, -20, 20, 50, 90, 120, 10, 40, 70, 110, 140, 170, 20, 50, 80, 120, 150, 190, 40, 70, 100, 140, 170, 200, 100, 130, 160, 200, 230, 260, 140, 180, 210, 240, 280, 310, 0, 40, 70, 100, 140, 170, 60, 100, 130, 160, 200, 230, 100, 130, 160, 200, 230, 260)
   )
 
-
-# Wider interval using recommended approach ----------------------------------------------------------
+# Wider interval using recommended approach where a full data frame is provided
 
   resulting_wider_range_w_int <- wider_intervals_aliquots %>%
     dplyr::mutate(computed_w_int = w_target - dplyr::lag(w_target)) %>%

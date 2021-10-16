@@ -1,0 +1,4 @@
+date,experiment_name,sample_name,replication,batch_sample_number,protocol_ID,air_dry_specimen_mass_before_pretreatment,container_tare,container_mass_w_OD_sample
+2021-03-04,SelectingClaysJan2021,leecom-promound-jan-2018,1,1,3,10.112,115.726,125.202
+2021-03-04,SelectingClaysJan2021,leecom-promound-jan-2018,2,2,3,10.1,105.797,115.224
+2021-03-04,SelectingClaysJan2021,leecom-promound-jan-2018,3,3,3,10.168,119.587,129.078

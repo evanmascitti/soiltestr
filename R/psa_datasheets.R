@@ -95,7 +95,7 @@ psa_datasheets <- function(
 
 
 
-    if(protocol_ID %in% hydrometer_invoking_method_IDs & is.null(hydrometer_ID)){
+    if(protocol_ID %in% internal_data$hydrometer_invoking_method_IDs & is.null(hydrometer_ID)){
     stop("This protocol requires a value for `hydrometer_ID` but you did not provide one.")
   }
 

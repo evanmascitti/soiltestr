@@ -11,7 +11,7 @@ hydrometer_schedule(
 )
 }
 \arguments{
-\item{start_time}{A datetime object representing an ISO clock time (including timezone). If \code{NULL} (the default), the start time is set to 8 AM on the day following the function call.}
+\item{start_time}{A datetime object representing an ISO clock time (including timezone). If \code{NULL} (the default), the start time is set to 7:59 AM on the day following the function call. This allows the stirring of the first sample to cease at 8 AM.}
 
 \item{batch_spacing}{Time interval in minutes between stirring the sub-batches, each comprising 4 samples. Recommended to use 70-min intervals.}
 

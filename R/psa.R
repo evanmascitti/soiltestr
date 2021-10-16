@@ -25,7 +25,7 @@
 #' @export
 #'
 #' @details This function relies on the dimensions of lab equipment used during the tests.
-#' It is recommended to set these as global options in your `.Rprofile file`, but they can also be passed as individual named arguments. See the vignette on setting lab equipment to work with **soiltestr**. (link needed).
+#' It is recommended to set these as global options at the top of your script or in an `.Rprofile file`, but they can also be passed as individual named arguments. See the vignette on setting lab equipment to work with **soiltestr**. (link needed).
 #' Choices include the following (tests which require each type of equipment are in parentheses):
 #'   - `bouyoucos_cylinder_dims` (hydrometer)
 #'   - `tin_tares` (all tests)
@@ -36,7 +36,7 @@ psa <- function(dir, bouyoucos_cylinder_dims = NULL, tin_tares = NULL,
                 beaker_tares = NULL,
                 hydrometer_dims = NULL, ...){
 
-#  browser()
+  # browser()
 
   # error message if directory does not exist
 
@@ -95,6 +95,20 @@ rm(datafiles, all_datafile_paths)
 
 
   # calculate air-dry water contents
+
+
+# throw an error if the join fails to recognize
+# the set of tin tares and the numbers supplied
+
+
+if(!all(common_datafiles$hygroscopic_corrections$tin_number %in% tin_tares$tin_number)){
+  stop("One or more tin numbers supplied in data sheet were not found in the data frame supplied to `tin_tares`. Did you supply the correct set?")
+}
+
+if(!all(common_datafiles$hygroscopic_corrections$tin_tare_set %in% tin_tares$tin_tare_set)){
+  stop("One or more observations in data sheet has no match for `tin_tare_set`  in the data frame supplied to `tin_tares`. Did you supply the correct set?")
+}
+
 
  # browser()
 
@@ -162,6 +176,7 @@ coarse_percent_passing <- switch (
   "15" = compute_sieves_percent_passing(),
   "16" = compute_sieves_percent_passing(),
   "17" = compute_sieves_percent_passing(),
+  "18" = compute_sieves_percent_passing(),
   stop(
     "Can't find the protocol - unable to compute % coarse particles for protocol_ID ",
     protocol_ID,
@@ -191,6 +206,7 @@ coarse_percent_passing <- switch (
     "15" = compute_pipette_fines_pct_passing(...),
     "16" = compute_pipette_fines_pct_passing(...),
     "17" = compute_pipette_fines_pct_passing(...),
+    "18" = compute_pipette_fines_pct_passing(...),
     stop("Can't find the protocol... unable to compute % fines for protocol_ID ", protocol_ID, call. = T)
   )
 
@@ -271,6 +287,7 @@ coarse_percent_passing <- switch (
   "15" = SSSA_pipette_bins(),
   "16" = SSSA_pipette_bins(),
   "17" = SSSA_pipette_bins(),
+  "18" = SSSA_pipette_bins(),
   stop("Could not find any info for psa_protocol ID ", protocol_ID, ". Can't compute sub-bins.", call. = T)
 )
 
@@ -316,6 +333,7 @@ coarse_percent_passing <- switch (
      "15" = USGA_bins(),
      "16" = USGA_bins(),
      "17" = USGA_bins(),
+     "18" = USGA_bins(),
      stop("Could not find any info for psa_protocol ID ", protocol_ID, ". Can't compute any sub-bins for sand-size parcticles.", call. = T)
    )
 
@@ -418,6 +436,7 @@ method_metadata <-switch (protocol_ID,
     "15" = psa_protocols[["15"]],
     "16" = psa_protocols[["16"]],
     "17" = psa_protocols[["17"]],
+    "18" = psa_protocols[["18"]],
     stop("Could not find any metadata for psa_protocol number ", protocol_ID, call. = T))
 
 

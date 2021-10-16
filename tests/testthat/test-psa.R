@@ -1,6 +1,3 @@
-
-
-
 test_that("PSA protocol 3", {
 
   # set options for equipment
@@ -164,5 +161,45 @@ test_that("PSA protocol 15", {
     purrr::pluck("percent_in_bin")
 
   expect_equal(sums[!is.na(sums)], rep(100, 11))
+
+})
+
+# General error checking for all protocols --------------------------------
+
+test_that("Errors stop function calls", {
+
+    options(
+      soiltestr.bouyoucos_cylinder_dims = NULL,
+      soiltestr.tin_tares = NULL,
+      soiltestr.hydrometer_dims = NULL,
+      soiltestr.beaker_tares = NULL)
+
+  # no tin tares provided
+  expect_error({
+    object = psa(
+      here::here(
+        "tests", "testthat", "test-data", "psa",
+        "protocol3", "psa-data_2021-03-04"),
+      beaker_tares = asi468::psa_beaker_tares)
+    })
+
+
+  # no beaker tares provided for a pipette method
+  expect_error({
+    object = psa(
+      here::here(
+        "tests", "testthat", "test-data", "psa",
+        "protocol3", "psa-data_2021-03-04"),
+      tin_tares = asi468::tin_tares)
+  })
+
+  # wrong set of tin tares in datasheets
+  expect_error({
+    object = psa(
+      here::here(
+        "tests", "testthat", "test-data", "psa",
+        "general-error-checking", "psa-data_2021-03-04"),
+      tin_tares = asi468::tin_tares)
+  })
 
 })

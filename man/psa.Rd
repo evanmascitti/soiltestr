@@ -46,7 +46,7 @@ Accepts a variety of laboratory protocols, see \code{\link[=psa_protocols]{psa_p
 }
 \details{
 This function relies on the dimensions of lab equipment used during the tests.
-It is recommended to set these as global options in your \verb{.Rprofile file}, but they can also be passed as individual named arguments. See the vignette on setting lab equipment to work with \strong{soiltestr}. (link needed).
+It is recommended to set these as global options at the top of your script or in an \verb{.Rprofile file}, but they can also be passed as individual named arguments. See the vignette on setting lab equipment to work with \strong{soiltestr}. (link needed).
 Choices include the following (tests which require each type of equipment are in parentheses):
 \itemize{
 \item \code{bouyoucos_cylinder_dims} (hydrometer)

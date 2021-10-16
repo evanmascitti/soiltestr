@@ -237,7 +237,7 @@ make_w_spread <- function(effort, PL, n_cyls = NULL){
 
 
   est_w_opt <- dplyr::case_when(
-    effort == 'reduced' ~ 1.25 * PL,
+    effort == 'reduced' ~ 1.15 * PL,
     effort == 'standard' ~ PL,
     effort == 'modified' ~ 0.75 * PL
     )

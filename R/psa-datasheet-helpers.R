@@ -134,19 +134,21 @@ check_hydrometer_blank_method <- function(){
   # object name in the returned character vector
 
 
+
+
   ID_for_hydrometer_blank_method <- get("protocol_ID", envir = rlang::caller_env(n = 2))
 
 
   # return a Boolean based on protocol ID and text from protocol summaries
   companion_measurement <- psa_protocols_summary %>%
     dplyr::filter(protocol_ID == ID_for_hydrometer_blank_method) %>%
-    purrr::pluck("other_comments") %>%
-    stringr::str_detect("blank computed w/ companion measurement")
+    dplyr::pull("other_comments") %>%
+    stringr::str_detect("companion")
 
   temp_calibration_measurement <-psa_protocols_summary %>%
     dplyr::filter(protocol_ID == ID_for_hydrometer_blank_method) %>%
     purrr::pluck("other_comments") %>%
-    stringr::str_detect("blank computed w/ temperature calibration")
+    stringr::str_detect("calibration")
 
   # determine return value based on the above tests
   if(companion_measurement) return('companion')
@@ -311,32 +313,70 @@ hydrometer_blank_method <- check_hydrometer_blank_method()
   # generate the main datasheet
   # for redundancy, include the blank correction method as a column
 
- # browser()
+   # browser()
 
-  psa_hydrometer_data  <- tibble::tibble(
-    date = date,
-    experiment_name = experiment_name,
-    protocol_ID = protocol_ID,
-    sample_name = rep(sample_names, each = n_reps*length(fines_diameters_sampled)),
-    replication = rep(rep(1:n_reps, times = length(fines_diameters_sampled) * length(sample_names))),
-    batch_sample_number = rep(1:(length(sample_names)*n_reps), times = length(fines_diameters_sampled)),
-    bouyoucos_cylinder_number = rep(bouyoucos_cylinder_numbers %||% "", times = length(fines_diameters_sampled)),
-    hydrometer_ID = hydrometer_ID,
-    # the Gs value can be programmed to react to whether it was provided or not....up until now I have always just assumed 2.7, so
-    # might as well just leave it that way. To use conditional logic will require some multiple of n_reps * length(sample_names) * length(fines_diameters_sampled) or similar, but I haven't quite found the right combination yet.
-    Gs = Gs,
-    approx_ESD = rep(fines_diameters_sampled %||% "" , each = length(sample_names) * n_reps),
-    stir_date = "",
-    stir_time = "",
-    stir_AM_PM = "",
-    sampling_date = "",
-    sampling_time = "",
-    sampling_AM_PM = "",
-    water_temp_c = "",
-    hydrometer_reading = "",
-    meniscus_correction = "",
-    comments = "-"
-  )
+
+  batch_sample_numbers <- tibble::tibble(
+    sample_name = rep(sample_names, each = n_reps),
+    Gs = rep(Gs, each = n_reps),
+    bouyoucos_cylinder_number = .env$bouyoucos_cylinder_numbers
+  ) %>%
+    dplyr::mutate(batch_sample_number = 1:nrow(.))
+
+  psa_hydrometer_data <- tidyr::crossing(
+    date = .env$date,
+    experiment_name = .env$experiment_name,
+    protocol_ID = .env$protocol_ID,
+    sample_name = .env$sample_names,
+    replication = 1:n_reps) %>%
+    dplyr::left_join(batch_sample_numbers, by = c('sample_name'),
+                     hydrometer_ID = .env$hydrometer_ID) %>%
+    dplyr::mutate(
+      approx_ESD = "",
+      stir_date = "",
+      stir_time = "",
+      stir_AM_PM = "",
+      sampling_date = "",
+      sampling_time = "",
+      sampling_AM_PM = "",
+      water_temp_c = "",
+      hydrometer_reading = "",
+      meniscus_correction = "",
+      comments = "-"
+    )
+
+
+
+
+  # this was the old version.....it has a problem with ordering the reps/sample names/ etc...
+  # trying above with tidyr::crossing and a well-placed join
+
+
+  # psa_hydrometer_data  <- tibble::tibble(
+  #   date = date,
+  #   experiment_name = experiment_name,
+  #   protocol_ID = protocol_ID,
+  #   sample_name = rep(sample_names, times = n_reps*length(fines_diameters_sampled)),
+  #   replication = rep(rep(1:n_reps, times = length(fines_diameters_sampled) * length(sample_names))),
+  #   batch_sample_number = rep(1:(length(sample_names)*n_reps), times = length(fines_diameters_sampled)),
+  #   bouyoucos_cylinder_number = rep(bouyoucos_cylinder_numbers %||% "", times = length(fines_diameters_sampled)),
+  #   hydrometer_ID = hydrometer_ID,
+  #   # the Gs value can be programmed to react to whether it was provided or not....up until now I have always just assumed 2.7, so
+  #   # might as well just leave it that way. To use conditional logic will require some multiple of n_reps * length(sample_names) * length(fines_diameters_sampled) or similar, but I haven't quite found the right combination yet.
+  #   Gs = Gs,
+  #   # approx_ESD = rep(fines_diameters_sampled %||% "" , each = length(sample_names) * n_reps),
+  #   approx_ESD = "",
+  #   stir_date = "",
+  #   stir_time = "",
+  #   stir_AM_PM = "",
+  #   sampling_date = "",
+  #   sampling_time = "",
+  #   sampling_AM_PM = "",
+  #   water_temp_c = "",
+  #   hydrometer_reading = "",
+  #   meniscus_correction = "",
+  #   comments = "-"
+  # )
 
 
 ######################
