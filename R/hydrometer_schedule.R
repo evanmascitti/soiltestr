@@ -7,7 +7,7 @@
 #'
 make_hydrometer_schedule <- function(start_time, batch_spacing, sample_numbers){
 
- #  browser()
+#  browser()
 
 
   sub_batches <- tibble::tibble(
@@ -24,17 +24,19 @@ make_hydrometer_schedule <- function(start_time, batch_spacing, sample_numbers){
   start_time = start_time,
   sample_number = sample_numbers,
   # t_min = batch_spacing + c(2, 4, 8, 15, 30, 55, (60 * c(seq(2, 12, 2), 24)))
-  t_min = batch_spacing + c(2, 8, 15, 30, (60 * c(2, 6, 10, 24)))
-  ) %>%
+  # t_min = batch_spacing + c(2, 8, 15, 30, (60 * c(2, 6, 10, 24)))
+  t_min = c(2, 8, 15, 30, (60 * c(2, 6, 10, 24)))
+  ) %>%  # I thin the batch spacing should not be included here, because it is accounted for in the start stirring time %>%
     dplyr::left_join(sub_batches, by = 'sample_number') %>%
     dplyr::mutate(
-      stir_time = dplyr::case_when(
+      start_stirring_time = dplyr::case_when(
         sub_batch_sample_number == 2L ~ start_time + 60*batch_spacing + 60*3,
         sub_batch_sample_number == 3L ~ start_time + 60*batch_spacing + 60*5,
         sub_batch_sample_number == 4L ~ start_time + 60*batch_spacing + 60*6,
         TRUE ~ start_time + 60*batch_spacing
       ), # allows one minute between stirring of each cylinder and accounts for
       # batches of 4
+      stop_stirring_time  = start_stirring_time + 60*1, # one minute to stir each cylinder
       sample_time_min = dplyr::case_when(
         sub_batch_sample_number == 2L ~ t_min + 1,
         sub_batch_sample_number == 3L ~ t_min + 2,
@@ -49,7 +51,7 @@ make_hydrometer_schedule <- function(start_time, batch_spacing, sample_numbers){
     # ),
     sample_time_sec = 60* sample_time_min,
     #  clock_time = start_time + sample_time_sec
-   clock_time = stir_time + sample_time_sec
+   clock_time = stop_stirring_time + sample_time_sec
   ) %>%
   dplyr::arrange(clock_time)
 
@@ -94,6 +96,7 @@ hydrometer_schedule <- function(
     )
 
 
+
   # browser()
 
  full_schedule <- mapply(
@@ -104,16 +107,21 @@ hydrometer_schedule <- function(
    SIMPLIFY = FALSE
    ) %>%
     dplyr::bind_rows() %>%
-   dplyr::group_by(dplyr::across(-c(start_time, stir_time, clock_time, sample_number))) %>%
-   tidyr::nest() %>%
-   dplyr::mutate(
-     clock_time = purrr::map_dbl(data, ~subtract_extra_secs(clock_time = .$clock_time, sample_number = .$sample_number, stir_time = .$stir_time)),
-     start_time = purrr::map_dbl(data, "start_time"),
-     stir_time = purrr::map_dbl(data, "stir_time"),
-     sample_number = purrr::map_int(data, "sample_number")) %>%
+   # dplyr::group_by(dplyr::across(-c(.data$start_time, start_stirring_time, stop_stirring_time, clock_time, sample_number))) %>%
+   # tidyr::nest() %>%
+
+   # debug here
+# can't get the subtract extra seconds to work now ....for the time being, forget about it
+ # full_schedule %>%
+   # dplyr::mutate(
+   #   # clock_time = purrr::map_dbl(data, ~subtract_extra_secs(clock_time = .$clock_time, sample_number = .$sample_number, start_stirring_time = .$start_stirring_time, stop_stirring_time = .$stop_stirring_time)),
+   #   start_time = purrr::map_dbl(data, "start_time"),
+   #   start_stirring_time = purrr::map_dbl(data, "start_stirring_time"),
+   #   stop_stirring_time = purrr::map_dbl(data, "stop_stirring_time"),
+   #   sample_number = purrr::map_int(data, "sample_number")) %>%
    dplyr::arrange(clock_time) %>%
    dplyr::mutate(
-     dplyr::across(.cols = c(start_time, stir_time, clock_time),
+     dplyr::across(.cols = c(start_time, start_stirring_time, stop_stirring_time, clock_time),
                    .fns = lubridate::as_datetime, tz = Sys.timezone()),
      sampling_date = format(clock_time, "%F"),
      sampling_time = clock_time) %>%
@@ -122,30 +130,41 @@ hydrometer_schedule <- function(
  #     sampling_time = format(clock_time, "%I:%M %p")
  #   ) %>%
    dplyr::ungroup() %>%
-   dplyr::select(sample_number, .data$stir_time, .data$sampling_date, .data$sampling_time)
+   dplyr::select(sample_number, .data$start_stirring_time, .data$stop_stirring_time, .data$sampling_date, .data$sampling_time)
 
- stir_times <- dplyr::distinct(full_schedule, .data$sample_number, .data$stir_time) %>%
-   dplyr::select(.data$sample_number, .data$stir_time)
+ stir_times <- dplyr::distinct(full_schedule, .data$sample_number, .data$start_stirring_time, .data$stop_stirring_time) %>%
+   dplyr::select(.data$sample_number, .data$start_stirring_time, .data$stop_stirring_time) %>%
+   tidyr::pivot_longer(
+     cols = c(.data$start_stirring_time, .data$stop_stirring_time),
+     names_to = 'action',
+     values_to = 'time'
+   ) %>%
+   dplyr::mutate(
+     action = stringr::str_remove(stringr::str_replace_all(action, "_", " "), "\\s?time")
+   )
 
- sampling_schedule <- dplyr::select(
-   full_schedule, .data$sample_number, .data$sampling_date, .data$sampling_time)
+ sampling_schedule <- full_schedule %>%
+   dplyr::select(.data$sample_number, .data$sampling_date, .data$sampling_time)
 
 
  sampling_times_renamed <- sampling_schedule %>%
    dplyr::mutate(action = 'take sample') %>%
    dplyr::rename(time = sampling_time)
 
- start_stirring_times <- stir_times %>%
-   dplyr::mutate(action = 'start stirring') %>%
-   dplyr::rename(time = stir_time)
 
- stop_stirring_times <- start_stirring_times %>%
-   dplyr::mutate(action = 'stop stirring',
-                 time = time + 60)
+
+
+ # start_stirring_times <- stir_times %>%
+ #   dplyr::mutate(action = 'start stirring') %>%
+ #   dplyr::rename(time = stir_time)
+ #
+ # stop_stirring_times <- start_stirring_times %>%
+ #   dplyr::mutate(action = 'stop stirring',
+ #                 time = time + 60)
 
  # browser()
 
- all_times <- dplyr::bind_rows(sampling_times_renamed, start_stirring_times, stop_stirring_times) %>%
+ all_times <- dplyr::bind_rows(sampling_times_renamed, stir_times) %>%
    dplyr::arrange(time) %>%
    dplyr::mutate(
      time = format(time, "%I:%M %p")) %>%
@@ -177,13 +196,13 @@ hydrometer_schedule <- function(
 #'
 #' @return
 #'
-subtract_extra_secs <- function(stir_time, clock_time, sample_number){
+subtract_extra_secs <- function(start_stirring_time, stop_stirring_time, clock_time, sample_number){
 
   # browser()
 
   # exit early if elapsed time is < 3 hours
 
-  if(as.numeric(lubridate::as.duration(clock_time - stir_time)) < 60*60*3){
+  if(as.numeric(lubridate::as.duration(clock_time - stop_stirring_time)) < 60*60*3){
     return(clock_time)
   }
 

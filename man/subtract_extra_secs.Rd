@@ -6,7 +6,12 @@
 third run has completed its first hour of sampling
 and there is no longer any overlap between sampling times}
 \usage{
-subtract_extra_secs(stir_time, clock_time, sample_number)
+subtract_extra_secs(
+  start_stirring_time,
+  stop_stirring_time,
+  clock_time,
+  sample_number
+)
 }
 \arguments{
 \item{clock_time}{datetime object}
