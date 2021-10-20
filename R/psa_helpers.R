@@ -34,7 +34,7 @@ metadata_file <- readr::read_csv(
 #'
 divide_psa_datafiles <- function(){
 
-  #  browser()
+  # browser()
 
   # inherit the dir argument from parent call
   dir <- get(x = "dir", envir = rlang::caller_env())
@@ -57,7 +57,9 @@ divide_psa_datafiles <- function(){
     pattern = "_\\d{4}-\\d{2}-\\d{2}\\.csv$") %>%
     stringr::str_remove_all("psa-")
 
-  purrr::set_names(all_datafile_paths, datafile_names)
+  # over-write existing all_datafile_paths object with a named character vector
+
+  all_datafile_paths <- purrr::set_names(all_datafile_paths, datafile_names)
 
   # find any file paths which match any of the patterns
   # this approach is not very elegant - it could definitely be done with
@@ -99,7 +101,7 @@ divide_psa_datafiles <- function(){
 #'
 import_psa_datafile <- function(x){
 
- #  browser()
+  #  browser()
 
   nm <- tools::file_path_sans_ext(basename(x)) %>%
     stringr::str_remove(pattern = c("^psa-") ) %>%
@@ -129,14 +131,14 @@ import_psa_datafile <- function(x){
   # coerce the relevant columns to character types and _then_ parse the
   # number
 
- #   browser()
+   #  browser()
 
 return_dfs <-   x %>%
     purrr::set_names(nm) %>%
     purrr::map(readr::read_csv,
                show_col_types = FALSE,
                na = "-",
-               trim_ws = TRUE,
+               trim_ws = FALSE,
                skip_empty_rows = TRUE,
                lazy = FALSE) %>%
     purrr::modify_if(.p = ~any(names(.) %in% "protocol_ID"),
@@ -225,15 +227,18 @@ check_pretreatment_correction <- function(){
 #'
 #' @return data frame named `fines_pct_passing`
 #'
-compute_pipette_fines_pct_passing <- function(...){
+compute_pipette_fines_pct_passing <- function(with_hydrometer = FALSE){
 
   # inherit the existing objects needed for computation
   # from the parent function environment
 
+  # when called inside another function which uses data for _both_ the hydrometer and pipette, this call needs to look one level higher in the call stack, hence the conditional statement
+  # for the environment
+
 #  browser()
 
 needed_objs <- mget(x = c("method_specific_datafiles", "OD_specimen_masses", "beaker_tares", "coarse_percent_passing", "protocol_ID"),
-                    envir = rlang::caller_env())
+                    envir = rlang::caller_env(n = dplyr::if_else(with_hydrometer, 2, 1)))
 
 # make them available in the current function call
 list2env(needed_objs,envir = rlang::current_env())

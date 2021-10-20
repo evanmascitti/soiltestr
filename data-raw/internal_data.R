@@ -31,15 +31,24 @@ psa_fines_methods <- tibble::enframe(psa_protocols,
                                      name = "protocol_ID",
                                      value = "protocol_info") %>%
   dplyr::mutate(fines_method = purrr::map_chr(protocol_info, ~.$fines_method)) %>%
-  dplyr::mutate(fines_method = c(stringr::str_match(fines_method, "pipette|hydrometer|laser[\\s_-]diffraction"))) %>%
-  dplyr::select(-protocol_info)
+  dplyr::mutate(fines_method = c(stringr::str_extract(fines_method, "hydrometer-plus-pipette|pipette|hydrometer|laser[\\s_-]diffraction"))) %>%
+  dplyr::select(.data$protocol_ID, .data$fines_method)
 
 # create vectors which select the correct protocol ID
 # based on which fines method they use
 
 pipette_invoking_protocol_IDs <- psa_fines_methods[psa_fines_methods$fines_method == "pipette", ]$protocol_ID
+cat("pipette_invoking_protocol_IDs are ", pipette_invoking_protocol_IDs, sep = "\n")
+
 
 hydrometer_invoking_protocol_IDs <- psa_fines_methods[psa_fines_methods$fines_method == "hydrometer", ]$protocol_ID
+cat("hydrometer_invoking_protocol_IDs are ", hydrometer_invoking_protocol_IDs, sep = "\n") %>%
+  .[!is.na(.)]
+
+dual_fines_method_invoking_protocol_IDs <- psa_fines_methods[stringr::str_detect(psa_fines_methods$fines_method, "hydrometer") & stringr::str_detect(psa_fines_methods$fines_method, "pipette"), ]$protocol_ID %>%
+  .[!is.na(.)]
+cat("dual_fines_method_invoking_protocol_IDs are ", dual_fines_method_invoking_protocol_IDs, sep = "\n")
+
 
 fines_laser_diffraction_invoking_protocol_IDs <- psa_fines_methods[psa_fines_methods$fines_method == "laser diffraction", ]$protocol_ID
 

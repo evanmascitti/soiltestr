@@ -1,0 +1,13 @@
+date,experiment_name,sample_name,replication,batch_sample_number,air_dry_specimen_mass_for_test,comments
+2021-10-15,psamethods2021,duraedge-fs-90,1,1,25.944,-
+2021-10-15,psamethods2021,duraedge-fs-90,2,2,25.722,-
+2021-10-15,psamethods2021,duraedge-fs-90,3,3,24.831,-
+2021-10-15,psamethods2021,no-6-tile,1,4,24.493,-
+2021-10-15,psamethods2021,no-6-tile,2,5,25.984,-
+2021-10-15,psamethods2021,no-6-tile,3,6,25.841,-
+2021-10-15,psamethods2021,promound,1,7,25.715,-
+2021-10-15,psamethods2021,promound,2,8,24.882,-
+2021-10-15,psamethods2021,promound,3,9,24.388,-
+2021-10-15,psamethods2021,sil-co-sil-75,1,10,25.587,-
+2021-10-15,psamethods2021,sil-co-sil-75,2,11,24.423,-
+2021-10-15,psamethods2021,sil-co-sil-75,3,12,25.162,-

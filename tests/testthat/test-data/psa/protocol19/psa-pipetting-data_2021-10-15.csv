@@ -1,0 +1,13 @@
+date,experiment_name,protocol_ID,sample_name,replication,batch_sample_number,bouyoucos_cylinder_number,Gs,beaker_tare_set,microns,beaker_number,beaker_mass_w_OD_sample,comments
+2021-10-15,psamethods2021,19,duraedge-fs-90,1,1,1,2.7,2021-01-15,0.2,58,48.602,-
+2021-10-15,psamethods2021,19,duraedge-fs-90,2,2,2,2.7,2021-01-15,0.2,59,49.481,-
+2021-10-15,psamethods2021,19,duraedge-fs-90,3,3,3,2.7,2021-01-15,0.2,60,48.512,-
+2021-10-15,psamethods2021,19,no-6-tile,1,4,4,2.7,2021-01-15,0.2,61,49.445,-
+2021-10-15,psamethods2021,19,no-6-tile,2,5,5,2.7,2021-01-15,0.2,62,48.803,-
+2021-10-15,psamethods2021,19,no-6-tile,3,6,6,2.7,2021-01-15,0.2,63,50.410,-
+2021-10-15,psamethods2021,19,promound,1,7,7,2.7,2021-01-15,0.2,64,49.254,-
+2021-10-15,psamethods2021,19,promound,2,8,8,2.7,2021-01-15,0.2,65,49.474,-
+2021-10-15,psamethods2021,19,promound,3,9,9,2.7,2021-01-15,0.2,66,49.750,-
+2021-10-15,psamethods2021,19,sil-co-sil-75,1,10,10,2.7,2021-01-15,0.2,1,49.422,-
+2021-10-15,psamethods2021,19,sil-co-sil-75,2,11,11,2.7,2021-01-15,0.2,2,50.909,-
+2021-10-15,psamethods2021,19,sil-co-sil-75,3,12,12,2.7,2021-01-15,0.2,3,50.489,-

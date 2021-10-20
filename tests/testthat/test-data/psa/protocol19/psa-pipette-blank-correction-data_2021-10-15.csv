@@ -1,0 +1,5 @@
+date,experiment_name,protocol_ID,blank_replication,bouyoucos_cylinder_number,beaker_tare_set,beaker_number,beaker_mass_w_OD_sample,comments
+2021-10-15,psamethods2021,19,1,13,2021-01-15,67,50.108,-
+2021-10-15,psamethods2021,19,2,13,2021-01-15,68,49.650,-
+2021-10-15,psamethods2021,19,3,13,2021-01-15,69,49.031,-
+2021-10-15,psamethods2021,19,4,13,2021-01-15,-,-,only did 3 blanks

@@ -1,0 +1,2 @@
+date,experiment_name,protocol_ID,hydrometer_blank_method,bouyoucos_cylinder_number,hydrometer_ID,approx_ESD,stir_date,stir_time,stir_AM_PM,sampling_date,sampling_time,sampling_AM_PM,water_temp_c,hydrometer_reading,meniscus_correction,comments
+2021-10-15,psamethods2021,19,companion,13,1,1,2021-10-17,07:59,AM,2021-10-17,08:00,AM,22,7,1,-

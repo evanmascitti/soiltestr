@@ -1,0 +1,13 @@
+date,experiment_name,sample_name,replication,batch_sample_number,protocol_ID,comments
+2021-10-15,psamethods2021,duraedge-fs-90,1,1,19,-
+2021-10-15,psamethods2021,duraedge-fs-90,2,2,19,-
+2021-10-15,psamethods2021,duraedge-fs-90,3,3,19,-
+2021-10-15,psamethods2021,no-6-tile,1,4,19,-
+2021-10-15,psamethods2021,no-6-tile,2,5,19,-
+2021-10-15,psamethods2021,no-6-tile,3,6,19,-
+2021-10-15,psamethods2021,promound,1,7,19,-
+2021-10-15,psamethods2021,promound,2,8,19,-
+2021-10-15,psamethods2021,promound,3,9,19,-
+2021-10-15,psamethods2021,sil-co-sil-75,1,10,19,-
+2021-10-15,psamethods2021,sil-co-sil-75,2,11,19,-
+2021-10-15,psamethods2021,sil-co-sil-75,3,12,19,-

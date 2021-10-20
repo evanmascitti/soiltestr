@@ -36,7 +36,7 @@ psa <- function(dir, bouyoucos_cylinder_dims = NULL, tin_tares = NULL,
                 beaker_tares = NULL,
                 hydrometer_dims = NULL, ...){
 
-  # browser()
+ #  browser()
 
   # error message if directory does not exist
 
@@ -59,13 +59,16 @@ psa <- function(dir, bouyoucos_cylinder_dims = NULL, tin_tares = NULL,
 
   test_date <- stringr::str_extract(string = dir, pattern = "\\d{4}-\\d{2}-\\d{2}")
 
+
+  # browser()
+
   all_datafile_paths <- divide_psa_datafiles()
 
 
 # read all the files in; this returns a list of length 2; each element
 # is also a list containing the appropriate data frames (tibbles)
 
- #  browser()
+  # browser()
 
 datafiles <- purrr::map(all_datafile_paths, import_psa_datafile)
 
@@ -154,7 +157,7 @@ hygroscopic_water_contents <- common_datafiles$hygroscopic_corrections %>%
   # now that the correct specimen mass is known, compute the coarse
   # percent passing
 
-  # browser()
+   # browser()
   # compute the coarse particles % passing
 
 coarse_percent_passing <- switch (
@@ -177,6 +180,7 @@ coarse_percent_passing <- switch (
   "16" = compute_sieves_percent_passing(),
   "17" = compute_sieves_percent_passing(),
   "18" = compute_sieves_percent_passing(),
+  "19" = compute_sieves_percent_passing(),
   stop(
     "Can't find the protocol - unable to compute % coarse particles for protocol_ID ",
     protocol_ID,
@@ -187,7 +191,7 @@ coarse_percent_passing <- switch (
 
 # next compute  the fines % passing
 
- #   browser()
+    browser()
   fines_percent_passing <- switch (protocol_ID,
     "1" = compute_pipette_fines_pct_passing(...),
     "2" = compute_152H_hydrometer_fines_pct_passing(...),
@@ -207,6 +211,7 @@ coarse_percent_passing <- switch (
     "16" = compute_pipette_fines_pct_passing(...),
     "17" = compute_pipette_fines_pct_passing(...),
     "18" = compute_pipette_fines_pct_passing(...),
+    "19" = compute_hydrometer_plus_pipette_fines_pct_passing(),
     stop("Can't find the protocol... unable to compute % fines for protocol_ID ", protocol_ID, call. = T)
   )
 

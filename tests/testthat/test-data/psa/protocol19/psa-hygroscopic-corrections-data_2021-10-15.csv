@@ -1,0 +1,13 @@
+date,experiment_name,sample_name,replication,batch_sample_number,tin_tare_set,tin_number,tin_w_wet_sample,tin_w_OD_sample,comments
+2021-10-15,psamethods2021,duraedge-fs-90,1,1,2021-03-04,121,13.254,12.841,-
+2021-10-15,psamethods2021,duraedge-fs-90,2,2,2021-03-04,122,15.166,14.691,-
+2021-10-15,psamethods2021,duraedge-fs-90,3,3,2021-03-04,123,11.181,10.846,-
+2021-10-15,psamethods2021,no-6-tile,1,4,2021-03-04,124,3.956,3.904,-
+2021-10-15,psamethods2021,no-6-tile,2,5,2021-03-04,125,3.970,3.92,-
+2021-10-15,psamethods2021,no-6-tile,3,6,2021-03-04,126,5.949,5.856,-
+2021-10-15,psamethods2021,promound,1,7,2021-03-04,127,14.946,14.28,-
+2021-10-15,psamethods2021,promound,2,8,2021-03-04,128,9.919,9.496,-
+2021-10-15,psamethods2021,promound,3,9,2021-03-04,129,9.002,8.619,-
+2021-10-15,psamethods2021,sil-co-sil-75,1,10,2021-03-04,130,10.088,10.084,-
+2021-10-15,psamethods2021,sil-co-sil-75,2,11,2021-03-04,131,10.656,10.654,-
+2021-10-15,psamethods2021,sil-co-sil-75,3,12,2021-03-04,132,6.969,6.965,-

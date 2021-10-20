@@ -1,15 +1,21 @@
-compute_152H_hydrometer_fines_pct_passing <- function(...){
+compute_152H_hydrometer_fines_pct_passing <- function(with_pipette = FALSE){
 
- #  browser()
+  # browser()
 
   # find needed objects from caller environment and
   # make them available in the current function call
+
+  # if this function is being called in a protocol
+  # which uses _both_ the hydrometer and pipette,
+  # it will need to look one more level up in the call stack,
+  # hence the conditional statement inside rlang::caller_env()
+
   needed_objs <- mget(x = c("method_specific_datafiles",
                             "OD_specimen_masses",
                             "tin_tares",
                             "bouyoucos_cylinder_dims",
                             "hydrometer_dims"),
-                      envir = rlang::caller_env())
+                      envir = rlang::caller_env(n = dplyr::if_else(with_pipette, 2, 1)))
   list2env(needed_objs, envir = rlang::current_env())
 
 
@@ -56,6 +62,7 @@ compute_152H_hydrometer_fines_pct_passing <- function(...){
   # browser()
 
   hydrometer_data <- method_specific_datafiles$hydrometer %>%
+    dplyr::mutate(approx_ESD = as.numeric(approx_ESD)) %>%
     dplyr::left_join(
       blank_correction_data, by = c("date", "experiment_name", "approx_ESD")
     ) %>%
@@ -73,7 +80,7 @@ compute_152H_hydrometer_fines_pct_passing <- function(...){
                  sep = ' ') %>%
     dplyr::mutate(
       sampling_datetime = lubridate::ymd_hm(sampling_datetime, tz = Sys.timezone()),
-      stir_datetime = lubridate::ymd_hm(stir_datetime, tz = Sys.timezone()),
+      stir_datetime = lubridate::ymd_hms(stir_datetime, tz = Sys.timezone()),
       elapsed_time = lubridate::as.duration(sampling_datetime - stir_datetime)) %>%
     dplyr::left_join(OD_specimen_masses, by = c("date", "experiment_name", "sample_name", "replication", "batch_sample_number"))
 
@@ -92,6 +99,9 @@ compute_152H_hydrometer_fines_pct_passing <- function(...){
   # multiple data frames by sample and then each calculation applied
   # before running the generalized_finer_D_x()
   # function on each data frame in the list column.
+
+
+  # browser()
 
 calculations_dfs <- hydrometer_data %>%
     dplyr::group_by(batch_sample_number) %>%
@@ -120,8 +130,8 @@ calculations_dfs <- hydrometer_data %>%
 
 # try to run it for the whole list, then rbind all the data frames together
 
-  # browser()
-all_results <- purrr::map(calculations_dfs, generalized_finer_D_x)
+ browser()
+all_results <- purrr::map(calculations_dfs, generalized_finer_D_x, with_pipette = with_pipette)
 
 fines_percent_passing <- dplyr::bind_rows(all_results) %>%
   dplyr::arrange(.data$batch_sample_number,
@@ -159,7 +169,7 @@ hydrometer_calcs_part_1 <- function(x){
 
 
 
-  #browser()
+ #  browser()
 
   # assign the required constants which exist in higher frames
   hydrometer_dims <- get(x = c("hydrometer_dims"), envir = rlang::caller_env(2))
@@ -328,10 +338,11 @@ percent_finer_D_x <- function(calculations_df, d_microns) {
 #' Iterate over multiple particle diameters for a given sample
 #'
 #' @param d_microns Numeric vector of arbitrary length, corresponding to the particle diameters to compute. Defaults to 2, which is the silt/clay cutoff.
+#' @param with_pipette Logical, whether function is being called from inside another function, necessitating that the protocol ID is found one more level up in the call stack
 #'
 #' @return data frame in long format with microns and percent_passing as columns
 #'
-generalized_finer_D_x <- function(calculations_df = NULL, d_microns = NULL){
+generalized_finer_D_x <- function(calculations_df = NULL, d_microns = NULL, with_pipette = FALSE){
 
   # instead of passing in a data frame as an argument to this function,
   # I am going to use the
@@ -352,9 +363,9 @@ generalized_finer_D_x <- function(calculations_df = NULL, d_microns = NULL){
   # protocol is being used and then look it up in the psa_protocols
   # list, as this contains a vector with this exact piece of information
 
-  #browser()
+  browser()
 
-  protocol_ID <- get("protocol_ID", envir = rlang::caller_env(3))
+  protocol_ID <- get("protocol_ID", envir = rlang::caller_env(n = dplyr::if_else(with_pipette, 4, 3)))
   d_microns <-psa_protocols[[rlang::sym(protocol_ID)]][["fines_diameters_to_compute"]][[1]]
 
   # throws an error if there are no diameters to compute
@@ -364,6 +375,13 @@ generalized_finer_D_x <- function(calculations_df = NULL, d_microns = NULL){
   }
 
   # having trouble with map2, try pmap instead which takes a named list
+
+
+  # STOPPING HERE 2021-10-20
+
+  # I broke protocol 8, but I think it is fixable pretty easily
+
+
   dfs_list <- parallel_args <-  tibble::tibble(
     calculations_df = purrr::rerun(.n = length(d_microns),
                                    calculations_df),
