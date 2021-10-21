@@ -59,9 +59,9 @@ compute_152H_hydrometer_fines_pct_passing <- function(with_pipette = FALSE){
   # sampling time from the appropriate components. Finally,
   # join with specimen masses
 
-  browser()
+  # browser()
 
-  hydrometer_data <- method_specific_datafiles$hydrometer %>%
+  hydrometer_data <-  method_specific_datafiles$hydrometer %>%
     dplyr::mutate(approx_ESD = as.numeric(approx_ESD)) %>%
     dplyr::left_join(
       blank_correction_data, by = c("date", "experiment_name", "approx_ESD")
@@ -83,15 +83,15 @@ compute_152H_hydrometer_fines_pct_passing <- function(with_pipette = FALSE){
         stringr::str_detect(
           sampling_datetime,
           pattern = "\\d{1,2}:\\d{2}:\\d{2}\\s+(A|P)M$"),
-        lubridate::ymd_hms(sampling_datetime, tz = Sys.timezone()),
-        lubridate::ymd_hm(sampling_datetime, tz = Sys.timezone())
+        lubridate::ymd_hms(sampling_datetime, tz = Sys.timezone(), quiet = TRUE),
+        lubridate::ymd_hm(sampling_datetime, tz = Sys.timezone(), quiet = TRUE)
         ),
       stir_datetime = dplyr::if_else(
         stringr::str_detect(
           stir_datetime,
           pattern = "\\d{1,2}:\\d{2}:\\d{2}\\s+(A|P)M$"),
-        lubridate::ymd_hms(stir_datetime, tz = Sys.timezone()),
-        lubridate::ymd_hm(stir_datetime, tz = Sys.timezone())
+        lubridate::ymd_hms(stir_datetime, tz = Sys.timezone(), quiet = TRUE),
+        lubridate::ymd_hm(stir_datetime, tz = Sys.timezone(), quiet = TRUE)
       ),
       elapsed_time = lubridate::as.duration(sampling_datetime - stir_datetime)) %>%
     dplyr::left_join(OD_specimen_masses, by = c("date", "experiment_name", "sample_name", "replication", "batch_sample_number"))
@@ -415,7 +415,7 @@ generalized_finer_D_x <- function(calculations_df = NULL, d_microns = NULL, with
 
   # not sure what is up wit this line of code....could have been a mis-placed copy/paste?? dfs_list <- parallel_args <-  tibble::tibble(
 
-  browser()
+#   browser()
   dfs_list <- tibble::tibble(
     calculations_df = purrr::rerun(.n = length(d_microns),
                                    calculations_df),

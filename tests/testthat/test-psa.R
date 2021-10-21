@@ -9,9 +9,7 @@ test_that("PSA protocol 3", {
 
 
 
-  suppressPackageStartupMessages(library(tidyverse))
-
-# set current working directory for clarity and less typing
+  # set current working directory for clarity and less typing
 
   setwd(here::here("tests", "testthat", "test-data", "psa", "protocol3"))
 
@@ -122,8 +120,6 @@ test_that("PSA protocol 15", {
           soiltestr.beaker_tares = asi468::psa_beaker_tares)
 
 
-
-  suppressPackageStartupMessages(library(tidyverse))
 
   # set current working directory for clarity and less typing
 

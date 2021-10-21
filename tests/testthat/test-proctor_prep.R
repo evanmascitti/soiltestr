@@ -22,7 +22,15 @@ test_that("Proctor prep returns the right aliquot", {
     purrr::reduce(dplyr::left_join, by= 'sample_name')
 
   # now pass the complete table to `proctor_prep()`
+  # suppress the message for testing
+  suppressWarnings({
   all_efforts_aliquots <- proctor_prep(x = full_args)
+  })
+
+  # now separately check that the warning is issued
+  expect_warning({
+    all_efforts_aliquots <- proctor_prep(x = full_args)
+  })
 
   # An alternative approach is to provide the x argument (which can be piped directly from `sand_clay_mix_calcs()` _and_ a data frame
   # having PL values
@@ -53,10 +61,17 @@ test_that("Proctor prep returns the right aliquot", {
                PLs = pl_values$PL)
 
   mix_03 <- dplyr::filter(full_args, sample_name == 'mix_03', effort == 'standard')
-  # widen the interval for a clayey soil
-  wider_intervals_aliquots <- proctor_prep(x = mix_03, PLs = pl_values,
-               date= Sys.Date(), w_int = 0.025)
 
+  # widen the interval for a clayey soil
+  suppressWarnings({wider_intervals_aliquots <- proctor_prep(x = mix_03, PLs = pl_values,
+               date= Sys.Date(), w_int = 0.025)})
+
+  # for the same call above, make sure a warning is issued because the effort argument over-rides the default behavior
+
+ expect_warning({
+   wider_intervals_aliquots <- proctor_prep(
+     x = mix_03, PLs = pl_values, date= Sys.Date(), w_int = 0.025)
+ })
 
 
 

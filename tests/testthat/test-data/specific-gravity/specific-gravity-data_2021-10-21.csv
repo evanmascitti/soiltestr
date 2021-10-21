@@ -1,0 +1,3 @@
+date,experiment_name,sample_name,replication,batch_sample_number,bottle_set,bottle_number,air_dry_specimen_mass,filled_bottle_post_boil_mass,water_temp_c,tin_tare_set,tin_number,tin_w_wet_sample,tin_w_OD_sample,comments
+2021-10-21,specific-gravity-method-development,granusil-4095,1,1,2021-10-20,1,30.074,155.973,20.6,2021-03-04,112,18.562,18.555,-
+2021-10-21,specific-gravity-method-development,granusil-4095,2,2,2021-10-20,3,30.265,152.520,20.6,2021-03-04,113,18.968,18.963,-
