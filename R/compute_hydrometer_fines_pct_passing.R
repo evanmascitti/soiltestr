@@ -59,7 +59,7 @@ compute_152H_hydrometer_fines_pct_passing <- function(with_pipette = FALSE){
   # sampling time from the appropriate components. Finally,
   # join with specimen masses
 
-  # browser()
+  browser()
 
   hydrometer_data <- method_specific_datafiles$hydrometer %>%
     dplyr::mutate(approx_ESD = as.numeric(approx_ESD)) %>%
@@ -79,8 +79,20 @@ compute_152H_hydrometer_fines_pct_passing <- function(with_pipette = FALSE){
                  stir_AM_PM,
                  sep = ' ') %>%
     dplyr::mutate(
-      sampling_datetime = lubridate::ymd_hm(sampling_datetime, tz = Sys.timezone()),
-      stir_datetime = lubridate::ymd_hms(stir_datetime, tz = Sys.timezone()),
+      sampling_datetime = dplyr::if_else(
+        stringr::str_detect(
+          sampling_datetime,
+          pattern = "\\d{1,2}:\\d{2}:\\d{2}\\s+(A|P)M$"),
+        lubridate::ymd_hms(sampling_datetime, tz = Sys.timezone()),
+        lubridate::ymd_hm(sampling_datetime, tz = Sys.timezone())
+        ),
+      stir_datetime = dplyr::if_else(
+        stringr::str_detect(
+          stir_datetime,
+          pattern = "\\d{1,2}:\\d{2}:\\d{2}\\s+(A|P)M$"),
+        lubridate::ymd_hms(stir_datetime, tz = Sys.timezone()),
+        lubridate::ymd_hm(stir_datetime, tz = Sys.timezone())
+      ),
       elapsed_time = lubridate::as.duration(sampling_datetime - stir_datetime)) %>%
     dplyr::left_join(OD_specimen_masses, by = c("date", "experiment_name", "sample_name", "replication", "batch_sample_number"))
 
@@ -101,7 +113,7 @@ compute_152H_hydrometer_fines_pct_passing <- function(with_pipette = FALSE){
   # function on each data frame in the list column.
 
 
-  # browser()
+   # browser()
 
 calculations_dfs <- hydrometer_data %>%
     dplyr::group_by(batch_sample_number) %>%
@@ -130,7 +142,7 @@ calculations_dfs <- hydrometer_data %>%
 
 # try to run it for the whole list, then rbind all the data frames together
 
- browser()
+ # browser()
 all_results <- purrr::map(calculations_dfs, generalized_finer_D_x, with_pipette = with_pipette)
 
 fines_percent_passing <- dplyr::bind_rows(all_results) %>%
@@ -169,12 +181,13 @@ hydrometer_calcs_part_1 <- function(x){
 
 
 
- #  browser()
+#   browser()
 
   # assign the required constants which exist in higher frames
   hydrometer_dims <- get(x = c("hydrometer_dims"), envir = rlang::caller_env(2))
 
 mass_percent_finer_df <- x %>%
+  dplyr::filter(!is.na(hydrometer_reading)) %>%
   dplyr::mutate(
     mass_pct_finer = 0.6226 * (Gs / (Gs - 1)) * (1000 / OD_specimen_mass) * (hydrometer_reading - blank_hydrometer_reading) * (100 / 1000)
   )
@@ -265,32 +278,50 @@ percent_finer_D_x <- function(calculations_df, d_microns) {
   #min_neg_dist is the distance which is slightly smaller than the one
   #requested.
 
-  min_pos_dist <- min(purrr::pluck(distances_df[distances_df$diff_from_desired_diameter > 0, ,], "diff_from_desired_diameter"))
 
-  min_neg_dist <- min(abs(purrr::pluck(distances_df[distances_df$diff_from_desired_diameter <= 0, ,], "diff_from_desired_diameter")))
+  if(all(distances_df$diff_from_desired_diameter < 0) | !any(distances_df$diff_from_desired_diameter < 0)){
 
-  # those values can now be used to filter the main data frame to include only
-  # rows having those values for the diff_from_desired_diameter variable
+    warning("Sample \'", unique(calculations_df$sample_name), "\', replication ", unique(calculations_df$replication), ": unable to filter for two particle diameters which bracket requested diameter of ", d_microns, " \u03bcm; inserting NA value.",
+            call. = FALSE)
 
-  filtered_distances_df <- distances_df %>%
-    dplyr::filter(dplyr::near(diff_from_desired_diameter, min_pos_dist) || dplyr::near(diff_from_desired_diameter, -min_neg_dist)
-                  )
+    predicted_percent_passing <- NA %>%
+      purrr::set_names(paste0('< ', d_microns, '\u03bcm'))
 
-  # next, fit a log-linear model to those two data points
+  } else{
 
-  # browser()
 
-  log_lin_mod <- lm(
-    data = filtered_distances_df,
-    formula = mass_pct_finer ~ log10(D_m_microns)
-  )
+    # this is the desired scenario
+    # filter the data frame to contain only the desired data points....discern these
+    # by assigning two local variables, one for the smallest distance above the
+    # desired diameter and one for the smallest distance above it
 
-  # finally, predict the percent passing for the requested particle diameter
-  predicted_percent_passing <- predict(object = log_lin_mod,
-                                       newdata = data.frame(D_m_microns = d_microns)
-  ) %>%
-    purrr::set_names(paste0('< ', d_microns, '\u03bcm'))
+    min_pos_dist <- min(purrr::pluck(distances_df[distances_df$diff_from_desired_diameter > 0, ,], "diff_from_desired_diameter"))
 
+    min_neg_dist <- min(abs(purrr::pluck(distances_df[distances_df$diff_from_desired_diameter <= 0, ,], "diff_from_desired_diameter")))
+
+    # those values can now be used to filter the main data frame to include only
+    # rows having those values for the diff_from_desired_diameter variable
+
+    filtered_distances_df <- distances_df %>%
+      dplyr::filter(
+        dplyr::near(diff_from_desired_diameter, min_pos_dist) | dplyr::near(diff_from_desired_diameter, -min_neg_dist))
+
+
+    # fit the log-linear model
+
+    log_lin_mod <- lm(
+      data = filtered_distances_df,
+      formula = mass_pct_finer ~ log10(D_m_microns)
+    )
+
+    # predict the percent passing for the requested particle diameter
+
+    predicted_percent_passing <- predict(
+      object = log_lin_mod,
+      newdata = data.frame(D_m_microns = d_microns)) %>%
+      purrr::set_names(paste0('< ', d_microns, '\u03bcm'))
+
+}
 
   # add the predicted value onto the original data frame,
   # select only the desired columns,
@@ -363,7 +394,7 @@ generalized_finer_D_x <- function(calculations_df = NULL, d_microns = NULL, with
   # protocol is being used and then look it up in the psa_protocols
   # list, as this contains a vector with this exact piece of information
 
-  browser()
+  # browser()
 
   protocol_ID <- get("protocol_ID", envir = rlang::caller_env(n = dplyr::if_else(with_pipette, 4, 3)))
   d_microns <-psa_protocols[[rlang::sym(protocol_ID)]][["fines_diameters_to_compute"]][[1]]
@@ -377,16 +408,20 @@ generalized_finer_D_x <- function(calculations_df = NULL, d_microns = NULL, with
   # having trouble with map2, try pmap instead which takes a named list
 
 
-  # STOPPING HERE 2021-10-20
-
   # I broke protocol 8, but I think it is fixable pretty easily
 
+  # filter for any diameters finer than 1 micron, as they can't be computed via sedimentation.
+  # THe only reason these would exist is when doing a dual hydrometer/pipette method....this way the arguments can stay the same but there is no attempt to compute a diameter for anything that is too fine
 
-  dfs_list <- parallel_args <-  tibble::tibble(
+  # not sure what is up wit this line of code....could have been a mis-placed copy/paste?? dfs_list <- parallel_args <-  tibble::tibble(
+
+  browser()
+  dfs_list <- tibble::tibble(
     calculations_df = purrr::rerun(.n = length(d_microns),
                                    calculations_df),
     d_microns = d_microns
   ) %>%
+    dplyr::filter(d_microns > 1) %>%
     purrr::pmap(percent_finer_D_x)
 
 

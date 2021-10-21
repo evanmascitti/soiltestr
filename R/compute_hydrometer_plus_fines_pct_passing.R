@@ -4,14 +4,15 @@
 #'
 compute_hydrometer_plus_pipette_fines_pct_passing <- function(){
 
-  browser()
+  # browser()
 
   hydrometer_fines_pct_passing <- compute_152H_hydrometer_fines_pct_passing(with_pipette = TRUE)
 
   pipette_fines_pct_passing <- compute_pipette_fines_pct_passing(with_hydrometer = TRUE)
 
 
-  complete_fines_pct_passing <- dplyr::bind_rows(hydrometer_fines_pct_passing, pipette_fines_pct_passing)
+  complete_fines_pct_passing <- dplyr::bind_rows(hydrometer_fines_pct_passing, pipette_fines_pct_passing) %>%
+    dplyr::arrange(batch_sample_number, dplyr::desc(microns))
 
 
   return(complete_fines_pct_passing)

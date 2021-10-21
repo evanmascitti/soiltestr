@@ -6,3 +6,7 @@ x <- psa(
   hydrometer_dims = asi468::astm_152H_hydrometers
 )
 
+
+
+x$averages$simple_bins
+x$averages$sub_bins %>% View()

@@ -191,7 +191,7 @@ coarse_percent_passing <- switch (
 
 # next compute  the fines % passing
 
-    browser()
+    # browser()
   fines_percent_passing <- switch (protocol_ID,
     "1" = compute_pipette_fines_pct_passing(...),
     "2" = compute_152H_hydrometer_fines_pct_passing(...),
@@ -256,6 +256,7 @@ coarse_percent_passing <- switch (
  simple_bins <- simple_bins()
 
 
+ # browser()
 
  # check if the protocol permits more complex bin sizes to be computed for
  # the fines method
@@ -293,6 +294,7 @@ coarse_percent_passing <- switch (
   "16" = SSSA_pipette_bins(),
   "17" = SSSA_pipette_bins(),
   "18" = SSSA_pipette_bins(),
+  "19" = SSSA_pipette_bins(),
   stop("Could not find any info for psa_protocol ID ", protocol_ID, ". Can't compute sub-bins.", call. = T)
 )
 
@@ -339,6 +341,7 @@ coarse_percent_passing <- switch (
      "16" = USGA_bins(),
      "17" = USGA_bins(),
      "18" = USGA_bins(),
+     "19" = USGA_bins(),
      stop("Could not find any info for psa_protocol ID ", protocol_ID, ". Can't compute any sub-bins for sand-size parcticles.", call. = T)
    )
 
@@ -442,6 +445,7 @@ method_metadata <-switch (protocol_ID,
     "16" = psa_protocols[["16"]],
     "17" = psa_protocols[["17"]],
     "18" = psa_protocols[["18"]],
+    "19" = psa_protocols[["19"]],
     stop("Could not find any metadata for psa_protocol number ", protocol_ID, call. = T))
 
 

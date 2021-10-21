@@ -4,10 +4,16 @@
 \alias{generalized_finer_D_x}
 \title{Iterate over multiple particle diameters for a given sample}
 \usage{
-generalized_finer_D_x(calculations_df = NULL, d_microns = NULL)
+generalized_finer_D_x(
+  calculations_df = NULL,
+  d_microns = NULL,
+  with_pipette = FALSE
+)
 }
 \arguments{
 \item{d_microns}{Numeric vector of arbitrary length, corresponding to the particle diameters to compute. Defaults to 2, which is the silt/clay cutoff.}
+
+\item{with_pipette}{Logical, whether function is being called from inside another function, necessitating that the protocol ID is found one more level up in the call stack}
 }
 \value{
 data frame in long format with microns and percent_passing as columns
