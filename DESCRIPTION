@@ -35,7 +35,6 @@ Imports:
     mathjaxr,
     crayon,
     stringr,
-    asi468,
     forcats,
     patchwork,
     glue

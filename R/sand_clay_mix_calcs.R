@@ -33,6 +33,7 @@
 #'   (if the mixes are to have different water contents), or a single numeric
 #'   value (if all mixes are to have the same final water content). Defaults to
 #'   0.05 which is the lowest water content typically used in a compaction test.
+#' @param round Logical, whether to round the component masses. Use only for easier formatting in `.Rmd` documents as precision is lost when passing to later calculations.
 #'
 #'
 #'@return A table of values with an appropriate number of
@@ -75,7 +76,8 @@ sand_clay_mix_calcs <- function(
   sand_sandy,
   sand_clayey,
   w_sandy,
-  w_clayey) {
+  w_clayey,
+  round = FALSE) {
 
  #  browser()
 
@@ -141,11 +143,21 @@ sand_clay_mix_calcs <- function(
       .data$kg_air_dry_clayey_component,
       .data$w_extant) %>%
     dplyr::mutate(
-      final_sand_pct = round(100 * .data$final_sand_pct, digits = 0),
+      final_sand_pct = round(100 * .data$final_sand_pct, digits = 0)
+    )
+
+  # round the answer if user supplies TRUE to `round` argument
+
+  if(round){
+
+    mix_ref <- mix_ref %>%
+    dplyr::mutate(
       w_extant = round(w_extant, digits = 3),
       kg_air_dry_sandy_component = round(.data$kg_air_dry_sandy_component, digits = 2),
       .data$kg_air_dry_silty_component,
       kg_air_dry_clayey_component = round(.data$kg_air_dry_clayey_component, digits = 2))
+
+  }
 
 # for later if I learn more about inheritance
   # and S3 classes

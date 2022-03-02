@@ -11,7 +11,7 @@
 #'
 #' @example inst/examples/w_addition_example.R
 #'
-w_addition <- function(OD_mass, w_extant, w_desired, x = NULL, ...){
+w_addition <- function(x = NULL, OD_mass, w_extant, w_desired,  ...){
 
   # browser()
 

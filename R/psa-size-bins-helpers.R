@@ -173,7 +173,7 @@ expanded_sieve_bins_1 <- function(){
 #'
 #'@return a tibble
 #'
-SSSA_pipette_bins <- function(){
+CSSC_pipette_bins <- function(){
 
   # assign cumulative percent passing to local variable based on its value in global environment
 
@@ -182,19 +182,20 @@ SSSA_pipette_bins <- function(){
 # this pivots wider, computes the differences, then removes any columns whose names
 # begins with a number
 
-  sssa_pipette_bins <- cumulative_percent_passing %>%
+  cssc_pipette_bins <- cumulative_percent_passing %>%
     dplyr::filter(.data$microns <= 53) %>%
     tidyr::pivot_wider(names_from = .data$microns, values_from = .data$percent_passing) %>%
     psa_decimal_to_pct() %>%
     dplyr::mutate(
      coarse_silt = .data$`53` - .data$`20`,
-      medium_silt = .data$`20` - .data$`5`,
-      fine_silt = .data$`5` - .data$`2`,
-      coarse_clay = .data$`2` - .data$`0.2`,
-      fine_clay = .data$`0.2`) %>%
+    medium_silt = .data$`20` - .data$`5`,
+    fine_silt = .data$`5` - .data$`2`,
+    # fine_silt = .data$`20` - .data$`2`, # this is DuraEdge's split; it's not official
+     coarse_clay = .data$`2` - .data$`0.2`,
+     fine_clay = .data$`0.2`) %>%
     psa_remove_number_bins()
 
-  return(sssa_pipette_bins)
+  return(cssc_pipette_bins)
 
 }
 
@@ -267,7 +268,7 @@ simple_bins <- function(){
   # assign the needed object from parent frame instead of
   # passing them as arguments
 
-  # browser()
+ #  browser()
 
   cumulative_percent_passing <- get("cumulative_percent_passing", envir = rlang::caller_env() )
 

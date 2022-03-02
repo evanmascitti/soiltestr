@@ -16,7 +16,8 @@ sand_clay_mix_calcs(
   sand_sandy,
   sand_clayey,
   w_sandy,
-  w_clayey
+  w_clayey,
+  round = FALSE
 )
 }
 \arguments{
@@ -50,6 +51,8 @@ in decimal form.}
 
 \item{w_clayey}{The gravimetric water content of the air-dry "clay" component,
 in decimal form.}
+
+\item{round}{Logical, whether to round the component masses. Use only for easier formatting in \code{.Rmd} documents as precision is lost when passing to later calculations.}
 
 \item{w_final}{a numeric vector of the same length as \code{expt_mix_nums}
 (if the mixes are to have different water contents), or a single numeric

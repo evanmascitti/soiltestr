@@ -37,11 +37,42 @@ AL_or_PL_batch_analysis <- function(type){
                                full.names = TRUE)
 
 
-  # error message if file does not exist
+  # exit early, returning empty results and issue a
+  # warning message if file does not exist in directory
+
+
+ #  browser()
 
   if(length(data_file_path) == 0) {
-    stop(glue::glue("\nNo {type} data file found in this directory."))
-  }
+
+   message(glue::glue("\nNo {type} data file found in directory {dir}. Returning empty data frames and plots for this data collection date."))
+
+      consistency_limit_avg_values <- tibble::tibble(
+        date = NA,
+        experiment_name = NA_character_,
+        sample_name = NA_character_,
+        batch_sample_number = NA_integer_,
+        test_type = type,
+        water_content = NA_real_
+      ) %>%
+        dplyr::mutate(date = as.Date(date)) %>%
+        .[0, ]
+
+      consistency_limit_all_values <- consistency_limit_avg_values
+
+      consistency_limit_variation_plot <- NULL
+
+
+    return_list <- list(consistency_limit_avg_values,
+                        consistency_limit_all_values,
+                        consistency_limit_variation_plot) %>%
+      purrr::set_names(paste0(
+        type, '_', c('avg_values', 'all_values', 'variation_plot')
+      ))
+
+    return(return_list)
+
+    }
 
   data_file <- readr::read_csv(
     data_file_path,
@@ -208,7 +239,37 @@ AL_batch_analysis <- function(dir, tin_tares = NULL){
 #'
 LL_batch_analysis <- function(dir, tin_tares = NULL){
 
+  # browser()
+
   data_file_path <- list.files(path = dir, pattern = "LL[_-]raw[_-]data", full.names = T)
+
+  if(length(data_file_path) == 0L){
+    # results_tbl <- tibble::tibble(
+    #   test_type = "",
+    #   date = Sys.Date(),
+    #   experiment_name = "",
+    #   sample_name = "",
+    #   batch_sample_number = 1,
+    #   tin_number = 1,
+    #   blow_count = 1,
+    #   tin_w_wet_sample = 1.2,
+    #   tin_w_OD_sample = 1.2,
+    #   tin_tare_set = "",
+    #   comments = ""
+    # ) %>%
+    #   .[0, ]
+
+    message("No LL data file found in directory ", dir, ". Returning empty data frames and plots for this data collection date.", call. = FALSE)
+
+    return(structure(
+      list(LL_results = NULL,
+           flow_curve_plots = NULL),
+      class = 'LL_batch') )
+
+  }
+
+
+# everything below applies if the file does exist
 
   data_file <- readr::read_csv(
     data_file_path,

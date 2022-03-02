@@ -1,0 +1,13 @@
+date,experiment_name,protocol_ID,sample_name,replication,batch_sample_number,microns,cumulative_mass_g,comments
+2021-11-02,psamethods2021,15,duraedge-fs-90,1,1,4000,3.391,-
+2021-11-02,psamethods2021,15,duraedge-fs-90,2,2,4000,3.375,-
+2021-11-02,psamethods2021,15,duraedge-fs-90,3,3,4000,3.112,-
+2021-11-02,psamethods2021,15,no-6-tile,1,4,4000,1.001,-
+2021-11-02,psamethods2021,15,no-6-tile,1,5,2000,1.03,-
+2021-11-02,psamethods2021,15,no-6-tile,3,6,4000,0.997,-
+2021-11-02,psamethods2021,15,promound,1,7,4000,0.082,-
+2021-11-02,psamethods2021,15,promound,2,8,4000,0.066,-
+2021-11-02,psamethods2021,15,promound,3,9,4000,0.063,-
+2021-11-02,psamethods2021,15,sil-co-sil-75,1,10,4000,4.459,-
+2021-11-02,psamethods2021,15,sil-co-sil-75,2,11,4000,3.942,-
+2021-11-02,psamethods2021,15,sil-co-sil-75,3,12,4000,2.803,-

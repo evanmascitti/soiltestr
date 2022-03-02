@@ -275,12 +275,12 @@ coarse_percent_passing <- switch (
    }
 
    fines_sub_bins <- switch (protocol_ID,
-  "1" = SSSA_pipette_bins(),
+  "1" = CSSC_pipette_bins(),
   "2" = insufficient_fines_sampling(),
-  "3" = SSSA_pipette_bins(),
+  "3" = CSSC_pipette_bins(),
   "4" = insufficient_fines_sampling(),
   "5" = insufficient_fines_sampling(),
-  "6" = SSSA_pipette_bins(),
+  "6" = CSSC_pipette_bins(),
   "7" = insufficient_fines_sampling(),
   "8" = insufficient_fines_sampling(),
   "9" = insufficient_fines_sampling(),
@@ -290,11 +290,11 @@ coarse_percent_passing <- switch (
   "11" = insufficient_fines_sampling(),
   "13" = pipette_20_to_0.2_only(),
   "14" = insufficient_fines_sampling(),
-  "15" = SSSA_pipette_bins(),
-  "16" = SSSA_pipette_bins(),
-  "17" = SSSA_pipette_bins(),
-  "18" = SSSA_pipette_bins(),
-  "19" = SSSA_pipette_bins(),
+  "15" = CSSC_pipette_bins(),
+  "16" = CSSC_pipette_bins(),
+  "17" = CSSC_pipette_bins(),
+  "18" = CSSC_pipette_bins(),
+  "19" = CSSC_pipette_bins(),
   stop("Could not find any info for psa_protocol ID ", protocol_ID, ". Can't compute sub-bins.", call. = T)
 )
 
