@@ -9,14 +9,14 @@
 #' decimal.
 #'
 #'
-#' @param df a data frame containing LL and PI values
+#' @param x a data frame containing LL and PI values
 #' @import ggplot2
 #' @return A `gg` plot object
 #' @export
 #'
-casagrande_chart <- function(df) {
+casagrande_chart <- function(x) {
 
-  plot1 <- ggplot(data= df, aes(100*.data$LL, 100*.data$PI))
+  plot1 <- ggplot(data= x, aes(100*.data$LL, 100*.data$PI))
 
   soil_class_labs <- tibble::tibble(soil_type= c('CL/OL', 'CH/OH', 'ML/OL', 'MH/OH', 'CL-ML'),
                             LL= c(40, 70, 40, 70, 16),
@@ -45,7 +45,7 @@ casagrande_chart <- function(df) {
                  fill='grey',
                  alpha=1/3) +
     labs(x='LL', y='PI')+
-    cowplot::theme_cowplot()+
+    theme_classic()+
     cowplot::background_grid(minor = 'xy')+
     theme(axis.title.y = element_text(angle=0, vjust=0.5),
           plot.background  = element_rect(color='black', fill= 'transparent', size=0.25),

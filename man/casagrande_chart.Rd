@@ -5,10 +5,10 @@
 \title{Plots the results of Atterberg limit tests on the standard Casagrande
 plasticity chart}
 \usage{
-casagrande_chart(df)
+casagrande_chart(x)
 }
 \arguments{
-\item{df}{a data frame containing LL and PI values}
+\item{x}{a data frame containing LL and PI values}
 }
 \value{
 A \code{gg} plot object
