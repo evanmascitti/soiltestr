@@ -181,6 +181,7 @@ coarse_percent_passing <- switch (
   "17" = compute_sieves_percent_passing(),
   "18" = compute_sieves_percent_passing(),
   "19" = compute_sieves_percent_passing(),
+  "20" = compute_sieves_percent_passing(),
   stop(
     "Can't find the protocol - unable to compute % coarse particles for protocol_ID ",
     protocol_ID,
@@ -212,6 +213,7 @@ coarse_percent_passing <- switch (
     "17" = compute_pipette_fines_pct_passing(...),
     "18" = compute_pipette_fines_pct_passing(...),
     "19" = compute_hydrometer_plus_pipette_fines_pct_passing(),
+    "20" = compute_pipette_fines_pct_passing(),
     stop("Can't find the protocol... unable to compute % fines for protocol_ID ", protocol_ID, call. = T)
   )
 
@@ -295,6 +297,7 @@ coarse_percent_passing <- switch (
   "17" = CSSC_pipette_bins(),
   "18" = CSSC_pipette_bins(),
   "19" = CSSC_pipette_bins(),
+  "20" = pipette_20_to_0.2_only(),
   stop("Could not find any info for psa_protocol ID ", protocol_ID, ". Can't compute sub-bins.", call. = T)
 )
 
@@ -342,6 +345,7 @@ coarse_percent_passing <- switch (
      "17" = USGA_bins(),
      "18" = USGA_bins(),
      "19" = USGA_bins(),
+     "20" = USGA_bins(),
      stop("Could not find any info for psa_protocol ID ", protocol_ID, ". Can't compute any sub-bins for sand-size parcticles.", call. = T)
    )
 
@@ -446,6 +450,7 @@ method_metadata <-switch (protocol_ID,
     "17" = psa_protocols[["17"]],
     "18" = psa_protocols[["18"]],
     "19" = psa_protocols[["19"]],
+    "20" = psa_protocols[["20"]],
     stop("Could not find any metadata for psa_protocol number ", protocol_ID, call. = T))
 
 

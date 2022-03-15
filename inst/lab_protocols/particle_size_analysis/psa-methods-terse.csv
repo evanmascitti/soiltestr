@@ -18,3 +18,4 @@ protocol_ID,OM_removal,carbonate_removal,iron_oxide_removal,mechanical_dispersio
 17,-,-,-,ultrasonics-01,calgon_0.5,10,pipette,USGA_sieves,after,-
 18,-,-,-,overnight_shaker,calgon_0.5,10,pipette,USGA_sieves,before,Drohan method without pre-treatment
 19,-,-,-,milkshake_5,calgon_5,25,hydrometer-plus-pipette,USGA_sieves,after,Combining hydrometer with centrifuge and pipette for <0.2 micron fraction
+20,-,-,-,milkshake_5,calgon_5,25,pipette,USGA_sieves,after,Fine clay breakdown; silt only broken into coarse (50-20 \u03bcm) and fine (20-2 \u03bcm) fractions; i.e. 5 \u03bcm diameter ignored.

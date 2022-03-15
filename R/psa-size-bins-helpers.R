@@ -220,7 +220,7 @@ pipette_20_to_0.2_only <- function(){
     psa_decimal_to_pct() %>%
     dplyr::mutate(
       coarse_silt = .data$`53` - .data$`20`,
-      coarse_silt = .data$`20` - .data$`2`,
+      fine_silt = .data$`20` - .data$`2`,
       coarse_clay = .data$`2` - .data$`0.2`,
       fine_clay = .data$`0.2`) %>%
     psa_remove_number_bins()
