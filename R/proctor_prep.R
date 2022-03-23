@@ -331,7 +331,7 @@ augment_proctor_w_targets <- function(x){
       .data$moist_soil_to_use_g,
       .data$water_to_add_g)  %>%
     dplyr::mutate(
-        moist_soil_to_use_g = round(moist_soil_to_use_g, digits = -2),
+        moist_soil_to_use_g = round(moist_soil_to_use_g, digits = -1),
         water_to_add_g = round(water_to_add_g, digits = -1)
       )
 
