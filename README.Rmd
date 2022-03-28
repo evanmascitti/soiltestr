@@ -30,7 +30,7 @@ version <- gsub('-', '.', version)
 
 **soiltestr** is built to help collect and analyze laboratory soil test data. I wrote the functions for my own use, but other soil scientists may find them of value. The code streamlines commonly performed tests: particle size analysis, Atterberg limits, Proctor maximum density, and particle density (specific gravity).
 
-This package is currently under heavy development and likely will be rather opaque to new users. However, I plan to streamline the documentation and release it to CRAN by July 2021.
+This package is currently under heavy development and likely will be rather opaque to new users. However, I plan to streamline the documentation and release it to CRAN.
 
 ## Installation
 

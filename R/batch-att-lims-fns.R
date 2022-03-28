@@ -74,6 +74,9 @@ AL_or_PL_batch_analysis <- function(type){
 
     }
 
+  # browser()
+  # message(data_file_path)
+
   data_file <- readr::read_csv(
     data_file_path,
     col_types = readr::cols(
@@ -259,7 +262,7 @@ LL_batch_analysis <- function(dir, tin_tares = NULL){
     # ) %>%
     #   .[0, ]
 
-    message("No LL data file found in directory ", dir, ". Returning empty data frames and plots for this data collection date.", call. = FALSE)
+    message("No LL data file found in directory ", dir, ". Returning empty data frames and plots for this data collection date.")
 
     return(structure(
       list(LL_results = NULL,
