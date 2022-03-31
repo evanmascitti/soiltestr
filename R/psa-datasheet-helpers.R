@@ -141,19 +141,17 @@ check_hydrometer_blank_method <- function(){
 
   # return a Boolean based on protocol ID and text from protocol summaries
   companion_measurement <- psa_protocols_summary %>%
-    dplyr::filter(protocol_ID == ID_for_hydrometer_blank_method) %>%
-    dplyr::pull("other_comments") %>%
-    stringr::str_detect("companion")
+    dplyr::filter(protocol_ID == ID_for_hydrometer_blank_method,
+                  stringr::str_detect(blank_method, "companion"))
 
-  temp_calibration_measurement <-psa_protocols_summary %>%
-    dplyr::filter(protocol_ID == ID_for_hydrometer_blank_method) %>%
-    purrr::pluck("other_comments") %>%
-    stringr::str_detect("calibration")
+  temp_calibration_measurement <- psa_protocols_summary %>%
+    dplyr::filter(protocol_ID == ID_for_hydrometer_blank_method,
+                  blank_method == "temperature calibration")
 
   # determine return value based on the above tests
-  if(companion_measurement) return('companion')
+  if(nrow(companion_measurement > 0)) return('companion')
 
-  if(temp_calibration_measurement) return('temp_calibration')
+  if(nrow(temp_calibration_measurement > 0)) return('temp_calibration')
 
   # should never reach this error message b/c one of the above
   # should always evaluate to TRUE ,but putting in for potential debugging help
@@ -229,6 +227,7 @@ hydrometer_blank_correction_datasheet <- function(){
     bouyoucos_cylinder_number = blank_correction_bouyoucos_cylinder,
     hydrometer_ID = hydrometer_ID,
     approx_ESD = fines_diameters_sampled %||% "",
+    reading_number = "",
     stir_date = "",
     stir_time = "",
     stir_AM_PM = "",
@@ -332,7 +331,8 @@ hydrometer_blank_method <- check_hydrometer_blank_method()
     dplyr::left_join(batch_sample_numbers, by = c('sample_name'),
                      hydrometer_ID = .env$hydrometer_ID) %>%
     dplyr::mutate(
-      approx_ESD = "",
+      approx_ESD = "-",
+      reading_number = "",
       stir_date = "",
       stir_time = "",
       stir_AM_PM = "",

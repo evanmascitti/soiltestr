@@ -123,6 +123,8 @@ hygroscopic_water_contents <- common_datafiles$hygroscopic_corrections %>%
 
   # compute oven-dry specimen masses used in actual PSA tests
 
+# browser()
+
   OD_specimen_masses <- common_datafiles$specimen_masses %>%
     dplyr::left_join(hygroscopic_water_contents,
                      by = c("date", "experiment_name", "sample_name",
@@ -157,7 +159,7 @@ hygroscopic_water_contents <- common_datafiles$hygroscopic_corrections %>%
   # now that the correct specimen mass is known, compute the coarse
   # percent passing
 
-   # browser()
+  # browser()
   # compute the coarse particles % passing
 
 coarse_percent_passing <- switch (
@@ -182,6 +184,8 @@ coarse_percent_passing <- switch (
   "18" = compute_sieves_percent_passing(),
   "19" = compute_sieves_percent_passing(),
   "20" = compute_sieves_percent_passing(),
+  "21" = compute_sieves_percent_passing(),
+  "22" = compute_sieves_percent_passing(),
   stop(
     "Can't find the protocol - unable to compute % coarse particles for protocol_ID ",
     protocol_ID,
@@ -214,6 +218,8 @@ coarse_percent_passing <- switch (
     "18" = compute_pipette_fines_pct_passing(...),
     "19" = compute_hydrometer_plus_pipette_fines_pct_passing(),
     "20" = compute_pipette_fines_pct_passing(),
+    "21" = compute_152H_hydrometer_fines_pct_passing(...),
+    "22" = compute_152H_hydrometer_fines_pct_passing(...),
     stop("Can't find the protocol... unable to compute % fines for protocol_ID ", protocol_ID, call. = T)
   )
 
@@ -277,12 +283,12 @@ coarse_percent_passing <- switch (
    }
 
    fines_sub_bins <- switch (protocol_ID,
-  "1" = CSSC_pipette_bins(),
+  "1" = CSSC_fines_bins(),
   "2" = insufficient_fines_sampling(),
-  "3" = CSSC_pipette_bins(),
+  "3" = CSSC_fines_bins(),
   "4" = insufficient_fines_sampling(),
   "5" = insufficient_fines_sampling(),
-  "6" = CSSC_pipette_bins(),
+  "6" = CSSC_fines_bins(),
   "7" = insufficient_fines_sampling(),
   "8" = insufficient_fines_sampling(),
   "9" = insufficient_fines_sampling(),
@@ -290,14 +296,16 @@ coarse_percent_passing <- switch (
   "11" = insufficient_fines_sampling(),
   "12" = insufficient_fines_sampling(),
   "11" = insufficient_fines_sampling(),
-  "13" = pipette_20_to_0.2_only(),
+  "13" = fines_20_to_0.2_only(),
   "14" = insufficient_fines_sampling(),
-  "15" = CSSC_pipette_bins(),
-  "16" = CSSC_pipette_bins(),
-  "17" = CSSC_pipette_bins(),
-  "18" = CSSC_pipette_bins(),
-  "19" = CSSC_pipette_bins(),
-  "20" = pipette_20_to_0.2_only(),
+  "15" = CSSC_fines_bins(),
+  "16" = CSSC_fines_bins(),
+  "17" = CSSC_fines_bins(),
+  "18" = CSSC_fines_bins(),
+  "19" = CSSC_fines_bins(),
+  "20" = non_standard_fines_bins_1(),
+  "21" = CSSC_fines_bins(),
+  "22" = non_standard_fines_bins_2(),
   stop("Could not find any info for psa_protocol ID ", protocol_ID, ". Can't compute sub-bins.", call. = T)
 )
 
@@ -346,8 +354,26 @@ coarse_percent_passing <- switch (
      "18" = USGA_bins(),
      "19" = USGA_bins(),
      "20" = USGA_bins(),
+     "21" = USGA_bins(),
+     "22" = insufficient_coarse_sampling(),
      stop("Could not find any info for psa_protocol ID ", protocol_ID, ". Can't compute any sub-bins for sand-size parcticles.", call. = T)
    )
+
+ } else{
+     # if code makes it into this statement, just attach the gravel and sand bins to the sub-bins
+
+   coarse_sub_bins <- simple_bins %>%
+     dplyr::select(
+       .data$date,
+       .data$protocol_ID,
+       .data$date, experiment_name,
+       .data$date, sample_name,
+       .data$replication,
+       .data$batch_sample_number,
+       .data$date,
+       .data$gravel,
+       .data$sand,
+       .data$date)
 
    }
 
@@ -451,6 +477,8 @@ method_metadata <-switch (protocol_ID,
     "18" = psa_protocols[["18"]],
     "19" = psa_protocols[["19"]],
     "20" = psa_protocols[["20"]],
+    "21" = psa_protocols[["20"]],
+    "22" = psa_protocols[["20"]],
     stop("Could not find any metadata for psa_protocol number ", protocol_ID, call. = T))
 
 

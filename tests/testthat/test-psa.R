@@ -56,17 +56,31 @@ test_that("PSA protocol 3", {
 
 test_that("PSA protocol 8", {
 
-  psa_obj_8 <- make_test_psa(protocol_ID = 8)
+  options(soiltestr.bouyoucos_cylinder_dims = asi468::bouyoucos_cylinders,
+          soiltestr.tin_tares = asi468::tin_tares,
+          soiltestr.hydrometer_dims = asi468::astm_152H_hydrometers,
+          soiltestr.beaker_tares = asi468::psa_beaker_tares)
+
+  setwd(here::here("tests", "testthat", "test-data", "psa", "protocol8"))
+
+  psa_obj_8 <- psa("psa-data_2021-03-30/")
+
+  # commenting out this garbage for now.
+  # Functions for checking the data are probably not necessary
+  # if each protocol has manually written tests.
+  # And I don't have them for
+  # every protocol anyway, so it would not be consistently
+  # applied even if it were left here .
 
   # check summation to 100% or NULL if sub-bins not computed
-  expect_true(psa_summation(psa_object = psa_obj_8,
-                            bins_type = "simple"))
-  expect_true(psa_summation(psa_object = psa_obj_8,
-                            bins_type = "sub"))
+  # expect_true(psa_summation(psa_object = psa_obj_8,
+  #                           bins_type = "simple"))
+  # expect_true(psa_summation(psa_object = psa_obj_8,
+  #                           bins_type = "sub"))
 
   # check names are correct
-  expect_equal(names(psa_obj_8),
-               psa_names_check())
+  # expect_equal(names(psa_obj_8),
+  #              psa_names_check())
 
   # check some extra values for this specific protocol ------------------------------
 # browser()
@@ -157,6 +171,60 @@ test_that("PSA protocol 15", {
     purrr::pluck("percent_in_bin")
 
   expect_equal(sums[!is.na(sums)], rep(100, 11))
+
+})
+
+# protocol 22 -------------------------------------------------------------
+
+
+test_that("PSA protocol 22", {
+
+  # set options for equipment
+
+  options(soiltestr.bouyoucos_cylinder_dims = asi468::bouyoucos_cylinders,
+          soiltestr.tin_tares = asi468::tin_tares,
+          soiltestr.hydrometer_dims = asi468::astm_152H_hydrometers,
+          soiltestr.beaker_tares = asi468::psa_beaker_tares)
+
+
+
+  # set current working directory for clarity and less typing
+
+  setwd(here::here("tests", "testthat", "test-data", "psa", "protocol22"))
+
+
+
+  # create psa object
+  psa22 <- psa(dir = 'psa-data_2022-03-28')
+
+
+  # NEED TO CHANGE THE CODE BELOW SO IT MATCHES THE NEW SAMPLE DATA
+
+  # check values of each component of the list ------------------------------
+
+  # all 3 values of total sand
+  sand_rounded <- purrr::map_dbl(psa22$averages$simple_bins$sand, round, 1)
+  expect_equal(object = sand_rounded, expected = c(4.7, 50.9))
+
+  # all 3 values of fine silt
+  expect_equal(object = round(psa22$averages$sub_bins$fine_silt, digits = 1),
+               expected = c(28.6, 25.2))
+
+  # make sure all plots exist
+  expect_equal(length(psa22$psd_plots), 2)
+
+  # all bins add to 100%
+
+
+  sums <- psa22$sub_bins %>%
+    dplyr::select((where(is.numeric))) %>%
+    dplyr::mutate(across(c(replication, batch_sample_number), .fns = as.factor)) %>%
+    tidyr::pivot_longer((where(is.numeric)), values_to =  'percent_in_bin') %>%
+    dplyr::group_by(across(where(is.factor))) %>%
+    dplyr::summarize(percent_in_bin = sum(percent_in_bin), .groups = 'drop') %>%
+    purrr::pluck("percent_in_bin")
+
+  expect_equal(sums[!is.na(sums)], rep(100, nrow(psa22$sub_bins)))
 
 })
 

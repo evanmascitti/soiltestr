@@ -173,7 +173,7 @@ expanded_sieve_bins_1 <- function(){
 #'
 #'@return a tibble
 #'
-CSSC_pipette_bins <- function(){
+CSSC_fines_bins <- function(){
 
   # assign cumulative percent passing to local variable based on its value in global environment
 
@@ -182,7 +182,7 @@ CSSC_pipette_bins <- function(){
 # this pivots wider, computes the differences, then removes any columns whose names
 # begins with a number
 
-  cssc_pipette_bins <- cumulative_percent_passing %>%
+  CSSC_fines_bins <- cumulative_percent_passing %>%
     dplyr::filter(.data$microns <= 53) %>%
     tidyr::pivot_wider(names_from = .data$microns, values_from = .data$percent_passing) %>%
     psa_decimal_to_pct() %>%
@@ -195,9 +195,77 @@ CSSC_pipette_bins <- function(){
      fine_clay = .data$`0.2`) %>%
     psa_remove_number_bins()
 
-  return(cssc_pipette_bins)
+  return(CSSC_fines_bins)
 
 }
+
+
+#' (Internal)
+#' Size bins for pipette sampling with 20, 2, and 0.2 microns
+#'
+#'
+#' @details These are the silt bins used by DuraEdge/Natural Sand Co.,
+#' plus the conventional coarse vs fine clay bins computed by pipette
+#' sampling
+#'
+#'@return a tibble
+#'
+non_standard_fines_bins_1 <- function(){
+
+  # assign cumulative percent passing to local variable based on its value in global environment
+
+  cumulative_percent_passing <- get("cumulative_percent_passing", envir = rlang::caller_env() )
+
+  # this pivots wider, computes the differences, then removes any columns whose names
+  # begins with a number
+
+  fines_bins <- cumulative_percent_passing %>%
+    dplyr::filter(.data$microns <= 53) %>%
+    tidyr::pivot_wider(names_from = .data$microns, values_from = .data$percent_passing) %>%
+    psa_decimal_to_pct() %>%
+    dplyr::mutate(
+      coarse_silt = .data$`53` - .data$`20`,
+      fine_silt = .data$`20` - .data$`2`,
+      coarse_clay = .data$`2` - .data$`0.2`,
+      fine_clay = .data$`0.2`) %>%
+    psa_remove_number_bins()
+
+  return(fines_bins)
+
+}
+
+#' (Internal)
+#' Size bins for pipette sampling with 20, 2, and 0.2 microns
+#'
+#'
+#' @details These are the silt bins used by DuraEdge/Natural Sand Co.,
+#' plus clay (no further splitting of clay fraction)
+#'
+#'@return a tibble
+#'
+non_standard_fines_bins_2 <- function(){
+
+  # assign cumulative percent passing to local variable based on its value in global environment
+
+  cumulative_percent_passing <- get("cumulative_percent_passing", envir = rlang::caller_env() )
+
+  # this pivots wider, computes the differences, then removes any columns whose names
+  # begins with a number
+
+  fines_bins <- cumulative_percent_passing %>%
+    dplyr::filter(.data$microns <= 53) %>%
+    tidyr::pivot_wider(names_from = .data$microns, values_from = .data$percent_passing) %>%
+    psa_decimal_to_pct() %>%
+    dplyr::mutate(
+      coarse_silt = .data$`53` - .data$`20`,
+      fine_silt = .data$`20` - .data$`2`,
+      clay = .data$`2`) %>%
+    psa_remove_number_bins()
+
+  return(fines_bins)
+
+}
+
 
 #' (Internal)
 #'
@@ -206,7 +274,7 @@ CSSC_pipette_bins <- function(){
 #'
 #'@return a tibble
 #'
-pipette_20_to_0.2_only <- function(){
+fines_20_to_0.2_only <- function(){
 
   # assign cumulative percent passing to local variable based on its value in global environment
 

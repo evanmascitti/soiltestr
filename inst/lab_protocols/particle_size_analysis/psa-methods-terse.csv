@@ -1,21 +1,23 @@
-protocol_ID,OM_removal,carbonate_removal,iron_oxide_removal,mechanical_dispersion,chemical_dispersion,g_sample,fines_method,coarse_method,wash_thru_270_time,other_comments
-1,-,-,-,milkshake_5,calgon_0.5,10,pipette,USGA_sieves,before,-
-2,-,-,-,milkshake_5,calgon_5,50,hydrometer,USGA_sieves,before,blank computed w/ companion measurement
-3,peroxide,-,-,milkshake_5,calgon_0.5,10,pipette,USGA_sieves,before,-
-4,-,-,-,overnight_shaker,calgon_5,50,pipette,USGA_sieves,before,-
-5,-,-,-,overnight_shaker,calgon_5,50,hydrometer,USGA_sieves,before,blank computed w/ companion measurement
-6,bleach,-,-,milkshake_5,calgon_0.5,10,pipette,USGA_sieves,before,-
-7,-,-,-,milkshake_5,calgon_5,50,pipette,gravel+sand,after,-
-8,-,-,-,milkshake_5,calgon_5,50,hydrometer,gravel+sand,after,blank computed w/ companion measurement
-9,-,-,-,milkshake_5,calgon_5,50,hydrometer,gravel+sand,after,blank computed w/ temperature calibration
-10,-,-,-,milkshake_5,calgon_0.5,10,pipette,gravel+sand,before,-
-11,-,-,-,milkshake_5,calgon_5,25,pipette,expanded_sieve_bins_1,before,-
-12,-,-,-,milkshake_5,calgon_5,50,pipette,USGA_sieves,before,-
-13,-,-,-,milkshake_5,calgon_5,50,pipette,USGA_sieves,before,-
-14,-,-,-,milkshake_5,calgon_5,50,wash-through,gravel+sand,-,total fines computed from #270 wash-through; no split between silt and clay....goal is to compute sand + gravel vs. fines
-15,-,-,-,milkshake_5,calgon_5,50,pipette,USGA_sieves,after,-
-16,-,-,-,overnight_shaker,calgon_5,50,pipette,USGA_sieves,after,-
-17,-,-,-,ultrasonics-01,calgon_0.5,10,pipette,USGA_sieves,after,-
-18,-,-,-,overnight_shaker,calgon_0.5,10,pipette,USGA_sieves,before,Drohan method without pre-treatment
-19,-,-,-,milkshake_5,calgon_5,25,hydrometer-plus-pipette,USGA_sieves,after,Combining hydrometer with centrifuge and pipette for <0.2 micron fraction
-20,-,-,-,milkshake_5,calgon_5,25,pipette,USGA_sieves,after,Fine clay breakdown; silt only broken into coarse (50-20 \u03bcm) and fine (20-2 \u03bcm) fractions; i.e. 5 \u03bcm diameter ignored.
+protocol_ID,OM_removal,carbonate_removal,iron_oxide_removal,mechanical_dispersion,chemical_dispersion,g_sample,fines_method,coarse_method,wash_thru_270_time,blank_method,other_comments
+1,-,-,-,milkshake_5,calgon_0.5,10,pipette,USGA_sieves,before,pipette,-
+2,-,-,-,milkshake_5,calgon_5,50,hydrometer,USGA_sieves,before,companion measurement,-
+3,peroxide,-,-,milkshake_5,calgon_0.5,10,pipette,USGA_sieves,before,pipette,-
+4,-,-,-,overnight_shaker,calgon_5,50,pipette,USGA_sieves,before,pipette,-
+5,-,-,-,overnight_shaker,calgon_5,50,hydrometer,USGA_sieves,before,companion measurement,-
+6,bleach,-,-,milkshake_5,calgon_0.5,10,pipette,USGA_sieves,before,pipette,-
+7,-,-,-,milkshake_5,calgon_5,50,pipette,gravel+sand,after,pipette,-
+8,-,-,-,milkshake_5,calgon_5,50,hydrometer,gravel+sand,after,companion measurement,-
+9,-,-,-,milkshake_5,calgon_5,50,hydrometer,gravel+sand,after,temperature calibration,-
+10,-,-,-,milkshake_5,calgon_0.5,10,pipette,gravel+sand,before,pipette,-
+11,-,-,-,milkshake_5,calgon_5,25,pipette,expanded_sieve_bins_1,before,pipette,-
+12,-,-,-,milkshake_5,calgon_5,50,pipette,USGA_sieves,before,pipette,-
+13,-,-,-,milkshake_5,calgon_5,50,pipette,USGA_sieves,before,pipette,-
+14,-,-,-,milkshake_5,calgon_5,50,wash-through,gravel+sand,-,-,total fines computed from #270 wash-through; no split between silt and clay....goal is to compute sand + gravel vs. fines
+15,-,-,-,milkshake_5,calgon_5,50,pipette,USGA_sieves,after,pipette,-
+16,-,-,-,overnight_shaker,calgon_5,50,pipette,USGA_sieves,after,pipette,-
+17,-,-,-,ultrasonics-01,calgon_0.5,10,pipette,USGA_sieves,after,pipette,-
+18,-,-,-,overnight_shaker,calgon_0.5,10,pipette,USGA_sieves,before,pipette,Drohan method without pre-treatment
+19,-,-,-,milkshake_5,calgon_5,25,hydrometer-plus-pipette,USGA_sieves,after,companion measurement  + pipette,Combining hydrometer with centrifuge and pipette for <0.2 micron fraction
+20,-,-,-,milkshake_5,calgon_5,25,pipette,USGA_sieves,after,pipette,Fine clay breakdown; silt only broken into coarse (50-20 \u03bcm) and fine (20-2 \u03bcm) fractions; i.e. 5 \u03bcm diameter ignored.
+21,-,-,-,milkshake_5,calgon_5,25,hydrometer,USGA_sieves,after,companion measurement,hydrometer for CSSS silt bins plus sand sieving w/ USGA meshes
+22,-,-,-,milkshake_5,calgon_5,25,hydrometer,gravel+sand,after,companion measurement,"hydrometer for CSSS silt bins but without sieving, i.e. total sand and gravel only"

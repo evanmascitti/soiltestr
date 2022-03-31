@@ -46,11 +46,13 @@ compute_152H_hydrometer_fines_pct_passing <- function(with_pipette = FALSE){
   # and the actual hydrometer data sheet. Easier to keep it that way for
   # internal consistency and just make the single adjustment here
 
-   blank_correction_data <-  method_specific_datafiles$hydrometer_blank_correction_w_companion %>%
+
+  blank_correction_data <-  method_specific_datafiles$hydrometer_blank_correction_w_companion %>%
     dplyr::rename(blank_hydrometer_reading = hydrometer_reading) %>%
     dplyr::left_join(hydrometer_dims, by = "hydrometer_ID") %>%
     dplyr::select(.data$date,
                   .data$experiment_name,
+                  .data$reading_number,
                   .data$approx_ESD,
                   .data$blank_hydrometer_reading)
 
@@ -59,13 +61,18 @@ compute_152H_hydrometer_fines_pct_passing <- function(with_pipette = FALSE){
   # sampling time from the appropriate components. Finally,
   # join with specimen masses
 
-  # browser()
+
+  # do this step invisibly to suppress the messages from dplyr::left_join.
+  # Not the most transparent  but actually I think this is safer because
+  # it will fail if the join does not succeed, rather than creating new
+  # columns with .x and .y appended, which can make errors difficult to debug.
+
+invisible({
 
   hydrometer_data <-  method_specific_datafiles$hydrometer %>%
     dplyr::mutate(approx_ESD = as.numeric(approx_ESD)) %>%
-    dplyr::left_join(
-      blank_correction_data, by = c("date", "experiment_name", "approx_ESD")
-    ) %>%
+  dplyr::left_join(
+      blank_correction_data) %>% # leaving out the by statement in case there are errors in raw data csv files
     dplyr::left_join(bouyoucos_cylinder_dims, by = "bouyoucos_cylinder_number") %>%
     dplyr::left_join(h2o_properties_w_temp_c, by = "water_temp_c") %>%
     tidyr::unite(col = 'sampling_datetime',
@@ -94,10 +101,14 @@ compute_152H_hydrometer_fines_pct_passing <- function(with_pipette = FALSE){
         lubridate::ymd_hm(stir_datetime, tz = Sys.timezone(), quiet = TRUE)
       ),
       elapsed_time = lubridate::as.duration(sampling_datetime - stir_datetime)) %>%
-    dplyr::left_join(OD_specimen_masses, by = c("date", "experiment_name", "sample_name", "replication", "batch_sample_number"))
+    dplyr::left_join(OD_specimen_masses) # same as above; leaving out by statement
+
+  # , by = c("date", "experiment_name", "sample_name", "replication", "batch_sample_number")
+
+})
 
   # get hydrometer used for test
-  hydrometer_ID <- unique(hydrometer_data$hydrometer_ID)
+  hydrometer_ID <- unique(method_specific_datafiles$hydrometer_blank_correction_w_companion)
 
 
  # particle calculations ---------------------------------------------------
@@ -145,6 +156,8 @@ calculations_dfs <- hydrometer_data %>%
  # browser()
 all_results <- purrr::map(calculations_dfs, generalized_finer_D_x, with_pipette = with_pipette)
 
+  # browser()
+
 fines_percent_passing <- dplyr::bind_rows(all_results) %>%
   dplyr::arrange(.data$batch_sample_number,
                  dplyr::desc(.data$microns))
@@ -181,10 +194,11 @@ hydrometer_calcs_part_1 <- function(x){
 
 
 
-#   browser()
-
   # assign the required constants which exist in higher frames
   hydrometer_dims <- get(x = c("hydrometer_dims"), envir = rlang::caller_env(2))
+
+
+  # browser()
 
 mass_percent_finer_df <- x %>%
   dplyr::filter(!is.na(hydrometer_reading)) %>%
@@ -307,7 +321,11 @@ percent_finer_D_x <- function(calculations_df, d_microns) {
         dplyr::near(diff_from_desired_diameter, min_pos_dist) | dplyr::near(diff_from_desired_diameter, -min_neg_dist))
 
 
+
     # fit the log-linear model
+
+   #  browser()
+
 
     log_lin_mod <- lm(
       data = filtered_distances_df,

@@ -1,3 +1,3 @@
-date,experiment_name,protocol_ID,hydrometer_blank_method,bouyoucos_cylinder_number,hydrometer_ID,approx_ESD,stir_date,stir_time,stir_AM_PM,sampling_date,sampling_time,sampling_AM_PM,water_temp_c,hydrometer_reading,meniscus_correction,comments
-2021-03-30,mets-july-2020,8,companion,12,1,5,2021-03-30,3:39,PM,2021-03-30,7:59,PM,21.5,6.25,1.0,-
-2021-03-30,mets-july-2020,8,companion,12,1,1,2021-03-30,3:39,PM,2021-03-31,12:30,PM,21.5,6.25,1.0,-
+date,experiment_name,protocol_ID,hydrometer_blank_method,bouyoucos_cylinder_number,hydrometer_ID,approx_ESD,reading_number,stir_date,stir_time,stir_AM_PM,sampling_date,sampling_time,sampling_AM_PM,water_temp_c,hydrometer_reading,meniscus_correction,comments
+2021-03-30,mets-july-2020,8,companion,12,1,5,1,2021-03-30,3:39,PM,2021-03-30,7:59,PM,21.5,6.25,1.0,-
+2021-03-30,mets-july-2020,8,companion,12,1,1,2,2021-03-30,3:39,PM,2021-03-31,12:30,PM,21.5,6.25,1.0,-

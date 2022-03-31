@@ -62,6 +62,8 @@ test_psa_sums <- function(psa_object){
 
 psa_summation <- function(psa_object, bins_type){
 
+  browser()
+
 bins_to_check <- psa_object[[paste0(bins_type, "_bins")]]
 
   if(bins_type == "sub" && is.null(bins_to_check)){
