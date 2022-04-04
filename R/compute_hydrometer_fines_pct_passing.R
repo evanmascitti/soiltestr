@@ -67,7 +67,7 @@ compute_152H_hydrometer_fines_pct_passing <- function(with_pipette = FALSE){
   # it will fail if the join does not succeed, rather than creating new
   # columns with .x and .y appended, which can make errors difficult to debug.
 
-invisible({
+suppressMessages({
 
   hydrometer_data <-  method_specific_datafiles$hydrometer %>%
     dplyr::mutate(approx_ESD = as.numeric(approx_ESD)) %>%
