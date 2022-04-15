@@ -403,3 +403,45 @@ compute_sieves_percent_passing <- function(){
 
     return(sieves_percent_passing)
   }
+
+
+#' Wrangle a csv of mastersizer data
+#'
+#' @param ...
+#'
+#' @return data frame containing metadata plus cumulative percent passing
+#'
+compute_mastersizer_fines_pct_passing <- function(...){
+
+  # function written 2022-04-15
+  # Will need to test it out once the sand is sieved for the samples
+  # tested today @ MCL
+
+
+
+  # find needed objects
+  needed_objs <- mget(x = c("method_specific_datafiles", "OD_specimen_masses", "coarse_percent_passing", "protocol_ID"),
+                      envir = rlang::caller_env())
+
+  # make them available in the current function call
+  list2env(needed_objs,envir = rlang::current_env())
+
+
+  browser()
+
+  raw_fines_df <- method_specific_datafiles$mastersizer
+
+  total_fines_df <- coarse_percent_passing %>%
+    dplyr::group_by(batch_sample_number) %>%
+    dplyr::summarise(total_fines = 1 - sum(cumulative_percent_passing))
+
+  fines_df <- raw_fines_df %>%
+    dplyr::right_join(total_fines_df, by = 'batch_sample_number') %>%
+    dplyr::mutate(
+      cumulative_percent_passing = cumulative_percent_passing * total_fines
+    ) %>%
+    dplyr::select(-total_fines)
+
+  return(fines_df)
+
+}
