@@ -3,4 +3,4 @@ pipette,pipette - 25 mL Lowry style
 hydrometer,hydrometer - ASTM 152H-type (g/L)
 hydrometer-plus-pipette,hydrometer-plus-pipette.... ASTM 152H-type (g/L) followed by centrifuge and Lowry sampling for <0.2 micron fraction
 wash-through,sample passed through #270 sieve; no separations made below this size
-mastersizer3000,laser scattering - suspension tested with Malvern Panalytical Mastersizer 3000 instrument. Obscuration was 5-15%.
+mastersizer-3000,laser scattering; suspension tested with Malvern Panalytical Mastersizer 3000 instrument. Obscuration was 5-15%. Termed 'laser-diffraction' in method abbreviation.

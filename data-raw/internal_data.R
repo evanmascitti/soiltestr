@@ -26,31 +26,45 @@ load('./data/psa_protocols_summary.rda')
 
 
 ###########################
+
+# create vector for use in regex below
+possible_psa_fines_method_abbreviations <- paste(
+  "hydrometer-plus-pipette",
+  "pipette",
+  "hydrometer",
+  "laser-diffraction",
+  sep = "|"
+)
+
 # create tibble object containing terse versions of fines methods
 psa_fines_methods <- tibble::enframe(psa_protocols,
                                      name = "protocol_ID",
                                      value = "protocol_info") %>%
   dplyr::mutate(fines_method = purrr::map_chr(protocol_info, ~.$fines_method)) %>%
-  dplyr::mutate(fines_method = c(stringr::str_extract(fines_method, "hydrometer-plus-pipette|pipette|hydrometer|laser[\\s_-]diffraction"))) %>%
-  dplyr::select(.data$protocol_ID, .data$fines_method)
+  dplyr::mutate(fines_method = c(stringr::str_extract(fines_method, stringr::regex(possible_psa_fines_method_abbreviations, ignore_case = TRUE)))) %>%dplyr::select(.data$protocol_ID, .data$fines_method)
 
 # create vectors which select the correct protocol ID
 # based on which fines method they use
 
-pipette_invoking_protocol_IDs <- psa_fines_methods[psa_fines_methods$fines_method == "pipette", ]$protocol_ID
-cat("pipette_invoking_protocol_IDs are ", pipette_invoking_protocol_IDs, sep = "\n")
-
-
-hydrometer_invoking_protocol_IDs <- psa_fines_methods[psa_fines_methods$fines_method == "hydrometer", ]$protocol_ID
-cat("hydrometer_invoking_protocol_IDs are ", hydrometer_invoking_protocol_IDs, sep = "\n") %>%
+pipette_invoking_protocol_IDs <- unlist(psa_fines_methods[str_detect(psa_fines_methods$fines_method, "pipette"),  'protocol_ID']) %>%
   .[!is.na(.)]
+cat("pipette_invoking_protocol_IDs are ", pipette_invoking_protocol_IDs, "\n", sep = "\n")
+
+
+hydrometer_invoking_protocol_IDs <- unlist(psa_fines_methods[str_detect(psa_fines_methods$fines_method, "hydrometer"),  'protocol_ID']) %>%
+  .[!is.na(.)]
+
+cat("hydrometer_invoking_protocol_IDs are ", hydrometer_invoking_protocol_IDs, "\n", sep = "\n")
 
 dual_fines_method_invoking_protocol_IDs <- psa_fines_methods[stringr::str_detect(psa_fines_methods$fines_method, "hydrometer") & stringr::str_detect(psa_fines_methods$fines_method, "pipette"), ]$protocol_ID %>%
   .[!is.na(.)]
-cat("dual_fines_method_invoking_protocol_IDs are ", dual_fines_method_invoking_protocol_IDs, sep = "\n")
+cat("dual_fines_method_invoking_protocol_IDs are ", dual_fines_method_invoking_protocol_IDs, "\n", sep = "\n")
 
 
-fines_laser_diffraction_invoking_protocol_IDs <- psa_fines_methods[psa_fines_methods$fines_method == "laser diffraction", ]$protocol_ID
+fines_laser_diffraction_invoking_protocol_IDs <- unname(unlist(psa_fines_methods[psa_fines_methods$fines_method == 'laser-diffraction', 'protocol_ID'])) %>%
+  .[!is.na(.)]
+
+cat("fines_laser_diffraction_invoking_protocol_IDs are ", fines_laser_diffraction_invoking_protocol_IDs, "\n", sep = "\n")
 
 # create tibble object containing terse versions of coarse methods --------
 
@@ -68,7 +82,7 @@ psa_coarse_methods <- tibble::enframe(psa_protocols,
 
 sieve_invoking_protocol_IDs <- psa_coarse_methods[psa_coarse_methods$coarse_method == "shaken", , drop = FALSE ]$protocol_ID
 
-coarse_laser_diffraction_invoking_protocol_IDs <- psa_fines_methods[psa_fines_methods$fines_method == "mastersizer", , drop = FALSE]$protocol_ID
+coarse_laser_diffraction_invoking_protocol_IDs <- unlist( psa_coarse_methods[psa_coarse_methods$coarse_method %in% c('mastersizer-3000') , 'protocol_ID'])
 
 pretreatment_invoking_protocol_IDs <- psa_protocols_summary %>%
   dplyr::select(c(protocol_ID, dplyr::contains('removal'))) %>%
@@ -131,6 +145,11 @@ after_fines_sampling_wash_through_protocol_IDs <- psa_protocols_summary %>%
   dplyr::filter(wash_thru_270_time == 'after') %>%
   purrr::pluck("protocol_ID")
 cat('after_fines_sampling_wash_through_protocol_IDs are', after_fines_sampling_wash_through_protocol_IDs, sep = "\n")
+
+before_fines_sampling_wash_through_protocol_IDs <- psa_protocols_summary %>%
+  dplyr::filter(wash_thru_270_time == 'before') %>%
+  purrr::pluck("protocol_ID")
+cat('after_fines_sampling_wash_through_protocol_IDs are', before_fines_sampling_wash_through_protocol_IDs, sep = "\n")
 
 
 # identify protocols that use a wash-through procedure for computing total fines

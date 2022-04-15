@@ -430,3 +430,33 @@ pretreatment_datasheet <- function(){
   return(psa_pretreatment_datasheet)
 }
 
+
+
+#' Writes blank files into which laser diffraction data can be copy-pasted
+#'
+#' Will need to insert many blank rows to permit data to be copy-pasted.
+#'
+#' @return populates blank .csv files
+#'
+fines_laser_diffraction_sampling_datasheets <- function(){
+
+  needed_objs <- mget(x = c("date", "experiment_name", "sample_names",
+                            "n_reps", "protocol_ID"),
+                      envir = rlang::caller_env())
+
+  list2env(needed_objs, envir = rlang::current_env())
+
+  ld_sampling_tbl <- tibble::tibble(
+    date = date,
+    experiment_name = experiment_name,
+    sample_name = rep(sample_names, each = n_reps),
+    replication = rep(1:n_reps),
+    batch_sample_number = 1:(length(sample_names)*n_reps),
+    protocol_ID = protocol_ID,
+    microns = "",
+    vol = ""
+  )
+
+  return(ld_sampling_tbl)
+
+}

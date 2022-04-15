@@ -10,6 +10,10 @@
 extant_w <- function(file, tin_tares = NULL, col_name = "water_content"){
 
 
+  if(!is.null(tin_tares) & !is.data.frame(tin_tares)){
+    stop("`tin_tares` argument must be a data frame.\n Please supply a data frame object or specify the tin tares using `options(soiltestr.tin_tares = {data frame object}`")
+  }
+
   tin_tares <- tin_tares %||% getOption('soiltestr.tin_tares') %||% internal_data$equipment_instructions("tin_tares")
 
 

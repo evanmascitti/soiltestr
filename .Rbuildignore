@@ -49,3 +49,4 @@ inst/extdata
 ^ignore-this//psa-functions-development/testing-new-psa()-fuction/psa-data_2021-03-04/psa_specimen_masses_2021-03-04\.csv$
 ^ignore-this//psa-functions-development/testing-new-psa()-fuction/w_conts\.csv$
 ^\.Rprofile$
+^\./debugging$

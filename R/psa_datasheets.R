@@ -299,19 +299,17 @@ if(use_hydrometer){
 # no additional sheets required beyond the datasheets common to all methods
 
 
-# use_fines_laser_diffraction <- protocol_ID %in% c(fines_laser_diffraction_invoking_protocol_IDs)
-  # if(use_fines_laser_diffraction){psa_fines_laser_diffraction_sampling_datasheets <- fines_laser_diffraction_sampling_datasheets(...)}
-
-
-
-# -------------------------------------------------------------------------
-
-
 
   # for laser diffraction methods -------------------------------------------
 
+use_fines_laser_diffraction <- protocol_ID %in% c(internal_data$fines_laser_diffraction_invoking_protocol_IDs)
 
-  # have not yet built any functions to create data sheets or analyze laser diffraction data
+  if(use_fines_laser_diffraction){
+    psa_fines_laser_diffraction_sampling_datasheets <- fines_laser_diffraction_sampling_datasheets(...)}
+
+
+
+# have not yet built any functions to create data sheets or analyze laser diffraction data
   # it is likely nothing is needed here, as the data will be collected automatically
   # using Panalytical's software and then exported as a csv file
 
