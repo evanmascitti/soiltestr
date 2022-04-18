@@ -302,10 +302,14 @@ if(use_hydrometer){
 
   # for laser diffraction methods -------------------------------------------
 
-use_fines_laser_diffraction <- protocol_ID %in% c(internal_data$fines_laser_diffraction_invoking_protocol_IDs)
+
+  use_fines_laser_diffraction <- protocol_ID %in% c(internal_data$fines_laser_diffraction_invoking_protocol_IDs)
 
   if(use_fines_laser_diffraction){
-    psa_fines_laser_diffraction_sampling_datasheets <- fines_laser_diffraction_sampling_datasheets(...)}
+    # psa_fines_laser_diffraction_sampling_datasheets <- fines_laser_diffraction_sampling_datasheets(...)
+    psa_fines_laser_diffraction_folder(...)
+
+    }
 
 
 
@@ -415,7 +419,15 @@ if(use_pretreatment){
 
   # write the new folder and files to disk
 
-  dir.create(path = new_folder)
+  # if laser diffraction protocol is used, the new directory already exists at
+  # this point in the function call, so only need to write
+  # it if it's not an LD method. This prevents a warning from being
+  # issued that the directory already exists.
+
+  if(!protocol_ID %in% internal_data$fines_laser_diffraction_invoking_protocol_IDs){
+    dir.create(path = new_folder)
+  }
+
   purrr::pwalk(.l = files_to_write, .f = readr::write_csv)
 
   n_succeeded <- sum(file.exists(file_paths_to_write))

@@ -76,7 +76,6 @@ message(crayon::green("Succes! Write file ", output_path, " to disk." ))
 #'
 #' @return data frame containing `microns` and `cumulative_percent_passing`
 #'
-#' @examples
 vol_in_bin_to_cumulative_percent_passing <- function(x){
 
   x %>%

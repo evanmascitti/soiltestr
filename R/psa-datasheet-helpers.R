@@ -434,29 +434,74 @@ pretreatment_datasheet <- function(){
 
 #' Writes blank files into which laser diffraction data can be copy-pasted
 #'
+#' Commenting out for now because I decided instead to export the mastersizer data
+#' as individual .xlsx files
+#'
 #' Will need to insert many blank rows to permit data to be copy-pasted.
 #'
-#' @return populates blank .csv files
+# #' @return populates blank .csv files
 #'
-fines_laser_diffraction_sampling_datasheets <- function(){
+# fines_laser_diffraction_sampling_datasheets <- function(){
+#
+#   needed_objs <- mget(x = c("date", "experiment_name", "sample_names",
+#                             "n_reps", "protocol_ID"),
+#                       envir = rlang::caller_env())
+#
+#   list2env(needed_objs, envir = rlang::current_env())
+#
+#   ld_sampling_tbl <- tibble::tibble(
+#     date = date,
+#     experiment_name = experiment_name,
+#     sample_name = rep(sample_names, each = n_reps),
+#     replication = rep(1:n_reps),
+#     batch_sample_number = 1:(length(sample_names)*n_reps),
+#     protocol_ID = protocol_ID,
+#     microns = "",
+#     vol = ""
+#   )
+#
+#   return(ld_sampling_tbl)
+#
+# }
 
-  needed_objs <- mget(x = c("date", "experiment_name", "sample_names",
-                            "n_reps", "protocol_ID"),
-                      envir = rlang::caller_env())
 
-  list2env(needed_objs, envir = rlang::current_env())
 
-  ld_sampling_tbl <- tibble::tibble(
-    date = date,
-    experiment_name = experiment_name,
-    sample_name = rep(sample_names, each = n_reps),
-    replication = rep(1:n_reps),
-    batch_sample_number = 1:(length(sample_names)*n_reps),
-    protocol_ID = protocol_ID,
-    microns = "",
-    vol = ""
-  )
+#' Write empty folder to hold Mastersizer files.
+#'
+#' @param ... Currently unused
+#'
+#' @return writes folder and README.md
+#'
+psa_fines_laser_diffraction_folder <- function(...){
 
-  return(ld_sampling_tbl)
+  # find objects
+    needed_objs <- mget(x = c("dir", "date", "experiment_name"),
+                        envir = rlang::caller_env())
+
+    # unpack into this function call
+    list2env(needed_objs, envir = rlang::current_env())
+
+
+    # build folder path
+
+    # browser()
+
+    folder_path <- fs::path(dir, glue::glue("psa-data_{date}"), "mastersizer-data-files")
+
+    # write the empty folder
+    fs::dir_create(folder_path)
+
+    # write a README inside
+
+    readme_path <- fs::path(folder_path, "README.md")
+
+
+    c("This folder contans individual data files from the Mastersizer 3000.",
+      "Each file is named `sample-[SAMPLE NUMBER].xlsx` to facilitate joining
+    with other metadata from this set/batch of analyses.") %>%
+      writeLines(con = readme_path)
 
 }
+
+
+
