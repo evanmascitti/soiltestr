@@ -7,7 +7,7 @@
 compute_sieves_percent_passing()
 }
 \value{
-
+data frame
 }
 \description{
 Calculate \% finer for arbitrary number of sieves

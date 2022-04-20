@@ -46,8 +46,10 @@ pivot_cumulative_percent_passing_wider <- function(df) {
 #'
 pivot_cumulative_percent_passing_longer <- function(df) {
 
+#   browser()
+
   df %>%
-    tidyr::pivot_longer(cols = -c(.data$date:.data$sample_name),
+    tidyr::pivot_longer(cols = -c(experiment_name, date, sample_name, replication, batch_sample_number),
                         names_to = 'microns',
                         values_to = 'percent_passing') %>%
     dplyr::mutate(microns = as.numeric(.data$microns))
@@ -68,12 +70,17 @@ pivot_cumulative_percent_passing_longer <- function(df) {
 #'
 summarize_psa <- function(df){
 
+# browser()
+
   df %>%
-    dplyr::group_by(dplyr::across(.cols = c(.data$date:.data$sample_name,)))%>%
-    dplyr::select(-c(.data$replication, .data$batch_sample_number)) %>%
+    dplyr::mutate(batch_sample_number = as.character(batch_sample_number)) %>%
+    dplyr::group_by(dplyr::across(.cols = c(batch_sample_number, date, experiment_name, experiment_name, sample_name)))%>%
+# dplyr::select(c(batch_sample_number, date, experiment_name, experiment_name, sample_name)) %>%
     dplyr::summarise(
-      dplyr::across(.col = tidyselect::vars_select_helpers$where(is.numeric),
-                    .fns = ~mean(., na.rm = TRUE)), .groups = 'drop')
+      dplyr::across(.col = where(is.numeric),
+                    .fns = ~mean(., na.rm = TRUE)), .groups = 'drop') %>%
+    dplyr::mutate(batch_sample_number = as.numeric(batch_sample_number)) %>%
+    dplyr::arrange(batch_sample_number)
 }
 
 

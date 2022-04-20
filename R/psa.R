@@ -50,8 +50,22 @@ psa <- function(dir, bouyoucos_cylinder_dims = NULL, tin_tares = NULL,
 
   protocol_ID <- find_protocol_ID()
 
+  # browser()
 
 
+  # if mastersizer protocol was used, need to convert the whole directory of
+  # .xlsx files to a single csv
+
+  mastersizer_csv_exists <- detect_mastersizer_csv()
+
+  if(protocol_ID %in% internal_data$fines_laser_diffraction_invoking_protocol_IDs & !mastersizer_csv_exists){
+
+   #  browser()
+
+    tidy_mastersizer(dir = eval(dir, envir = rlang::current_env()), fmt = ".xlsx")
+
+
+  }
 
 
   # read all raw data files and put into a list, then divide into common
@@ -234,6 +248,10 @@ coarse_percent_passing <- switch (
                    dplyr::desc(.data$microns)) %>%
     dplyr::filter(
       !is.na(microns)
+    ) %>%
+    tidyr::fill(dplyr::everything()) %>%
+    dplyr::select(
+      date, experiment_name, sample_name, replication, batch_sample_number, protocol_ID, dplyr::everything()
     )
 
 
@@ -409,9 +427,11 @@ if(length(all_sub_bins != 0)){
 
 # make the ggplots for each sample and replication ---------------------
 
-#  browser()
+
+# browser()
 
 base_plots <- cumulative_percent_passing %>%
+  tidyr::fill(dplyr::everything()) %>%
   dplyr::left_join(psa_protocols_summary, by = "protocol_ID") %>%
   dplyr::group_by(.data$batch_sample_number) %>%
   dplyr::arrange(.data$batch_sample_number) %>%
@@ -422,8 +442,11 @@ base_plots <- cumulative_percent_passing %>%
 # this is a hack to filter to a single row per replication
 # not ideal but it works
 
+# browser()
+
 plots_extra_stuff <- cumulative_percent_passing %>%
-  dplyr::group_by(dplyr::across(.cols = .data$date:.data$batch_sample_number)) %>%
+  tidyr::fill(dplyr::everything()) %>%
+  dplyr::group_by(dplyr::across(.cols = -c(microns, percent_passing))) %>%
   dplyr::summarise() %>%
   dplyr::left_join(psa_protocols_summary, by = "protocol_ID") %>%
   dplyr::mutate(subtitle = paste(
@@ -494,7 +517,7 @@ method_metadata <-switch (protocol_ID,
 # the predicates check that the element is not null and whether
 # it has the relevant column names
 
-  #  browser()
+  # browser()
 
   averages <- mget(x = c("cumulative_percent_passing", "simple_bins", "sub_bins", "pretreatment_loss"),
               envir = rlang::current_env()) %>%

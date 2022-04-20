@@ -253,7 +253,7 @@ return(return_df)
 #' a d_microns vector of any length, so long as the values fall between
 #' those measured during the hydrometer test
 #'
-percent_finer_D_x <- function(calculations_df, d_microns) {
+hydrometer_percent_finer_D_x <- function(calculations_df, d_microns) {
 
  # find and assign the required arguments from the caller environment, which
   # is the function environment of the generalized wrapper
@@ -403,7 +403,7 @@ generalized_finer_D_x <- function(calculations_df = NULL, d_microns = NULL, with
 
   # determine what the fines diameters to compute are, and
   # assign as a variable for d_microns....the default is NULL,
-  # and in the next step below I pass this vector to the percent_finer_D_x
+  # and in the next step below I pass this vector to the hydrometer_percent_finer_D_x
   # function along with the original data frame. I initially tried
   # this with a loop but I like pmap better, it is more concise
   # and feels safer since it is a named list
@@ -440,7 +440,7 @@ generalized_finer_D_x <- function(calculations_df = NULL, d_microns = NULL, with
     d_microns = d_microns
   ) %>%
     dplyr::filter(d_microns > 1) %>%
-    purrr::pmap(percent_finer_D_x)
+    purrr::pmap(hydrometer_percent_finer_D_x)
 
 
   # if there is more than one diameter to compute, reduce the data frames by

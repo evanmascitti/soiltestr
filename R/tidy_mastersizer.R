@@ -5,38 +5,46 @@
 #' @param fmt format, one of `.xlsx`, `.csv`, or `.tsv`
 #'
 #' @return silently writes data to disk in `.csv` format
-#' @export
 #'
 tidy_mastersizer <- function(dir, fmt = ".xlsx"){
+
+
+  browser()
 
   fmt <- match.arg(fmt, choices = c(".xlsx", ".csv", ".tsv"))
 
 
-  all_files <- list.files(path = dir, pattern = fmt, full.names = T) %>%
+  all_files <- list.files(path = paste0(dir, "mastersizer-data"), pattern = fmt, full.names = T, recursive = T) %>%
     purrr::set_names(nm = stringr::str_extract(tools::file_path_sans_ext(basename(.)), "(?<=sample-)\\d+"))
 
 
-  reading_fn <- switch(fmt,
-  ".csv" = readr::read_csv,
-  ".tsv" = readr::read_tsv,
-  ".xlsx" = readxl::read_excel
-    )
+  # reading_fn <- switch(fmt,
+  # ".csv" = readr::read_csv,
+  # ".tsv" = readr::read_tsv,
+  # ".xlsx" = readxl::read_excel
+  #   )
 
   reading_args <- all_files %>%
     tibble::enframe(name = "batch_sample_number",
-                    value = "file")
+                    value = "file") %>%
+    dplyr::mutate(batch_sample_number = as.numeric(batch_sample_number)) %>%
+    dplyr::arrange(batch_sample_number)
 
 
   if(fmt == ".xlsx"){
 
    all_data <- reading_args %>%
      dplyr::rename(path = file) %>%
-     dplyr::mutate(tbl = purrr::map(path, reading_fn))
+     dplyr::mutate(tbl = purrr::map(path, readxl::read_excel))
 
   } else{
-
-        all_data <- reading_args %>%
-      dplyr::mutate(tbl = purrr::map(file, reading_fn))
+    if(fmt == ".csv"){
+      all_data <- reading_args %>%
+        dplyr::mutate(tbl = purrr::map(file, readr::read_csv, show_col_types = F))
+    } else{
+      all_data <- reading_args %>%
+        dplyr::mutate(tbl = purrr::map(file, readr::read_tsv, show_col_types = F))
+    }
   }
 
   # browser()
@@ -49,7 +57,10 @@ fines_vol_only <- all_data %>%
     ) %>%
   split(~batch_sample_number) %>%
   purrr::map(vol_in_bin_to_cumulative_percent_passing) %>%
-  dplyr::bind_rows()
+  dplyr::bind_rows() %>%
+  dplyr::select(batch_sample_number, microns, cumulative_percent_passing_normalized_to_total_fines)
+
+
 # write to disk
 
 
@@ -63,7 +74,8 @@ readr::write_csv(
 )
 
 
-message(crayon::green("Succes! Write file ", output_path, " to disk." ))
+# message(crayon::green("Succes! Write file ", output_path, " to disk." ))
+# don't want this printed when called by psa()
 
 
 }

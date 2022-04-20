@@ -377,14 +377,13 @@ wash_through_coarse_grains <- function(){
 
 #' Calculate % finer for arbitrary number of sieves
 #'
-#' @return
-#' @export
+#' @return data frame
 #'
 compute_sieves_percent_passing <- function(){
 
   # find required objects from calling environment
 
- #  browser()
+  # browser()
 
   needed_objs <- mget(x = c("method_specific_datafiles", "OD_specimen_masses"),
                       envir = rlang::caller_env())
@@ -427,21 +426,198 @@ compute_mastersizer_fines_pct_passing <- function(...){
   list2env(needed_objs,envir = rlang::current_env())
 
 
-  browser()
 
-  raw_fines_df <- method_specific_datafiles$mastersizer
+
+  raw_fines_df <- method_specific_datafiles$mastersizer %>%
+    dplyr::mutate(cumulative_percent_passing_normalized_to_total_fines = readr::parse_number(cumulative_percent_passing_normalized_to_total_fines))
 
   total_fines_df <- coarse_percent_passing %>%
     dplyr::group_by(batch_sample_number) %>%
-    dplyr::summarise(total_fines = 1 - sum(cumulative_percent_passing))
+    dplyr::summarise(total_fines = min(percent_passing))
 
-  fines_df <- raw_fines_df %>%
-    dplyr::right_join(total_fines_df, by = 'batch_sample_number') %>%
+ #  browser()
+
+  fines_df <- total_fines_df %>%
+    dplyr::left_join(raw_fines_df, by =  'batch_sample_number') %>%
     dplyr::mutate(
-      cumulative_percent_passing = cumulative_percent_passing * total_fines
+      percent_passing = cumulative_percent_passing_normalized_to_total_fines * total_fines
     ) %>%
-    dplyr::select(-total_fines)
+    dplyr::select(c(batch_sample_number, microns, percent_passing)) %>%
+    dplyr::filter(microns < 53) # to eliminate data points not collected w/ mastersizer
 
-  return(fines_df)
+  # now just need to interpolate the desired fines diameters
+  # from the mastersizer data
+
+  # instead of using the function I wrote for doing the same thing on hydrometer data,
+  # make a new version here. The other one is too complicated because it also does
+  # hydrometer-specific calculations.
+
+
+
+  fines_df_w_predicted_values <- compute_percent_passing_x_microns(x = fines_df, desired_diameters = c(20, 5, 2, 0.2))
+
+return(fines_df_w_predicted_values)
+
+
 
 }
+
+
+
+
+#' calculate the percent finer than a given particle diameter
+#'
+#' @param x data frame containing columns `microns` and `percent_passing`
+#' @param desired_diameters numeric vector of diameters on which to to compute
+#'
+#' @return data frame with new values added for the desired particle diameters
+compute_percent_passing_x_microns <- function(x, desired_diameters){
+
+  distances_dfs <- vector("list", length = length(desired_diameters))
+
+
+  for(i in seq_along(desired_diameters)){
+
+  temp_dfs <- x %>%
+      split(~batch_sample_number) %>%
+      purrr::map(~dplyr::mutate(., dist_from_desired  = microns  - desired_diameters[[i]]))
+
+find_min_pos_dist <-  function(x){
+
+  min(x$dist_from_desired[x$dist_from_desired > 0])
+
+}
+
+find_min_neg_dist <-  function(x){
+
+  min(abs(x$dist_from_desired[x$dist_from_desired < 0]))
+
+      }
+
+min_pos_dist <- unique(purrr::map_dbl(temp_dfs, find_min_pos_dist))
+
+min_neg_dist <- unique(purrr::map_dbl(temp_dfs, find_min_neg_dist))
+
+
+# distances_dfs[[i]] <- temp_dfs %>%
+#       purrr::map(., ~dplyr::filter(dplyr::near(microns, min_pos_dists[[i]]) | dplyr::near(microns, -min_neg_dists[[i]])))
+
+
+distances_dfs[[i]] <- temp_dfs %>%
+  dplyr::bind_rows() %>%
+  dplyr::filter(
+    dplyr::near(dist_from_desired, min_pos_dist) | dplyr::near(dist_from_desired, -min_neg_dist))
+
+
+  }
+
+  # fit the log-linear model
+
+  # browser()
+
+mods <-  vector("list", length = length(desired_diameters))
+
+
+for(i in seq_along(mods)){
+
+  mods[[i]] <- distances_dfs[[i]] %>%
+    split(~batch_sample_number) %>%
+    purrr::map(~lm(data = ., formula = percent_passing ~ log10(microns)  ))
+
+
+}
+
+  # predict the percent passing for the requested particle diameter
+
+# browser()
+
+predicted_values <- mods %>%
+  tibble::enframe(value = "model") %>%
+  dplyr::mutate(microns = desired_diameters,
+                batch_sample_number = list(1:length(temp_dfs))) %>%
+  tidyr::unnest(cols = c(model, batch_sample_number)) %>%
+  dplyr::mutate(
+    microns_df = purrr::map(microns, ~tibble::tibble(microns = .)),
+    percent_passing  = mapply(
+      object = model,
+      newdata = microns_df, FUN= predict)
+  ) %>%
+  dplyr::select(
+    batch_sample_number, microns, percent_passing
+  )
+
+  # predicted_percent_passing <- predict(
+  #   object = log_lin_mod,
+  #   newdata = data.frame(D_m_microns = d_microns)) %>%
+  #   purrr::set_names(paste0('< ', d_microns, '\u03bcm'))
+
+return_df <- dplyr::bind_rows(
+  x, predicted_values
+) %>%
+  dplyr::arrange(batch_sample_number, dplyr::desc(microns))
+
+}
+
+
+
+
+
+
+#############################
+
+
+
+
+
+#this finds the difference in microns between the closest size actually
+#measured and the requested particle diameter. The min_pos_dist value is the
+#distance of the diameter slightly larger than the one requested, and the
+#min_neg_dist is the distance which is slightly smaller than the one
+#requested.
+
+
+
+  # filter the data frame to contain only the desired data points....discern these
+  # by assigning two local variables, one for the smallest distance above the
+  # desired diameter and one for the smallest distance above it
+
+  # min_pos_dist <- min(purrr::pluck(distances_df[distances_df$diff_from_desired_diameter > 0, ,], "diff_from_desired_diameter"))
+
+  # min_neg_dist <- min(abs(purrr::pluck(distances_df[distances_df$diff_from_desired_diameter <= 0, ,], "diff_from_desired_diameter")))
+
+  # those values can now be used to filter the main data frame to include only
+  # rows having those values for the diff_from_desired_diameter variable
+
+  # filtered_distances_df <- distances_df %>%
+  #   dplyr::filter(
+  #     dplyr::near(diff_from_desired_diameter, min_pos_dist) | dplyr::near(diff_from_desired_diameter, -min_neg_dist))
+
+
+
+
+  ################################
+
+
+
+
+#' Internal helper to determine whether mastersizer data need to be wrangled
+#' into a single file
+#'
+#' @return logical of length 1
+#'
+detect_mastersizer_csv <- function(){
+
+  # browser()
+
+  dir <- get("dir", rlang::caller_env())
+
+  n_mastersizer_files <- list.files(path = dir, pattern = "mastersizer.*\\.csv$", full.names = T, recursive = F) %>%
+    length()
+
+  csv_exists <- n_mastersizer_files  > 0
+
+  return(csv_exists)
+
+
+}
+

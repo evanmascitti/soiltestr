@@ -152,7 +152,7 @@
 #
 #   browser()
 #
-# percent_finer_D_x <- function(df, d_microns) {
+# hydrometer_percent_finer_D_x <- function(df, d_microns) {
 #
 #    browser()
 #
@@ -237,7 +237,7 @@
 #
 # for (i in seq_along(d_microns) ) {
 #
-#   dfs_list[[i]] <- percent_finer_D_x(df, d_microns[[i]])
+#   dfs_list[[i]] <- hydrometer_percent_finer_D_x(df, d_microns[[i]])
 #
 #   }
 #
