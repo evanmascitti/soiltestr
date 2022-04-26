@@ -73,14 +73,16 @@ summarize_psa <- function(df){
 # browser()
 
   df %>%
-    dplyr::mutate(batch_sample_number = as.character(batch_sample_number)) %>%
-    dplyr::group_by(dplyr::across(.cols = c(batch_sample_number, date, experiment_name, experiment_name, sample_name)))%>%
+    dplyr::arrange(batch_sample_number) %>%
+    #dplyr::mutate(batch_sample_number = as.character(batch_sample_number)) %>%
+    dplyr::group_by(dplyr::across(.cols = c(date, experiment_name, sample_name)))%>%
 # dplyr::select(c(batch_sample_number, date, experiment_name, experiment_name, sample_name)) %>%
     dplyr::summarise(
       dplyr::across(.col = where(is.numeric),
-                    .fns = ~mean(., na.rm = TRUE)), .groups = 'drop') %>%
-    dplyr::mutate(batch_sample_number = as.numeric(batch_sample_number)) %>%
-    dplyr::arrange(batch_sample_number)
+                    .fns = ~mean(., na.rm = TRUE)), .groups = 'drop')
+  # %>%
+  #   dplyr::mutate(batch_sample_number = as.numeric(batch_sample_number)) %>%
+  #
 }
 
 

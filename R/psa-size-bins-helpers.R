@@ -336,23 +336,34 @@ simple_bins <- function(){
   # assign the needed object from parent frame instead of
   # passing them as arguments
 
- #  browser()
+ # browser()
 
   cumulative_percent_passing <- get("cumulative_percent_passing", envir = rlang::caller_env() )
+  protocol_ID <- get("protocol_ID", envir = rlang::caller_env() )
 
 simple_size_bins <- cumulative_percent_passing %>%
     tidyr::pivot_wider(names_from = .data$microns,
                        values_from = .data$percent_passing) %>%
     dplyr::mutate(
+      protocol_ID = .env$protocol_ID,
       gravel = .data$`4000` - .data$`2000`,
       sand = .data$`2000` - .data$`53`,
       silt = .data$`53` - .data$`2`,
       clay = .data$`2`) %>%
-    dplyr::select(.data$date:.data$batch_sample_number,
-                  .data$gravel:.data$clay) %>%
+    dplyr::select(
+      .data$date,
+      .data$experiment_name,
+      .data$sample_name,
+      .data$replication,
+      .data$batch_sample_number,
+      .data$protocol_ID,
+      .data$gravel,
+      .data$sand,
+      .data$silt,
+      .data$clay) %>%
     dplyr::mutate(
       dplyr::across(
-        .cols = .data$gravel:.data$clay,
+        .cols = c(gravel, sand, silt, clay),
         .fns = ~.*100))
 
   return(simple_size_bins)

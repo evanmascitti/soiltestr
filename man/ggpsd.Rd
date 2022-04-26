@@ -4,11 +4,20 @@
 \alias{ggpsd}
 \title{Plot one or more particle size distributions}
 \usage{
-ggpsd(df, points = TRUE, log_lines = TRUE, bold_log_lines = TRUE, ...)
+ggpsd(
+  df,
+  units = "microns",
+  points = TRUE,
+  log_lines = TRUE,
+  bold_log_lines = TRUE,
+  ...
+)
 }
 \arguments{
 \item{df}{Data frame containing columns titled \code{microns} and
 \code{percent_passing}}
+
+\item{units}{Whether x-axis should be displayed in μcm or mm}
 
 \item{points}{Whether to include points on the plot (default is TRUE, set to FALSE for lines only)}
 

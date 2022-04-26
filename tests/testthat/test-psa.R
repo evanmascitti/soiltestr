@@ -153,8 +153,8 @@ test_that("PSA protocol 15", {
   expect_equal(object = sand_rounded, expected = c(97.8, 13.4, 4))
 
   # all 3 values of fine silt
-  expect_equal(object = round(psa15$averages$sub_bins$fine_silt, digits = 1),
-               expected = c(0.2, 16.8, 11.8))
+  expect_equal(object = round(psa15$averages$sub_bins$fine_silt, digits = 2),
+               expected = c(0.13, 16.79, 11.75))
 
  # make sure all plots exist
   expect_equal(length(psa15$psd_plots), 12)
@@ -170,7 +170,7 @@ test_that("PSA protocol 15", {
     dplyr::summarize(percent_in_bin = sum(percent_in_bin), .groups = 'drop') %>%
     purrr::pluck("percent_in_bin")
 
-  expect_equal(sums[!is.na(sums)], rep(100, 11))
+  expect_equal(sums[!is.na(sums)], rep(100, 12))
 
 })
 

@@ -281,6 +281,8 @@ coarse_percent_passing <- switch (
 
   # create data frame of standard bin sizes
 
+  # browser()
+
  simple_bins <- simple_bins()
 
 
@@ -387,15 +389,14 @@ coarse_percent_passing <- switch (
    coarse_sub_bins <- simple_bins %>%
      dplyr::select(
        .data$date,
-       .data$protocol_ID,
-       .data$date, experiment_name,
-       .data$date, sample_name,
+       .data$experiment_name,
+       .data$sample_name,
        .data$replication,
        .data$batch_sample_number,
-       .data$date,
+       .data$protocol_ID,
        .data$gravel,
-       .data$sand,
-       .data$date)
+       .data$sand
+       )
 
    }
 
@@ -408,6 +409,10 @@ coarse_percent_passing <- switch (
 all_sub_bins <- ls(pattern = "sub_bins")
 
 if(length(all_sub_bins != 0)){
+
+
+  # browser()
+
 
   sub_bins <- mget(all_sub_bins) %>%
     purrr::reduce(
