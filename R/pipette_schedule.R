@@ -17,7 +17,7 @@
 
 pipette_schedule <- function(sample_name, start_time = NULL, sample_depth_cm = 10, microns = c(20, 5, 2), Gs, ambient_temp_c){
 
-  test_date <- Sys.Date() + 1
+  if(is.null(start_time)){ test_date <- Sys.Date() + 1 }
   start_time <- start_time %||% lubridate::make_datetime(year = lubridate::year(test_date), month = lubridate::month(test_date), day = lubridate::day(test_date), hour = 8, min = 0, sec = 0, tz = Sys.timezone())
 
 

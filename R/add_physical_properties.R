@@ -86,6 +86,9 @@ if(!"Gs" %in% names(x)){
   # perform calculations on the data frame
   # join with mold dimensions data frame
 
+
+  # browser()
+
   newdf <- x %>%
     dplyr::left_join(mold_dimensions, by = "mold_ID") %>%
     dplyr::left_join(

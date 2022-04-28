@@ -9,7 +9,7 @@
 tidy_mastersizer <- function(dir, fmt = ".xlsx"){
 
 
-  browser()
+  # browser()
 
   fmt <- match.arg(fmt, choices = c(".xlsx", ".csv", ".tsv"))
 

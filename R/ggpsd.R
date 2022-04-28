@@ -31,14 +31,6 @@ ggpsd <- function(df, units = "microns", points = TRUE, log_lines = TRUE, bold_l
   units <- match.arg(units, choices = c("microns", "mm"))
 
 
-
-  log_line_breaks <- c(seq(0.1, 1, 0.1),
-                 seq(1, 10, 1),
-                 seq(10, 100, 10),
-                 seq(100, 1000, 100),
-                 seq(2000, 4000, 1000))
-
-
   psa_log_lines <- function(){
     if(log_lines){
       list(
@@ -49,8 +41,6 @@ ggpsd <- function(df, units = "microns", points = TRUE, log_lines = TRUE, bold_l
       )
     }
   }
-
-  bold_log_line_breaks <- c(0.1, 1, 10, 100, 1000)
 
   psa_bold_log_lines <- function(){
     if(bold_log_lines){
@@ -73,7 +63,18 @@ ggpsd <- function(df, units = "microns", points = TRUE, log_lines = TRUE, bold_l
 
 
   if(units == "microns"){
-  psd_plot <- df %>%
+
+
+    log_line_breaks <- c(seq(0.1, 1, 0.1),
+                         seq(1, 10, 1),
+                         seq(10, 100, 10),
+                         seq(100, 1000, 100),
+                         seq(2000, 4000, 1000))
+
+    bold_log_line_breaks <- c(0.1, 1, 10, 100, 1000)
+
+
+   psd_plot <- df %>%
     ggplot2::ggplot(ggplot2::aes(x = .data$microns, y = .data$percent_passing, ...))+
     ggplot2::scale_x_continuous(expression("Particle diameter, \u03bcm"),
                                 limits = c(0.1, 4000),
@@ -106,13 +107,23 @@ ggpsd <- function(df, units = "microns", points = TRUE, log_lines = TRUE, bold_l
 
   if(units == "mm"){
 
+    log_line_breaks <- 0.001 * c(seq(0.1, 1, 0.1),
+                                 seq(1, 10, 1),
+                                 seq(10, 100, 10),
+                                 seq(100, 1000, 100),
+                                 seq(2000, 4000, 1000))
+
+    bold_log_line_breaks <- 0.001 * c(0.1, 1, 10, 100, 1000)
+
+
+
     psd_plot <- df %>%
       ggplot2::ggplot(ggplot2::aes(x = .data$microns / 1000, y = .data$percent_passing, ...))+
       ggplot2::scale_x_continuous(expression("Particle diameter, mm"),
                                   limits = 0.001 * c(0.1, 4000),
                                   trans = "log10",
-                                  breaks = 0.001 * c(0.1, 1, 10, 100, 1000),
-                                  labels = scales::comma(0.001 * c(0.1, 1, 10, 100, 1000)))+
+                                  breaks = as.numeric(c("0.0001", "0.001", "0.01", "0.10", "1.0")),
+                                  labels = c("0.0001", "0.001", "0.01", "0.10", "1.0"))+
       ggplot2:: scale_y_continuous("% passing",
                                    limits = c(0, 1),
                                    breaks = seq(0, 1, 0.2),
