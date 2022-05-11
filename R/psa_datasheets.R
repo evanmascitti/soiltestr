@@ -68,6 +68,7 @@ psa_datasheets <- function(
     stop("Directory", dir, "does not exist.")
   }
 
+
   # coerce protocol ID to character type in case user supplies it as an integer
 
   protocol_ID <- as.character(protocol_ID)
@@ -95,7 +96,7 @@ psa_datasheets <- function(
 
 
 
-    if(protocol_ID %in% internal_data$hydrometer_invoking_method_IDs & is.null(hydrometer_ID)){
+    if(protocol_ID %in% internal_data$hydrometer_invoking_protocol_IDs & is.null(hydrometer_ID)){
     stop("This protocol requires a value for `hydrometer_ID` but you did not provide one.")
   }
 

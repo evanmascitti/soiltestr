@@ -1,0 +1,10 @@
+date,experiment_name,protocol_ID,sample_name,replication,batch_sample_number,microns,cumulative_mass_g,comments
+2022-05-09,kafmo-west-2022,24,Ryan-Shaffer,1,1,6730,0,-
+2022-05-09,kafmo-west-2022,24,Ryan-Shaffer,1,1,4760,0,-
+2022-05-09,kafmo-west-2022,24,Ryan-Shaffer,1,1,4000,0.352,-
+2022-05-09,kafmo-west-2022,24,Ryan-Shaffer,1,1,2000,9.425,-
+2022-05-09,kafmo-west-2022,24,Ryan-Shaffer,1,1,1000,20.086,-
+2022-05-09,kafmo-west-2022,24,Ryan-Shaffer,1,1,500,28.442,-
+2022-05-09,kafmo-west-2022,24,Ryan-Shaffer,1,1,250,35.243,-
+2022-05-09,kafmo-west-2022,24,Ryan-Shaffer,1,1,150,38.781,-
+2022-05-09,kafmo-west-2022,24,Ryan-Shaffer,1,1,53,44.191,-

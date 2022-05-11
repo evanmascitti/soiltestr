@@ -228,6 +228,66 @@ test_that("PSA protocol 22", {
 
 })
 
+
+
+# protocol 24 -----------------------------------------------------
+
+
+
+
+test_that("PSA protocol 24", {
+
+  # set options for equipment
+
+  options(soiltestr.bouyoucos_cylinder_dims = asi468::bouyoucos_cylinders,
+          soiltestr.tin_tares = asi468::tin_tares,
+          soiltestr.hydrometer_dims = asi468::astm_152H_hydrometers,
+          soiltestr.beaker_tares = asi468::psa_beaker_tares)
+
+
+
+  # set current working directory for clarity and less typing
+
+  setwd(here::here("tests", "testthat", "test-data", "psa", "protocol24"))
+
+
+
+  # create psa object
+  psa24 <- psa(dir = 'psa-data_2022-05-09')
+
+
+    # check values of each component of the list ------------------------------
+
+
+  # all bins add to 100%
+
+
+  sums <- psa24$sub_bins %>%
+    dplyr::select((where(is.numeric))) %>%
+    dplyr::mutate(across(c(replication, batch_sample_number), .fns = as.factor)) %>%
+    tidyr::pivot_longer((where(is.numeric)), values_to =  'percent_in_bin') %>%
+    dplyr::group_by(across(where(is.factor))) %>%
+    dplyr::summarize(percent_in_bin = sum(percent_in_bin), .groups = 'drop') %>%
+    purrr::pluck("percent_in_bin")
+
+  expect_equal(sums[!is.na(sums)], rep(100, nrow(psa24$sub_bins)))
+
+
+  # check that the gravel, sand, silt, and clay are all correct
+  # use purrr to pull out the values for each, treating the
+  # tibble as a list
+
+  expect_equal(
+    unname( purrr::map_dbl(psa24$simple_bins[, c("gravel", "sand", "silt", "clay")], 1)),
+    c(14.1, 53.9, 22.6, 8.9),
+    tolerance = 0.1
+  )
+
+
+})
+
+####################
+
 # General error checking for all protocols --------------------------------
 
 test_that("Errors stop function calls", {

@@ -326,12 +326,12 @@ if(protocol_ID %in% internal_data$after_fines_sampling_wash_through_protocol_IDs
   return(fines_percent_passing)
 }
 
-# the function compute_hydrometer_fines_pct_passing() is kept in
+# the function compute_152H_hydrometer_fines_pct_passing() is kept in
 # its own file. It needs a number of helpers which are specific to that
 # function, and it is getting pretty long. Pulling out so it is easier to work through and so it does not clutter this file so badly.
 
 # Like `compute_pipette_fines_pct_passing()`, the
-# `compute_hydrometer_fines_pct_passing()` function
+# `compute_152H_hydrometer_fines_pct_passing()` function
 # also returns a data frame called `fines_percent_passing()`
 # with an arbitrary number of particle diameters:
 

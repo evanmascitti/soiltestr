@@ -1,0 +1,8 @@
+date,experiment_name,protocol_ID,hydrometer_blank_method,bouyoucos_cylinder_number,hydrometer_ID,approx_ESD,reading_number,stir_date,stir_time,stir_AM_PM,sampling_date,sampling_time,sampling_AM_PM,water_temp_c,hydrometer_reading,meniscus_correction,comments
+2022-05-09,kafmo-west-2022,24,companion,2,1,53,1,2022-05-09,12:00,PM,2022-05-09,12:01,PM,22,6,1.0,-
+2022-05-09,kafmo-west-2022,24,companion,2,1,22,2,2022-05-09,12:00,PM,2022-05-09,12:05,PM,22,6,1.0,-
+2022-05-09,kafmo-west-2022,24,companion,2,1,18,3,2022-05-09,12:00,PM,2022-05-09,12:10,PM,22,6,1.0,-
+2022-05-09,kafmo-west-2022,24,companion,2,1,6,4,2022-05-09,12:00,PM,2022-05-09,12:16,PM,22,6,1.0,-
+2022-05-09,kafmo-west-2022,24,companion,2,1,4,5,2022-05-09,12:00,PM,2022-05-09,12:31,PM,22,6,1.0,-
+2022-05-09,kafmo-west-2022,24,companion,2,1,3,6,2022-05-09,12:00,PM,2022-05-09,3:00,PM,22,6,1.0,-
+2022-05-09,kafmo-west-2022,24,companion,2,1,1,7,2022-05-09,12:00,PM,2022-05-10,11:00,AM,22,6,1.0,-

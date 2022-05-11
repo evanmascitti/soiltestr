@@ -53,7 +53,6 @@ compute_152H_hydrometer_fines_pct_passing <- function(with_pipette = FALSE){
     dplyr::select(.data$date,
                   .data$experiment_name,
                   .data$reading_number,
-                  .data$approx_ESD,
                   .data$blank_hydrometer_reading)
 
   # join hydrometer data with the other required information,
@@ -70,7 +69,7 @@ compute_152H_hydrometer_fines_pct_passing <- function(with_pipette = FALSE){
 suppressMessages({
 
   hydrometer_data <-  method_specific_datafiles$hydrometer %>%
-    dplyr::mutate(approx_ESD = as.numeric(approx_ESD)) %>%
+    # commenting out as I am trying to remove the approx_ESD from anything that is actually computed in the analysis....it is for planning purposes only, i.e. to ensure the right particle diametersa re 'bracketed.' dplyr::mutate(approx_ESD = as.numeric(approx_ESD)) %>%
   dplyr::left_join(
       blank_correction_data) %>% # leaving out the by statement in case there are errors in raw data csv files
     dplyr::left_join(bouyoucos_cylinder_dims, by = "bouyoucos_cylinder_number") %>%
@@ -169,7 +168,7 @@ return(fines_percent_passing)
 }
 
 
-# some helpers and wrappers for `compute_hydrometer_fines_pct_passing --------
+# some helpers and wrappers for `compute_152H_hydrometer_fines_pct_passing --------
 
 
 
@@ -185,7 +184,7 @@ return(fines_percent_passing)
 #' to obtain desired % passing values
 #'
 #' @param x a data frame containing relevant columns, these are produced by the
-#'   actions inside `compute_hydromter_fines_pct_passing()`  _before_ this function
+#'   actions inside `compute_152H_hydrometer_fines_pct_passing()`  _before_ this function
 #'   is called.
 #'
 #' @return
@@ -324,7 +323,7 @@ hydrometer_percent_finer_D_x <- function(calculations_df, d_microns) {
 
     # fit the log-linear model
 
-   #  browser()
+    #browser()
 
 
     log_lin_mod <- lm(
@@ -433,7 +432,7 @@ generalized_finer_D_x <- function(calculations_df = NULL, d_microns = NULL, with
 
   # not sure what is up wit this line of code....could have been a mis-placed copy/paste?? dfs_list <- parallel_args <-  tibble::tibble(
 
-#   browser()
+  # browser()
   dfs_list <- tibble::tibble(
     calculations_df = purrr::rerun(.n = length(d_microns),
                                    calculations_df),

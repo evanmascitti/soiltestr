@@ -8,7 +8,7 @@ hydrometer_calcs_part_1(x)
 }
 \arguments{
 \item{x}{a data frame containing relevant columns, these are produced by the
-actions inside \code{compute_hydromter_fines_pct_passing()}  \emph{before} this function
+actions inside \code{compute_152H_hydrometer_fines_pct_passing()}  \emph{before} this function
 is called.}
 }
 \value{
