@@ -149,7 +149,7 @@ cat('after_fines_sampling_wash_through_protocol_IDs are', after_fines_sampling_w
 before_fines_sampling_wash_through_protocol_IDs <- psa_protocols_summary %>%
   dplyr::filter(wash_thru_270_time == 'before') %>%
   purrr::pluck("protocol_ID")
-cat('after_fines_sampling_wash_through_protocol_IDs are', before_fines_sampling_wash_through_protocol_IDs, sep = "\n")
+cat('before_fines_sampling_wash_through_protocol_IDs are', before_fines_sampling_wash_through_protocol_IDs, sep = "\n")
 
 
 # identify protocols that use a wash-through procedure for computing total fines
