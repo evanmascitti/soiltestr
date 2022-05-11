@@ -99,6 +99,35 @@ USGA_bins <- function(){
 }
 
 
+#' Same as usga_bins() but with more gravel sieves
+#'
+#' @return a tibble
+#'
+USGA_bins_plus_gravel <- function(){
+
+  #  browser()
+
+  # assign cumulative percent passing to local variable based on its value in global environment
+
+  cumulative_percent_passing <- get("cumulative_percent_passing", envir = rlang::caller_env() )
+
+  usga_bins_plus_gravel <- cumulative_percent_passing %>%
+    dplyr::filter(.data$microns >= 53) %>%
+    tidyr::pivot_wider(names_from = .data$microns, values_from = .data$percent_passing) %>%
+    psa_decimal_to_pct() %>%
+    dplyr::mutate(
+      gravel = .data$`6730` - .data$`2000`,
+      very_coarse_sand = .data$`2000` - .data$`1000`,
+      coarse_sand = .data$`1000` - .data$`500`,
+      medium_sand = .data$`500` - .data$`250`,
+      fine_sand = .data$`250` - .data$`150`,
+      very_fine_sand = .data$`150` - .data$`53`) %>%
+    psa_remove_number_bins()
+
+
+  return(usga_bins_plus_gravel)
+
+}
 
 #' (Internal)
 #'

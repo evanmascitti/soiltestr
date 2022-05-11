@@ -2,3 +2,4 @@ coarse_method,coarse_method_details
 USGA_sieves,"Shaken on Ro-tap machine for 5 minutes using ASTM sieves with diameters of 2000, 1000, 500, 250, 150, and 53 microns. Gravel + sand + silt + clay sum to 100 %. Particles > 4000 microns excluded from sample entirely."
 gravel+sand,Shaken by hand through #10 sieve after removing fines and oven-drying. Particles > 2000 microns considered gravel. Gravel + sand + silt + clay sum to 100 %. Particles > 4000 microns excluded from sample entirely.
 laser_diffraction_dry,Sample washed through #270 sieve; coarse particles analyzed with air circulation method on Malvern Mastersizer 3000 instrument
+USGA_sieves_plus_gravel,"Shaken on Ro-tap machine for 5 minutes using ASTM sieves with diameters of 6730, 4760, 4000, 2000, 1000, 500, 250, 150, and 53 microns. Gravel + sand + silt + clay sum to 100 %. Gravel must be sieved separately as the Ro-tap can only accomodate 6 sieves at a time."

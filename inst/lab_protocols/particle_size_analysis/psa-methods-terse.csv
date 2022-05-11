@@ -22,3 +22,4 @@ protocol_ID,OM_removal,carbonate_removal,iron_oxide_removal,mechanical_dispersio
 21,-,-,-,milkshake_5,calgon_5,25,hydrometer,USGA_sieves,after,companion measurement,hydrometer for CSSS silt bins plus sand sieving w/ USGA meshes
 22,-,-,-,milkshake_5,calgon_5,25,hydrometer,gravel+sand,after,companion measurement,"hydrometer for CSSS silt bins but without sieving, i.e. total sand and gravel only"
 23,-,-,-,milkshake_5,calgon_5,25,mastersizer-3000,USGA_sieves,before,-,sample wet-sieved through #270 before analyzing suspension with Mastersizer 3000
+24,-,-,-,milkshake_5,calgon_5,50,hydrometer,USGA_sieves_plus_gravel,before,companion measurement,hydrometer method for detailed fines breakdown (but no fine clay) plus expanded sieve analysis.

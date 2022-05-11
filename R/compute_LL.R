@@ -17,16 +17,12 @@
 #' @references [ASTM D4318 - 17e1](https://www.astm.org/Standards/D4318)
 #'
 compute_LL <- function(df) {
-#
-#   raw_data <- df %>%
-#     dplyr::filter(
-#       .data$blow_count != "NA",
-#       .data$water_content != "NA")
 
 
-raw_data <- df[!is.na(df$blow_count) && !is.na(df$water_content), ]
+# raw_data <- df[!is.na(df$blow_count) && !is.na(df$water_content), ]
 
-    raw_data <- df %>%
+
+  raw_data <- df %>%
       dplyr::filter(
         !is.na(.data$blow_count),
         !is.na(.data$water_content))

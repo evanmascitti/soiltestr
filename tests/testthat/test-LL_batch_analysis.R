@@ -1,7 +1,11 @@
 test_that("LL_batch_analysis returns correct types",
           {
 
-            results <- LL_batch_analysis(dir = 'test-data/att-lims/atterberg-limits_2021-06-03/', tin_tares = asi468::tin_tares)
+
+            setwd(here::here('tests', 'testthat', 'test-data'))
+
+
+            results <- LL_batch_analysis(dir ='att-lims/atterberg-limits_2021-06-03/', tin_tares = asi468::tin_tares)
 
             # computes both the values and makes the plots?
             expect_equal(length(results), 2)
