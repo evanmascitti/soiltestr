@@ -20,8 +20,8 @@ compute_flow_index <- function(dir, tin_tares = NULL) {
 
     message("No LL data file found in directory ", dir, ". Returning empty data frame for this data collection date.")
 
-    return(tibble::tibble(sample_name,
-                          flow_index))
+    return(tibble::tibble(sample_name = NA,
+                          flow_index = NA) %>% .[0,])
 
   }
 
@@ -66,7 +66,7 @@ compute_flow_index <- function(dir, tin_tares = NULL) {
                                        'tin_number')) %>%
     soiltestr::add_w()
 
-  browser()
+  # browser()
 
   na_flow_index_sample_numbers <- LL_raw_data %>%
     dplyr::mutate(water_content_is_na = is.na(water_content)) %>%
