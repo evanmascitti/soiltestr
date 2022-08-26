@@ -18,12 +18,10 @@ compute_flow_index <- function(dir, tin_tares = NULL) {
 
   if(length(data_file_path) == 0L){
 
-    message("No LL data file found in directory ", dir, ". Returning empty data frames and plots for this data collection date.")
+    message("No LL data file found in directory ", dir, ". Returning empty data frame for this data collection date.")
 
-    return(structure(
-      list(LL_results = NULL,
-           flow_curve_plots = NULL),
-      class = 'LL_batch') )
+    return(tibble::tibble(sample_name,
+                          flow_index))
 
   }
 
