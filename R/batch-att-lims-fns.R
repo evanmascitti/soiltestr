@@ -242,7 +242,7 @@ AL_batch_analysis <- function(dir, tin_tares = NULL){
 #'
 LL_batch_analysis <- function(dir, tin_tares = NULL){
 
-  # browser()
+  browser()
 
   data_file_path <- list.files(path = dir, pattern = "LL[_-]raw[_-]data", full.names = T)
 

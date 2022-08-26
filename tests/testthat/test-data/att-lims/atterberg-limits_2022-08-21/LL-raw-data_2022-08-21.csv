@@ -1,0 +1,13 @@
+test_type,date,experiment_name,sample_name,batch_sample_number,tin_number,blow_count,tin_w_wet_sample,tin_w_OD_sample,tin_tare_set,comments
+LL,2022-08-21,sandClay1,boyd-20-80_duraedge-fs-90_30,1,169,31,9.606,7.984,2021-03-04,-
+LL,2022-08-21,sandClay1,boyd-20-80_duraedge-fs-90_30,1,170,26,9.832,8.182,2021-03-04,-
+LL,2022-08-21,sandClay1,boyd-20-80_duraedge-fs-90_30,1,171,23,9.701,8.017,2021-03-04,-
+LL,2022-08-21,sandClay1,boyd-20-80_duraedge-fs-90_30,1,172,18,10.366,8.481,2021-03-04,-
+LL,2022-08-21,sandClay1,boyd-20-80_no-6-tile_30,2,173,33,11.203,8.411,2021-03-04,-
+LL,2022-08-21,sandClay1,boyd-20-80_no-6-tile_30,2,174,27,8.345,6.318,2021-03-04,-
+LL,2022-08-21,sandClay1,boyd-20-80_no-6-tile_30,2,175,23,7.124,5.417,2021-03-04,-
+LL,2022-08-21,sandClay1,boyd-20-80_no-6-tile_30,2,176,20,7.499,5.658,2021-03-04,-
+LL,2022-08-21,sandClay1,boyd-20-80_promound_30,3,177,32,8.497,6.258,2021-03-04,-
+LL,2022-08-21,sandClay1,boyd-20-80_promound_30,3,178,21,9.297,6.754,2021-03-04,-
+LL,2022-08-21,sandClay1,boyd-20-80_promound_30,3,179,16,9.946,7.184,2021-03-04,-
+LL,2022-08-21,sandClay1,boyd-20-80_promound_30,3,85,20,8.738,6.375,2021-03-04,-

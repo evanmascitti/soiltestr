@@ -111,6 +111,8 @@ rm(datafiles, all_datafile_paths)
   tin_tares <- tin_tares %||% getOption('soiltestr.tin_tares') %||% internal_data$equipment_instructions("tin_tares")
 
 
+# browser()
+
   # calculate air-dry water contents
 
 
