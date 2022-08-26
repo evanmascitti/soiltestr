@@ -68,26 +68,45 @@ compute_flow_index <- function(dir, tin_tares = NULL) {
                                        'tin_number')) %>%
     soiltestr::add_w()
 
-  # browser()
+  browser()
 
-  flow_indices <- LL_raw_data %>%
-    dplyr::group_by(.data$batch_sample_number) %>%
+  na_flow_index_sample_numbers <- LL_raw_data %>%
+    dplyr::mutate(water_content_is_na = is.na(water_content)) %>%
+    dplyr::group_by(batch_sample_number) %>%
+    dplyr::summarise(
+      n_pts = dplyr::n(),
+      n_na_water_contents = sum(water_content_is_na),
+      all_are_na = n_pts == n_na_water_contents
+    ) %>%
+    dplyr::ungroup() %>%
+    dplyr::filter(all_are_na) %>%
+    dplyr::pull('batch_sample_number')
+
+  na_flow_indices <- tibble::tibble(
+    batch_sample_number = na_flow_index_sample_numbers,
+    flow_index = NA_real_
+  )
+
+
+  all_flow_indices <- LL_raw_data %>%
+    dplyr::filter(!batch_sample_number %in% na_flow_index_sample_numbers) %>%
+  dplyr::group_by(batch_sample_number) %>%
     tidyr::nest() %>%
     dplyr::mutate(
-      flow_curve_model = purrr::map(
-        data,
-        fit_flow_curve_model
-      ),
+      flow_curve_model = purrr::map(data,
+                                    fit_flow_curve_model),
       flow_index_coefficients = purrr::map(flow_curve_model, "coefficients"),
       flow_index = purrr::map_dbl(flow_index_coefficients, 2),
-      sample_name = purrr::map_chr(.data$data, ~ unique(.$sample_name))) %>%
-    dplyr::select(.data$batch_sample_number, .data$flow_index) %>%
+      sample_name = purrr::map_chr(data, ~ unique(.$sample_name))
+    ) %>%
+    dplyr::select(batch_sample_number, flow_index) %>%
     dplyr::ungroup() %>%
+    dplyr::bind_rows(na_flow_indices) %>%
     dplyr::left_join(specimen_index, by = 'batch_sample_number') %>%
-    dplyr::select(.data$sample_name, .data$flow_index)
+    dplyr::select(sample_name, flow_index)
 
 
-  return(flow_indices)
+  return(all_flow_indices)
 }
 
 
@@ -105,8 +124,8 @@ fit_flow_curve_model <- function(x){
 
   # browser()
 
-  if(all(is.na(x$water_content))){
-    return(NULL)
+  if(all(is.na(x$water_content)) | length(x$water_content) == 0L){
+    return(NA)
   } else{
     flow_curve_model <- stats::na.omit(
       stats::lm(data = x,
