@@ -132,7 +132,7 @@ ggpsd <- function(df, units = "microns", points = TRUE, log_lines = TRUE, bold_l
       psa_bold_log_lines()+
       ggplot2::geom_hline(yintercept = seq(0, 1, 0.2), color = 'grey90',
                           size = 0.25)+
-      ggplot2::geom_line( alpha = 1/2)+
+      ggplot2::geom_line(show.legend = FALSE, alpha = 1/2)+
       psa_points()+
       ggplot2::ggtitle("Cumulative particle size distribution")+
       ggplot2::theme_classic()+

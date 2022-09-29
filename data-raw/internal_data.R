@@ -48,7 +48,7 @@ psa_fines_methods <- tibble::enframe(psa_protocols,
 
 pipette_invoking_protocol_IDs <- unlist(psa_fines_methods[str_detect(psa_fines_methods$fines_method, "pipette"),  'protocol_ID']) %>%
   .[!is.na(.)]
-cat("pipette_invoking_protocol_IDs are ", pipette_invoking_protocol_IDs, "\n", sep = "\n")
+message("pipette_invoking_protocol_IDs are ", pipette_invoking_protocol_IDs, "\n", sep = "\n")
 
 
 hydrometer_invoking_protocol_IDs <- unlist(psa_fines_methods[str_detect(psa_fines_methods$fines_method, "hydrometer"),  'protocol_ID']) %>%
@@ -65,6 +65,8 @@ fines_laser_diffraction_invoking_protocol_IDs <- unname(unlist(psa_fines_methods
   .[!is.na(.)]
 
 cat("fines_laser_diffraction_invoking_protocol_IDs are ", fines_laser_diffraction_invoking_protocol_IDs, "\n", sep = "\n")
+
+
 
 # create tibble object containing terse versions of coarse methods --------
 
@@ -157,7 +159,16 @@ cat('before_fines_sampling_wash_through_protocol_IDs are', before_fines_sampling
 wash_through_protocol_IDs <- psa_protocols_summary %>%
   dplyr::filter(fines_method == "wash-through") %>%
   purrr::pluck("protocol_ID")
-cat('wash_through_protocol_IDs are', wash_through_protocol_IDs, sep = "\n")
+cat('\n wash_through_protocol_IDs are', wash_through_protocol_IDs, sep = "\n")
+
+
+
+ultrasonics_protocol_IDs <- psa_protocols_summary %>%
+  dplyr::filter(
+    str_detect(mechanical_dispersion, "ultrasonics")) %>%
+  purrr::pluck("protocol_ID")
+
+message("\n ultrasonics_protocol_IDs are \n", paste0(ultrasonics_protocol_IDs, "\n"))
 
 
 # collect and export ------------------------------------------------------

@@ -2,3 +2,5 @@ mechanical_dispersion,mechanical_dispersion_details
 milkshake_5,Agitated with milkshake-style mixer in ~ 400 mL of liquid for 5 minutes
 overnight_shaker,Shaken on orbital-style lab shaker for >= 8 hours
 ultrasonics-01,agitated with ultrasonic probe in 15 minute increments; fines poured off after each interval and ~200 mL of new deionized water added
+ultrasonics-02,agitated with ultrasonic probe for 30 min (Duiker lab; pre-polishing)
+ultrasonics-03,agitated with ultrasonic probe for 30 min (Duiker lab; post-polishing)
