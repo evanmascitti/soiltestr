@@ -9,6 +9,9 @@ format_mix_calcs(x)
 \arguments{
 \item{x}{S3 object of class \code{soiltestr_mix_calcs}}
 }
+\value{
+No return value (under development)
+}
 \description{
 Formats the column names for prettier printing in R Markdown documents
 }

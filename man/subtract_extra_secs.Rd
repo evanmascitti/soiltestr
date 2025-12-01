@@ -18,6 +18,9 @@ subtract_extra_secs(
 
 \item{sample_number}{numeric}
 }
+\value{
+Table of sampling times
+}
 \description{
 Reduce gap between samples to 1 minute when the
 third run has completed its first hour of sampling

@@ -58,9 +58,9 @@ Gs_variation_plot <-
   ggplot2::ggplot(
     data = summarized_results_tbl,
     mapping = ggplot2::aes(
-      x = .data$Gs,
-      y = .data$sample_name,
-      color = .data$sample_name
+      x = Gs,
+      y = sample_name,
+      color = sample_name
     )
   ) +
   ggplot2::stat_summary(data = all_results_tbl,

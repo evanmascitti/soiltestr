@@ -11,6 +11,9 @@ hydrometer_calcs_part_1(x)
 actions inside \code{compute_152H_hydrometer_fines_pct_passing()}  \emph{before} this function
 is called.}
 }
+\value{
+data frame
+}
 \description{
 Results passed to other functions which interpolate along the curve
 to obtain desired \% passing values

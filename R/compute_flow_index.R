@@ -1,7 +1,6 @@
 #'
 #' @title Calculate the flow index from the flow curve of a series of LL tests
 #'
-#'
 #' @inheritParams LL_batch_analysis
 #' @return tibble containing sample names and flow indices
 #' @export

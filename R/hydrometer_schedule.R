@@ -107,7 +107,7 @@ hydrometer_schedule <- function(
    SIMPLIFY = FALSE
    ) %>%
     dplyr::bind_rows() %>%
-   # dplyr::group_by(dplyr::across(-c(.data$start_time, start_stirring_time, stop_stirring_time, clock_time, sample_number))) %>%
+   # dplyr::group_by(dplyr::across(-c(start_time, start_stirring_time, stop_stirring_time, clock_time, sample_number))) %>%
    # tidyr::nest() %>%
 
    # debug here
@@ -130,12 +130,12 @@ hydrometer_schedule <- function(
  #     sampling_time = format(clock_time, "%I:%M %p")
  #   ) %>%
    dplyr::ungroup() %>%
-   dplyr::select(sample_number, .data$start_stirring_time, .data$stop_stirring_time, .data$sampling_date, .data$sampling_time)
+   dplyr::select(sample_number, start_stirring_time, stop_stirring_time, sampling_date, sampling_time)
 
- stir_times <- dplyr::distinct(full_schedule, .data$sample_number, .data$start_stirring_time, .data$stop_stirring_time) %>%
-   dplyr::select(.data$sample_number, .data$start_stirring_time, .data$stop_stirring_time) %>%
+ stir_times <- dplyr::distinct(full_schedule, sample_number, start_stirring_time, stop_stirring_time) %>%
+   dplyr::select(sample_number, start_stirring_time, stop_stirring_time) %>%
    tidyr::pivot_longer(
-     cols = c(.data$start_stirring_time, .data$stop_stirring_time),
+     cols = c(start_stirring_time, stop_stirring_time),
      names_to = 'action',
      values_to = 'time'
    ) %>%
@@ -144,7 +144,7 @@ hydrometer_schedule <- function(
    )
 
  sampling_schedule <- full_schedule %>%
-   dplyr::select(.data$sample_number, .data$sampling_date, .data$sampling_time)
+   dplyr::select(sample_number, sampling_date, sampling_time)
 
 
  sampling_times_renamed <- sampling_schedule %>%
@@ -169,7 +169,7 @@ hydrometer_schedule <- function(
    dplyr::mutate(
      time = format(time, "%I:%M %p")) %>%
    dplyr::select(
-     .data$sampling_date, .data$time, .data$sample_number, .data$action
+     sampling_date, time, sample_number, action
    )
 
  return(all_times)
@@ -194,7 +194,7 @@ hydrometer_schedule <- function(
 #' @param clock_time datetime object
 #' @param sample_number numeric
 #'
-#' @return
+#' @return Table of sampling times
 #'
 subtract_extra_secs <- function(start_stirring_time, stop_stirring_time, clock_time, sample_number){
 

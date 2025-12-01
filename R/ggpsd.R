@@ -75,7 +75,7 @@ ggpsd <- function(df, units = "microns", points = TRUE, log_lines = TRUE, bold_l
 
 
    psd_plot <- df %>%
-    ggplot2::ggplot(ggplot2::aes(x = .data$microns, y = .data$percent_passing, ...))+
+    ggplot2::ggplot(ggplot2::aes(x = microns, y = percent_passing, ...))+
     ggplot2::scale_x_continuous(expression("Particle diameter, \u03bcm"),
                                 limits = c(0.1, 4000),
                                 trans = "log10",
@@ -118,7 +118,7 @@ ggpsd <- function(df, units = "microns", points = TRUE, log_lines = TRUE, bold_l
 
 
     psd_plot <- df %>%
-      ggplot2::ggplot(ggplot2::aes(x = .data$microns / 1000, y = .data$percent_passing, ...))+
+      ggplot2::ggplot(ggplot2::aes(x = microns / 1000, y = percent_passing, ...))+
       ggplot2::scale_x_continuous(expression("Particle diameter, mm"),
                                   limits = 0.001 * c(0.1, 4000),
                                   trans = "log10",

@@ -33,7 +33,7 @@ ggphase_diagram <- function(sand_pct, clay_pct, G_sa, G_c, dry_density,
   base_family <- base_family %||% 'sans'
 
   G_w <- soiltestr::h2o_properties_w_temp_c %>%
-    dplyr::filter(dplyr::near(.data$water_temp_c, round(ambient_temp_c, 1))) %>%
+    dplyr::filter(dplyr::near(water_temp_c, round(ambient_temp_c, 1))) %>%
     .$water_density_Mg_m3 %>%
     .[1]
 
@@ -41,29 +41,29 @@ ggphase_diagram <- function(sand_pct, clay_pct, G_sa, G_c, dry_density,
     x = 0.2,
     m_sa = sand_pct,
     m_c = clay_pct,
-    Gs = .data$m_sa*G_sa + .data$m_c*G_c,
+    Gs = m_sa*G_sa + m_c*G_c,
     w = water_content,
-    m_w = .data$w*(.data$m_sa + .data$m_c),
-    v_sa_abs = .data$m_sa / G_sa,
-    v_c_abs = .data$m_c / G_c,
-    v_w_abs = .data$m_w / G_w,
-    v_a_abs = ((.data$m_sa + .data$m_c)/dry_density)-((.data$m_sa/G_sa)+(.data$m_c/G_c)+(.data$m_w/G_w)),
-    v_tot_abs = sum(.data$v_sa_abs, .data$v_c_abs, .data$v_w_abs, .data$v_a_abs),
-    v_sa = .data$v_sa_abs / .data$v_tot_abs,
-    v_c = .data$v_c_abs / .data$v_tot_abs,
-    v_w = .data$v_w_abs / .data$v_tot_abs,
-    v_a = .data$v_a_abs / .data$v_tot_abs,
-    v_tot = .data$v_tot_abs / .data$v_tot_abs)
+    m_w = w*(m_sa + m_c),
+    v_sa_abs = m_sa / G_sa,
+    v_c_abs = m_c / G_c,
+    v_w_abs = m_w / G_w,
+    v_a_abs = ((m_sa + m_c)/dry_density)-((m_sa/G_sa)+(m_c/G_c)+(m_w/G_w)),
+    v_tot_abs = sum(v_sa_abs, v_c_abs, v_w_abs, v_a_abs),
+    v_sa = v_sa_abs / v_tot_abs,
+    v_c = v_c_abs / v_tot_abs,
+    v_w = v_w_abs / v_tot_abs,
+    v_a = v_a_abs / v_tot_abs,
+    v_tot = v_tot_abs / v_tot_abs)
 
   base_phases_plot <- suppressMessages(
-    ggplot2::ggplot(data = phases, ggplot2::aes(x = .data$x))+
-      ggplot2::geom_rect(ggplot2::aes(xmin = 0.1, xmax = 0.2, ymin = 0, ymax = .data$v_sa/.data$v_tot),
+    ggplot2::ggplot(data = phases, ggplot2::aes(x = x))+
+      ggplot2::geom_rect(ggplot2::aes(xmin = 0.1, xmax = 0.2, ymin = 0, ymax = v_sa/v_tot),
                          alpha = alpha_level, fill = sand_color, color ='grey60', size = 0.25)+
-      ggplot2::geom_rect(ggplot2::aes(xmin = 0.1, xmax = 0.2, ymin = .data$v_sa/.data$v_tot, ymax = sum(.data$v_sa, .data$v_c)/.data$v_tot),
+      ggplot2::geom_rect(ggplot2::aes(xmin = 0.1, xmax = 0.2, ymin = v_sa/v_tot, ymax = sum(v_sa, v_c)/v_tot),
                          alpha = alpha_level, fill = clay_color, color ='grey60', size = 0.25)+
-      ggplot2::geom_rect(ggplot2::aes(xmin = 0.1, xmax = 0.2, ymin = sum(.data$v_sa, .data$v_c)/.data$v_tot, ymax = sum(.data$v_sa, .data$v_c, .data$v_w)/.data$v_tot),
+      ggplot2::geom_rect(ggplot2::aes(xmin = 0.1, xmax = 0.2, ymin = sum(v_sa, v_c)/v_tot, ymax = sum(v_sa, v_c, v_w)/v_tot),
                          alpha = alpha_level, fill = "#d4f1f9", color ='grey60', size = 0.25)+
-      ggplot2::geom_rect(ggplot2::aes(xmin = 0.1, xmax = 0.2, ymin = sum(.data$v_sa, .data$v_c, .data$v_w)/.data$v_tot, ymax = .data$v_tot),
+      ggplot2::geom_rect(ggplot2::aes(xmin = 0.1, xmax = 0.2, ymin = sum(v_sa, v_c, v_w)/v_tot, ymax = v_tot),
                          alpha = alpha_level, fill = "transparent", color ='grey60', size = 0.25)+
       ggplot2::coord_fixed(ratio = 0.2, xlim = c(0, 0.35))+
       ggplot2::theme_void(base_family = base_family)

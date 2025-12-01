@@ -133,8 +133,8 @@ if(!all(common_datafiles$hygroscopic_corrections$tin_tare_set %in% tin_tares$tin
 hygroscopic_water_contents <- common_datafiles$hygroscopic_corrections %>%
       dplyr::left_join(tin_tares, by = c("tin_tare_set", "tin_number")) %>%
       soiltestr::add_w() %>%
-    dplyr::rename(hygroscopic_water_content = .data$water_content) %>%
-    dplyr::select(.data$date:.data$batch_sample_number, .data$hygroscopic_water_content)
+    dplyr::rename(hygroscopic_water_content = water_content) %>%
+    dplyr::select(date:batch_sample_number, hygroscopic_water_content)
 
   # compute oven-dry specimen masses used in actual PSA tests
 
@@ -145,8 +145,8 @@ hygroscopic_water_contents <- common_datafiles$hygroscopic_corrections %>%
     dplyr::left_join(hygroscopic_water_contents,
                      by = c("date", "experiment_name", "sample_name",
                             "replication", "batch_sample_number")) %>%
-    dplyr::mutate(OD_specimen_mass = .data$air_dry_specimen_mass_for_test / (1 + .data$hygroscopic_water_content)) %>%
-  dplyr::select(.data$date:.data$batch_sample_number, .data$OD_specimen_mass)
+    dplyr::mutate(OD_specimen_mass = air_dry_specimen_mass_for_test / (1 + hygroscopic_water_content)) %>%
+  dplyr::select(date:batch_sample_number, OD_specimen_mass)
 
 
 # determine whether pretreatment correction should be applied
@@ -167,7 +167,7 @@ hygroscopic_water_contents <- common_datafiles$hygroscopic_corrections %>%
         pretreatment_loss, by = c(
           "date", "experiment_name", "sample_name", "replication",
           "batch_sample_number")) %>%
-      dplyr::mutate(OD_specimen_mass = .data$OD_specimen_mass * (1 - .data$pretreatment_loss_pct))
+      dplyr::mutate(OD_specimen_mass = OD_specimen_mass * (1 - pretreatment_loss_pct))
   } else
     pretreatment_loss <- NULL
 
@@ -250,8 +250,8 @@ coarse_percent_passing <- switch (
  #  browser()
   cumulative_percent_passing <- dplyr::bind_rows(fines_percent_passing,
                                       coarse_percent_passing) %>%
-    dplyr::arrange(.data$batch_sample_number,
-                   dplyr::desc(.data$microns)) %>%
+    dplyr::arrange(batch_sample_number,
+                   dplyr::desc(microns)) %>%
     dplyr::filter(
       !is.na(microns)
     ) %>%
@@ -396,14 +396,14 @@ coarse_percent_passing <- switch (
 
    coarse_sub_bins <- simple_bins %>%
      dplyr::select(
-       .data$date,
-       .data$experiment_name,
-       .data$sample_name,
-       .data$replication,
-       .data$batch_sample_number,
-       .data$protocol_ID,
-       .data$gravel,
-       .data$sand
+       date,
+       experiment_name,
+       sample_name,
+       replication,
+       batch_sample_number,
+       protocol_ID,
+       gravel,
+       sand
        )
 
    }
@@ -427,8 +427,8 @@ if(length(all_sub_bins != 0)){
       dplyr::left_join,
       by = c("date", "experiment_name", "protocol_ID", "sample_name",
              "replication", "batch_sample_number")) %>%
-    dplyr::arrange(.data$batch_sample_number,
-                   .data$replication)
+    dplyr::arrange(batch_sample_number,
+                   replication)
 
 } else {
 
@@ -446,8 +446,8 @@ if(length(all_sub_bins != 0)){
 base_plots <- cumulative_percent_passing %>%
   tidyr::fill(dplyr::everything()) %>%
   dplyr::left_join(psa_protocols_summary, by = "protocol_ID") %>%
-  dplyr::group_by(.data$batch_sample_number) %>%
-  dplyr::arrange(.data$batch_sample_number) %>%
+  dplyr::group_by(batch_sample_number) %>%
+  dplyr::arrange(batch_sample_number) %>%
   tidyr::nest() %>%
   dplyr::mutate(plot = purrr::map(data, ggpsd)) %>%
   purrr::pluck("plot")
@@ -463,16 +463,16 @@ plots_extra_stuff <- cumulative_percent_passing %>%
   dplyr::summarise() %>%
   dplyr::left_join(psa_protocols_summary, by = "protocol_ID") %>%
   dplyr::mutate(subtitle = paste(
-  " Sample name: ", .data$sample_name, "\n",
-  "Replication ", .data$replication, "\n") ) %>%
-  dplyr::arrange(.data$batch_sample_number)
+  " Sample name: ", sample_name, "\n",
+  "Replication ", replication, "\n") ) %>%
+  dplyr::arrange(batch_sample_number)
 
 # this was some extra stuff I was going to include right on the plot
 # but I think it clutters it too much
 # this is mostly for EDA/qc anwyay; for a publication or
 # polished report I would do this in R Markdown
 
-  # "Fines sampling: ", .data$fines_method, "\n",
+  # "Fines sampling: ", fines_method, "\n",
 #  g_sample, " g sample", "\n",
 #  "[See protocol ", protocol_ID, "for other method details.") ) %>%
 

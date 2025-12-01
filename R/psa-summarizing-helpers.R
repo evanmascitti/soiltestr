@@ -31,8 +31,8 @@
 pivot_cumulative_percent_passing_wider <- function(df) {
 
   df %>%
-    tidyr::pivot_wider(names_from = .data$microns,
-                       values_from = .data$percent_passing)
+    tidyr::pivot_wider(names_from = microns,
+                       values_from = percent_passing)
 }
 
 
@@ -52,7 +52,7 @@ pivot_cumulative_percent_passing_longer <- function(df) {
     tidyr::pivot_longer(cols = -c(experiment_name, date, sample_name, replication, batch_sample_number),
                         names_to = 'microns',
                         values_to = 'percent_passing') %>%
-    dplyr::mutate(microns = as.numeric(.data$microns))
+    dplyr::mutate(microns = as.numeric(microns))
 
 }
 

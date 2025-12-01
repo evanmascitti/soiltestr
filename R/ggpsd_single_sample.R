@@ -23,7 +23,7 @@ ggpsd_single_sample <- function(df, ...){
   bold_log_lines <- c(0.1, 1, 10, 100, 1000, 10000)
 
   df %>%
-    ggplot2::ggplot(ggplot2::aes(x = .data$microns, y = .data$percent_passing, ...))+
+    ggplot2::ggplot(ggplot2::aes(x = microns, y = percent_passing, ...))+
     ggplot2::scale_x_continuous("Particle diameter, \u03bcm",
                                 limits = c(0.1, 10000),
                                 trans = "log10",

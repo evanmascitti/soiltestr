@@ -47,7 +47,7 @@
 #'
 #'@example inst/examples/proctor_prep_example.R
 #'
-#'@seealso [`proctor_fit()`], [`mix_calcs()`], [`proctor_datasheet()`]
+#'@seealso [`proctor_fit()`], [`sand_clay_mix_calcs()`], [`proctor_datasheet()`]
 #'
 #'@export
 #'
@@ -150,16 +150,16 @@ if(!is.null(x)){
   w_targets_df <-  unclass(w_targets_df) %>%
     tibble::as_tibble() %>%
     dplyr::select(
-      .data$sample_name,
-      .data$effort,
-      .data$w_extant,
-      .data$PL) %>%
+      sample_name,
+      effort,
+      w_extant,
+      PL) %>%
     dplyr::group_by(dplyr::across()) %>%
     dplyr::mutate(
       w_target = purrr::map2(effort, PL, make_w_spread)
     ) %>%
     dplyr::ungroup() %>%
-    tidyr::unnest(cols = c(.data$w_target)) %>%
+    tidyr::unnest(cols = c(w_target)) %>%
     dplyr::ungroup()
 
   augmented_w_targets_df <- augment_proctor_w_targets(x = w_targets_df)
@@ -200,7 +200,7 @@ if(!is.null(x)){
     dplyr::group_by(dplyr::across()) %>%
     tidyr::nest() %>%
     dplyr::mutate(w_target = purrr::map2(effort, PL, make_w_spread)) %>%
-    tidyr::unnest(cols = .data$w_target) %>%
+    tidyr::unnest(cols = w_target) %>%
     dplyr::ungroup()
 
 
@@ -318,20 +318,20 @@ augment_proctor_w_targets <- function(x){
     dplyr::mutate(
       date = date,
       OD_soil_to_use = cylinder_volume_cm3 * assumed_d_max * (4.75 / 4.5),
-      delta_w = .data$w_target - w_extant,
-      moist_soil_to_use_g = .data$OD_soil_to_use * (1 + w_extant),
-      w_target_g = .data$w_target * .data$OD_soil_to_use,
-      w_already_present = .data$moist_soil_to_use_g - .data$OD_soil_to_use,
-      water_to_add_g = .data$w_target_g - .data$w_already_present
+      delta_w = w_target - w_extant,
+      moist_soil_to_use_g = OD_soil_to_use * (1 + w_extant),
+      w_target_g = w_target * OD_soil_to_use,
+      w_already_present = moist_soil_to_use_g - OD_soil_to_use,
+      water_to_add_g = w_target_g - w_already_present
     ) %>%
     dplyr::select(
-      .data$date,
-      .data$sample_name,
-      .data$effort,
-      .data$w_target,
-      .data$cylinder_number,
-      .data$moist_soil_to_use_g,
-      .data$water_to_add_g)  %>%
+      date,
+      sample_name,
+      effort,
+      w_target,
+      cylinder_number,
+      moist_soil_to_use_g,
+      water_to_add_g)  %>%
     dplyr::mutate(
         moist_soil_to_use_g = round(moist_soil_to_use_g, digits = -1),
         water_to_add_g = round(water_to_add_g, digits = -1)

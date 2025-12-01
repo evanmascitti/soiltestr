@@ -106,8 +106,8 @@ sieving_datasheet <- function() {
     cumulative_mass_g = "",
     comments = "-"
   ) %>%
-    dplyr::arrange(.data$batch_sample_number,
-                   dplyr::desc(.data$microns))
+    dplyr::arrange(batch_sample_number,
+                   dplyr::desc(microns))
 
   return(sieving_data)
 
@@ -244,8 +244,8 @@ hydrometer_blank_correction_datasheet <- function(){
     psa_hydrometer_blank_correction_w_companion_data %>%
     dplyr::mutate(hydrometer_reading = "-",
                   calgon_solution_ID = calgon_solution_ID %||% "") %>%
-    dplyr::relocate(.data$calgon_solution_ID,
-                    .after = .data$hydrometer_blank_method)
+    dplyr::relocate(calgon_solution_ID,
+                    .after = hydrometer_blank_method)
 
   # choose which one to return based on the value of the
   # hydrometer_blank_method variable which was inherited from parent

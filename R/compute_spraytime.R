@@ -14,18 +14,18 @@ compute_spraytime <- function(df, OD_soil_mass_g = 8000,
 
   df %>%
     dplyr::mutate(
-      moist_mass_g = OD_soil_mass_g * (1+.data$w_target) ,
-      water_already_present_g = OD_soil_mass_g * .data$w_extant ,
-      water_desired_g = OD_soil_mass_g * .data$w_target ,
-      w_to_add_g = .data$water_desired_g  - .data$water_already_present_g ,
+      moist_mass_g = OD_soil_mass_g * (1+w_target) ,
+      water_already_present_g = OD_soil_mass_g * w_extant ,
+      water_desired_g = OD_soil_mass_g * w_target ,
+      w_to_add_g = water_desired_g  - water_already_present_g ,
       sec_to_spray = round(
-        .data$w_to_add_g/spray_flo_rate_cm3_sec,0) ,
-      sec_to_spray_period = lubridate::as.period(lubridate::as.duration(.data$sec_to_spray)),
+        w_to_add_g/spray_flo_rate_cm3_sec,0) ,
+      sec_to_spray_period = lubridate::as.period(lubridate::as.duration(sec_to_spray)),
       time_to_spray = sprintf("%02d:%02d",
-                              lubridate::minute(.data$sec_to_spray_period),
-                              lubridate::second(.data$sec_to_spray_period) )
+                              lubridate::minute(sec_to_spray_period),
+                              lubridate::second(sec_to_spray_period) )
     ) %>%
-    dplyr::select(-c(.data$water_already_present_g, .data$water_desired_g, .data$sec_to_spray, .data$sec_to_spray_period))
+    dplyr::select(-c(water_already_present_g, water_desired_g, sec_to_spray, sec_to_spray_period))
 
   } # end of function
 

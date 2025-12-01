@@ -15,7 +15,7 @@
 #'  a column named `Gs`), gravimetric water contents in a column named
 #'  `water_content`, and the ambient test temperature (&deg;C) in a column named
 #'  `ambient_temp_c`. Water contents can be easily computed with [`add_w()`].
-#'  The use of [`generate_proctor_datasheet()`] ensures compatibility of the the
+#'  The use of [`proctor_datasheet()`] ensures compatibility of the the
 #'  column names used during data collection with those expected by this
 #'  function.
 #'
@@ -32,7 +32,7 @@ add_physical_properties <- function(x, mold_dimensions = NULL, cleat_mark = FALS
   # look up density of water at specified temperature
 
   # water_density <- soiltestr::h2o_properties_w_temp_c %>%
-  #   dplyr::filter(.data$water_temp_c == round(unique(x$ambient_temp_c), 1)) %>%
+  #   dplyr::filter(water_temp_c == round(unique(x$ambient_temp_c), 1)) %>%
   #   .$water_density_Mg_m3 %>%
   #   .[1]
 
@@ -96,18 +96,18 @@ if(!"Gs" %in% names(x)){
       by = c("ambient_temp_c" = "water_temp_c")
     ) %>%
     dplyr::mutate(
-      moist_soil_g =.data$filled_mold_g - .data$empty_mold_mass_g,
-      OD_soil_g = .data$moist_soil_g / (1 + .data$water_content),
-      moist_density = .data$moist_soil_g / .data$mold_vol_cm3,
-      dry_density = .data$OD_soil_g / .data$mold_vol_cm3,
-      total_porosity = 1 - (.data$dry_density / .data$Gs),
-      void_ratio = 1 / (1 - .data$total_porosity),
-      volumetric_water_content = (.data$water_content*.data$OD_soil_g/.data$water_density_Mg_m3) / .data$mold_vol_cm3,
-      Se = (.data$water_content * .data$dry_density / .data$water_density_Mg_m3) / .data$total_porosity
+      moist_soil_g =filled_mold_g - empty_mold_mass_g,
+      OD_soil_g = moist_soil_g / (1 + water_content),
+      moist_density = moist_soil_g / mold_vol_cm3,
+      dry_density = OD_soil_g / mold_vol_cm3,
+      total_porosity = 1 - (dry_density / Gs),
+      void_ratio = 1 / (1 - total_porosity),
+      volumetric_water_content = (water_content*OD_soil_g/water_density_Mg_m3) / mold_vol_cm3,
+      Se = (water_content * dry_density / water_density_Mg_m3) / total_porosity
     ) %>%
-    dplyr::select(-c(.data$water_absolute_viscosity_poises,
-                       .data$water_density_Mg_m3,
-                       .data$water_density_kg_m3
+    dplyr::select(-c(water_absolute_viscosity_poises,
+                       water_density_Mg_m3,
+                       water_density_kg_m3
                        ))
 
   return(newdf)

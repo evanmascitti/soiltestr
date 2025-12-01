@@ -20,7 +20,7 @@
 ggflowcurve <- function(df, ...){
 
 
-  plot <- ggplot2::ggplot(data= df, aes(.data$blow_count, .data$water_content))+
+  plot <- ggplot2::ggplot(data= df, aes(blow_count, water_content))+
     ggplot2::geom_vline(xintercept = 15:35, color = 'grey95', linewidth = 0.25)+
     ggplot2::geom_smooth(aes(...),
                          formula = y~x,

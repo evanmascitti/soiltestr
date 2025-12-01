@@ -125,7 +125,7 @@ proctor_datasheet <- function(prep_sheet = NULL,
        date = new_date,
         ambient_temp_c = ambient_temp_c,
         tin_tare_set = tin_tare_set,
-        w_target = as.character(round(.data$w_target, digits = 3)),
+        w_target = as.character(round(w_target, digits = 3)),
         mold_ID = "",
         filled_mold_g = "",
         tin_number = tin_numbers,
@@ -134,23 +134,23 @@ proctor_datasheet <- function(prep_sheet = NULL,
         comments = "-"
       ) %>%
       dplyr::select(
-        .data$date,
-        .data$sample_name,
-        .data$effort,
-        .data$tin_tare_set,
-        .data$ambient_temp_c,
-        .data$w_target,
-        .data$cylinder_number,
-        .data$mold_ID,
-        .data$filled_mold_g,
-        .data$tin_number,
-        .data$tin_w_wet_sample,
-        .data$tin_w_OD_sample,
-        .data$comments) %>%
+        date,
+        sample_name,
+        effort,
+        tin_tare_set,
+        ambient_temp_c,
+        w_target,
+        cylinder_number,
+        mold_ID,
+        filled_mold_g,
+        tin_number,
+        tin_w_wet_sample,
+        tin_w_OD_sample,
+        comments) %>%
       dplyr::arrange(
-        .data$sample_name,
-        dplyr::desc(.data$effort),
-        .data$cylinder_number)
+        sample_name,
+        dplyr::desc(effort),
+        cylinder_number)
 
 
 # write file to disk if write ==  TRUE

@@ -25,7 +25,7 @@
 #' @param w_clayey Numeric (decimal). Water content of sandy component.
 #' @param ... Other arguments passed to methods (currently ignored)
 #'
-#' @return
+#' @return Table of mix component masses
 #' @export
 #'
 #'
@@ -264,9 +264,7 @@ sand_w_scr_mix_calcs <- function(
     dplyr::mutate(
       dplyr::across(
         .cols = dplyr::matches("air_dry_(sandy|silty|clayey)_mass"),
-        .fns = round, digits = 2
-      )
-    )
+        .fns = \(x) round(x, digits = 2)))
 
   # browser()
 

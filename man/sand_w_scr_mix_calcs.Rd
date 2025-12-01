@@ -74,6 +74,9 @@ sand_w_scr_mix_calcs(
 
 \item{mix_name}{Character, if \code{NULL} a name is constructed as "\code{sandy_name}-\code{silty-name}-\code{clayey_name}-scr-\code{final_scr}_\code{final_sand_content}"}
 }
+\value{
+Table of mix component masses
+}
 \description{
 Computations are based on desired sand content and silt-to-clay ratio of the final mixture
 }

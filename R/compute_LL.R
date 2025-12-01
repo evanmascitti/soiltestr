@@ -24,8 +24,8 @@ compute_LL <- function(df) {
 
   raw_data <- df %>%
     dplyr::filter(
-      !is.na(.data$blow_count),
-      !is.na(.data$water_content))
+      !is.na(blow_count),
+      !is.na(water_content))
 
 
   # if all values are NA just assign an NA value to the LL

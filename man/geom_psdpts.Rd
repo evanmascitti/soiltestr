@@ -9,6 +9,9 @@ geom_psdpts(pts = points)
 \arguments{
 \item{pts}{Logical value}
 }
+\value{
+ggplot object
+}
 \description{
 For internal use inside \code{ggpsd()}; if points argument set to TRUE (the default)
 points will be added to the log-linear plot (in addition to the log-linear

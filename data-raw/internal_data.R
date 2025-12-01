@@ -41,7 +41,7 @@ psa_fines_methods <- tibble::enframe(psa_protocols,
                                      name = "protocol_ID",
                                      value = "protocol_info") %>%
   dplyr::mutate(fines_method = purrr::map_chr(protocol_info, ~.$fines_method)) %>%
-  dplyr::mutate(fines_method = c(stringr::str_extract(fines_method, stringr::regex(possible_psa_fines_method_abbreviations, ignore_case = TRUE)))) %>%dplyr::select(.data$protocol_ID, .data$fines_method)
+  dplyr::mutate(fines_method = c(stringr::str_extract(fines_method, stringr::regex(possible_psa_fines_method_abbreviations, ignore_case = TRUE)))) %>%dplyr::select(protocol_ID, fines_method)
 
 # create vectors which select the correct protocol ID
 # based on which fines method they use

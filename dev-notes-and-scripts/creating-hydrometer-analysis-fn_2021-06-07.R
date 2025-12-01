@@ -204,12 +204,12 @@
 #   # all the relevant metadata values should be identicacl)
 #   return_df <- df %>%
 #     dplyr::mutate("percent_passing_{d_microns}_microns" := predicted_percent_passing) %>%
-#     dplyr::select(.data$date,
-#                   .data$experiment_name,
-#                   .data$protocol_ID,
-#                   .data$sample_name,
-#                   .data$replication,
-#                   .data$batch_sample_number,
+#     dplyr::select(date,
+#                   experiment_name,
+#                   protocol_ID,
+#                   sample_name,
+#                   replication,
+#                   batch_sample_number,
 #                   dplyr::matches(
 #                     "^percent_passing_\\d.*_microns$"
 #                   )) %>%
@@ -250,12 +250,12 @@
 #                                             "sample_name",
 #                                             "replication",
 #                                             "batch_sample_number"))  %>%
-#   dplyr::select(.data$date,
-#                 .data$experiment_name,
-#                 .data$protocol_ID,
-#                 .data$sample_name,
-#                 .data$replication,
-#                 .data$batch_sample_number,
+#   dplyr::select(date,
+#                 experiment_name,
+#                 protocol_ID,
+#                 sample_name,
+#                 replication,
+#                 batch_sample_number,
 #                 dplyr::matches(
 #                   "^percent_passing_\\d.*_microns$"
 #                 )) %>%
@@ -264,7 +264,7 @@
 #     names_to = 'microns',
 #     values_to = 'percent_passing'
 #   ) %>%
-#   dplyr::mutate(microns = readr::parse_number(.data$microns)
+#   dplyr::mutate(microns = readr::parse_number(microns)
 #   ) %>%
 #   dplyr::arrange(dplyr::desc(microns))
 #
@@ -290,12 +290,12 @@
 #
 #
 # generalized_check %>%
-#   dplyr::select(.data$date,
-#                 .data$experiment_name,
-#                 .data$protocol_ID,
-#                 .data$sample_name,
-#                 .data$replication,
-#                 .data$batch_sample_number,
+#   dplyr::select(date,
+#                 experiment_name,
+#                 protocol_ID,
+#                 sample_name,
+#                 replication,
+#                 batch_sample_number,
 #                 dplyr::matches(
 #                   "^percent_passing_\\d.*_microns$"
 #                 ))

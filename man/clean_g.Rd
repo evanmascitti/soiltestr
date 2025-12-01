@@ -9,6 +9,9 @@ clean_g(df)
 \arguments{
 \item{df}{}
 }
+\value{
+a data frame
+}
 \description{
 Returns a numeric column after parsing and removing any non-numeric characters
 }

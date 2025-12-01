@@ -1,6 +1,6 @@
 Package: soiltestr
 Title: Functions for Laboratory Soil Testing
-Version: 0.0.3.0
+Version: 0.0.3.1
 Authors@R: 
     person(given = "Evan",
            family = "Mascitti",
@@ -17,7 +17,6 @@ Suggests:
     testthat,
     mosaic,
     splines,
-    lifecycle,
     stats
 Imports: 
     dplyr,
@@ -37,7 +36,8 @@ Imports:
     stringr,
     forcats,
     patchwork,
-    glue
+    glue,
+    lifecycle
 Depends: 
     R (>= 2.10)
 RdMacros: 

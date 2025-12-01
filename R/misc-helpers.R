@@ -4,7 +4,7 @@
 #'
 #' @param df
 #'
-#' @return
+#' @return a data frame
 #'
 clean_g <- function(df){
 

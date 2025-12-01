@@ -42,8 +42,8 @@ hygroscopic_w <- function(dir, tin_tares = NULL){
   hygroscopic_summary <- raw_data %>%
     dplyr::left_join(tin_tares, by = c("tin_tare_set", "tin_number")) %>%
     soiltestr::add_w() %>%
-    dplyr::group_by(.data$sample_name) %>%
-    dplyr::summarise(water_content = mean(.data$water_content, na.rm = TRUE))
+    dplyr::group_by(sample_name) %>%
+    dplyr::summarise(water_content = mean(water_content, na.rm = TRUE))
 
 
   return(hygroscopic_summary)

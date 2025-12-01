@@ -1,8 +1,9 @@
-#' `r lifecycle::badge('maturing')`
-#'
 #' @title Calculate soil mixture component weights
 #'
+#'
+#'
 #'\loadmathjax
+#'
 #'@description Returns a concise, printer-friendly
 #'reference sheet. It is useful when mixing two soils ("sand" and "clay") from
 #'an air-dry condition to produce a final mixture having a particular %
@@ -53,10 +54,7 @@
 #'and the equation for the
 #'air-dry mass of clayey soil is
 #'
-#'\mjdeqn{
-#'m_{clayey~(air-dry)}~=~\left\lbrack(1~-~\left(\frac{S_f~-~S_{clayey}}
-#'{S_{sandy}~-~S_{clayey}}\right)\right\rbrack~\cdot~
-#'(1~+~w_{clayey})~\cdot~m_{~total~mixture~(oven-dry)} }{}
+#'\mjdeqn{m_{clayey~(air-dry)}~=~\left\lbrack(1~-~\left(\frac{S_f~-~S_{clayey}}{S_{sandy}~-~S_{clayey}}\right)\right\rbrack~\cdot~(1~+~w_{clayey})~\cdot~m_{~total~mixture~(oven-dry)} }{}
 #'
 #'
 #'@example inst/examples/sand_clay_mix_calcs_example.R
@@ -127,23 +125,23 @@ sand_clay_mix_calcs <- function(
     clayey_name = clayey_name,
     final_sand_pct = final_sand_pct,
     final_OD_kg = final_OD_kg,
-    OD_sand_size_mass_in_final_mix = final_OD_kg*.data$final_sand_pct,
-    OD_non_sand_size_mass_in_final_mix = final_OD_kg - .data$OD_sand_size_mass_in_final_mix,
-   kg_OD_sandy_component = ( final_OD_kg * (.data$final_sand_pct - sand_clayey) / (sand_sandy - sand_clayey) ),
-    kg_OD_clayey_component = final_OD_kg - .data$kg_OD_sandy_component,
-    kg_air_dry_sandy_component = .data$kg_OD_sandy_component*(1+w_sandy),
-    kg_air_dry_clayey_component = .data$kg_OD_clayey_component*(1+w_clayey),
-    kg_water_already_present = ( (w_sandy * .data$kg_OD_sandy_component) + (w_clayey * .data$kg_OD_clayey_component) ),
+    OD_sand_size_mass_in_final_mix = final_OD_kg*final_sand_pct,
+    OD_non_sand_size_mass_in_final_mix = final_OD_kg - OD_sand_size_mass_in_final_mix,
+   kg_OD_sandy_component = ( final_OD_kg * (final_sand_pct - sand_clayey) / (sand_sandy - sand_clayey) ),
+    kg_OD_clayey_component = final_OD_kg - kg_OD_sandy_component,
+    kg_air_dry_sandy_component = kg_OD_sandy_component*(1+w_sandy),
+    kg_air_dry_clayey_component = kg_OD_clayey_component*(1+w_clayey),
+    kg_water_already_present = ( (w_sandy * kg_OD_sandy_component) + (w_clayey * kg_OD_clayey_component) ),
     w_extant = kg_water_already_present / final_OD_kg,
    kg_air_dry_silty_component = NA_real_) %>%
     dplyr::select(
-      mix_date, sample_name, sandy_name, clayey_name, .data$final_sand_pct,
-      .data$kg_air_dry_sandy_component,
-      .data$kg_air_dry_silty_component,
-      .data$kg_air_dry_clayey_component,
-      .data$w_extant) %>%
+      mix_date, sample_name, sandy_name, clayey_name, final_sand_pct,
+      kg_air_dry_sandy_component,
+      kg_air_dry_silty_component,
+      kg_air_dry_clayey_component,
+      w_extant) %>%
     dplyr::mutate(
-      final_sand_pct = round(100 * .data$final_sand_pct, digits = 0)
+      final_sand_pct = round(100 * final_sand_pct, digits = 0)
     )
 
   # round the answer if user supplies TRUE to `round` argument
@@ -153,9 +151,9 @@ sand_clay_mix_calcs <- function(
     mix_ref <- mix_ref %>%
     dplyr::mutate(
       w_extant = round(w_extant, digits = 3),
-      kg_air_dry_sandy_component = round(.data$kg_air_dry_sandy_component, digits = 2),
-      .data$kg_air_dry_silty_component,
-      kg_air_dry_clayey_component = round(.data$kg_air_dry_clayey_component, digits = 2))
+      kg_air_dry_sandy_component = round(kg_air_dry_sandy_component, digits = 2),
+      kg_air_dry_silty_component,
+      kg_air_dry_clayey_component = round(kg_air_dry_clayey_component, digits = 2))
 
   }
 
@@ -175,7 +173,7 @@ sand_clay_mix_calcs <- function(
 #'
 #' @param x S3 object of class `soiltestr_mix_calcs`
 #'
-#' @return
+#' @return No return value (under development)
 #' @export
 #'
 format_mix_calcs <- function(x){
@@ -185,9 +183,9 @@ format_mix_calcs <- function(x){
                   `Sample name` = sample_name,
                   `Sand name` = sandy_name,
                   `Clay name`= clayey_name,
-                  `Final % sand-size` = .data$final_sand_pct,
-                  `kg sand component`= .data$kg_air_dry_sandy_component,
-                  `kg clay component`= .data$kg_air_dry_clayey_component,
-                  `Mix water content` = .data$w_extant)
+                  `Final % sand-size` = final_sand_pct,
+                  `kg sand component`= kg_air_dry_sandy_component,
+                  `kg clay component`= kg_air_dry_clayey_component,
+                  `Mix water content` = w_extant)
 
 }

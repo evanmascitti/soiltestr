@@ -40,20 +40,20 @@ ggproctor <- function(df, identifier = sample_name,
     dplyr::group_by({{identifier}}) %>%
     tidyr::nest() %>%
     dplyr::mutate(
-      d_max = purrr::map_dbl(.data$data, soiltestr::d_max),
-      w_opt = purrr::map_dbl(.data$data, soiltestr::w_opt),
+      d_max = purrr::map_dbl(data, soiltestr::d_max),
+      w_opt = purrr::map_dbl(data, soiltestr::w_opt),
       d_max_label_text = paste(
-        "bold(rho)[max]==", round(.data$d_max, 2)),
+        "bold(rho)[max]==", round(d_max, 2)),
       w_opt_label_text = paste(
-        "w[opt]==", round(.data$w_opt, 3))
+        "w[opt]==", round(w_opt, 3))
     ) %>%
     dplyr::ungroup() %>%
     dplyr::select(
       {{identifier}},
-      .data$d_max,
-      .data$w_opt,
-      .data$d_max_label_text,
-      .data$w_opt_label_text  )
+      d_max,
+      w_opt,
+      d_max_label_text,
+      w_opt_label_text  )
   )
 
   geom_proctor_annotation <- function(){
@@ -63,7 +63,7 @@ ggproctor <- function(df, identifier = sample_name,
           data = annotation_df,
           mapping = aes(x= w_opt,
                         y= d_max,
-                        label = .data$d_max_label_text),
+                        label = d_max_label_text),
           nudge_y = 0.03,
           size = 7/.pt,
           parse = TRUE
@@ -72,7 +72,7 @@ ggproctor <- function(df, identifier = sample_name,
           data = annotation_df,
           mapping = aes(x= w_opt,
                         y= d_max,
-                        label = .data$w_opt_label_text),
+                        label = w_opt_label_text),
           nudge_y = 0.01,
           size = 7/.pt,
           parse = TRUE
@@ -86,8 +86,8 @@ ggproctor <- function(df, identifier = sample_name,
 
       ggplot2::geom_smooth(
       data = df,
-      ggplot2::aes(x= .data$water_content,
-                   y= .data$dry_density,
+      ggplot2::aes(x= water_content,
+                   y= dry_density,
                    color = {{identifier}}),
       method= "lm",
       formula = y~splines::ns(x, 3),
@@ -101,8 +101,8 @@ ggproctor <- function(df, identifier = sample_name,
 
     ggplot2::geom_point(
       data = df,
-      ggplot2::aes(x= .data$water_content,
-                   y= .data$dry_density,
+      ggplot2::aes(x= water_content,
+                   y= dry_density,
                    color = {{identifier}}),
       size=1.5,
       alpha = 0.8,
@@ -112,16 +112,16 @@ ggproctor <- function(df, identifier = sample_name,
   # make data frame and tat_function with label for 100 % saturation line
 
   sat_curves_data <- df %>%
-    dplyr::mutate(w_rank = dplyr::row_number(.data$water_content)) %>%
-    dplyr::filter(.data$w_rank > 2) %>%
+    dplyr::mutate(w_rank = dplyr::row_number(water_content)) %>%
+    dplyr::filter(w_rank > 2) %>%
     dplyr::mutate(
-      w_grid = modelr::seq_range(x= .data$water_content,
-                                 n = length(.data$water_content),
+      w_grid = modelr::seq_range(x= water_content,
+                                 n = length(water_content),
                                  expand = 0.25),
       sat_100_density =
-        1 / ( (1/.data$Gs) + (.data$w_grid/0.9978) + ((.data$w_grid/0.9978)*(1-1)/(1) ) ),
+        1 / ( (1/Gs) + (w_grid/0.9978) + ((w_grid/0.9978)*(1-1)/(1) ) ),
       sat_90_density=
-        1 / ( (1/.data$Gs) + (.data$w_grid/0.9978) + ((.data$w_grid/0.9978)*(1-0.9)/(0.9)) )
+        1 / ( (1/Gs) + (w_grid/0.9978) + ((w_grid/0.9978)*(1-0.9)/(0.9)) )
     )
 
   geom_sat_100 <- function(){

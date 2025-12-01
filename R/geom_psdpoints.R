@@ -6,7 +6,7 @@
 #'
 #' @param pts Logical value
 #'
-#' @return
+#' @return ggplot object
 #'
 
 geom_psdpts <- function(pts = points){

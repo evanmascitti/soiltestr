@@ -50,10 +50,10 @@ compute_152H_hydrometer_fines_pct_passing <- function(with_pipette = FALSE){
   blank_correction_data <-  method_specific_datafiles$hydrometer_blank_correction_w_companion %>%
     dplyr::rename(blank_hydrometer_reading = hydrometer_reading) %>%
     dplyr::left_join(hydrometer_dims, by = "hydrometer_ID") %>%
-    dplyr::select(.data$date,
-                  .data$experiment_name,
-                  .data$reading_number,
-                  .data$blank_hydrometer_reading)
+    dplyr::select(date,
+                  experiment_name,
+                  reading_number,
+                  blank_hydrometer_reading)
 
   # join hydrometer data with the other required information,
   # then create datetime objects for stir time and
@@ -158,8 +158,8 @@ all_results <- purrr::map(calculations_dfs, generalized_finer_D_x, with_pipette 
   # browser()
 
 fines_percent_passing <- dplyr::bind_rows(all_results) %>%
-  dplyr::arrange(.data$batch_sample_number,
-                 dplyr::desc(.data$microns))
+  dplyr::arrange(batch_sample_number,
+                 dplyr::desc(microns))
 
 return(fines_percent_passing)
 
@@ -187,7 +187,7 @@ return(fines_percent_passing)
 #'   actions inside `compute_152H_hydrometer_fines_pct_passing()`  _before_ this function
 #'   is called.
 #'
-#' @return
+#' @return data frame
 #'
 hydrometer_calcs_part_1 <- function(x){
 
@@ -224,9 +224,9 @@ max_diam_in_suspension_df <- effective_depth_df %>%
 
 
 return_df <- max_diam_in_suspension_df %>%
-  dplyr::select(.data$date:.data$batch_sample_number,
-                .data$mass_pct_finer,
-                .data$D_m_microns)
+  dplyr::select(date:batch_sample_number,
+                mass_pct_finer,
+                D_m_microns)
 
 return(return_df)
 
@@ -356,12 +356,12 @@ hydrometer_percent_finer_D_x <- function(calculations_df, d_microns) {
     dplyr::mutate(
       "percent_passing_{d_microns}_microns" := predicted_percent_passing) %>%
     dplyr::select(
-      .data$date,
-      .data$experiment_name,
-      .data$protocol_ID,
-      .data$sample_name,
-      .data$replication,
-      .data$batch_sample_number,
+      date,
+      experiment_name,
+      protocol_ID,
+      sample_name,
+      replication,
+      batch_sample_number,
       dplyr::matches("^percent_passing_\\d.*_microns$")
     ) %>%
     dplyr::distinct() %>%
@@ -468,12 +468,12 @@ generalized_finer_D_x <- function(calculations_df = NULL, d_microns = NULL, with
   # pick out only the relevant columns and put back into long format
 
   all_sizes_predicted <- reduced_predicted_sizes %>%
-    dplyr::select(.data$date,
-                  .data$experiment_name,
-                  .data$protocol_ID,
-                  .data$sample_name,
-                  .data$replication,
-                  .data$batch_sample_number,
+    dplyr::select(date,
+                  experiment_name,
+                  protocol_ID,
+                  sample_name,
+                  replication,
+                  batch_sample_number,
                   dplyr::matches(
                     "^percent_passing_\\d.*_microns$"
                   )) %>%
@@ -482,7 +482,7 @@ generalized_finer_D_x <- function(calculations_df = NULL, d_microns = NULL, with
       names_to = 'microns',
       values_to = 'percent_passing'
     ) %>%
-    dplyr::mutate(microns = readr::parse_number(.data$microns)
+    dplyr::mutate(microns = readr::parse_number(microns)
     ) %>%
     dplyr::arrange(dplyr::desc(microns))
 

@@ -81,16 +81,16 @@ USGA_bins <- function(){
   cumulative_percent_passing <- get("cumulative_percent_passing", envir = rlang::caller_env() )
 
   usga_bins <- cumulative_percent_passing %>%
-    dplyr::filter(.data$microns >= 53) %>%
-    tidyr::pivot_wider(names_from = .data$microns, values_from = .data$percent_passing) %>%
+    dplyr::filter(microns >= 53) %>%
+    tidyr::pivot_wider(names_from = microns, values_from = percent_passing) %>%
     psa_decimal_to_pct() %>%
     dplyr::mutate(
-      gravel = .data$`4000` - .data$`2000`,
-      very_coarse_sand = .data$`2000` - .data$`1000`,
-      coarse_sand = .data$`1000` - .data$`500`,
-      medium_sand = .data$`500` - .data$`250`,
-      fine_sand = .data$`250` - .data$`150`,
-      very_fine_sand = .data$`150` - .data$`53`) %>%
+      gravel = `4000` - `2000`,
+      very_coarse_sand = `2000` - `1000`,
+      coarse_sand = `1000` - `500`,
+      medium_sand = `500` - `250`,
+      fine_sand = `250` - `150`,
+      very_fine_sand = `150` - `53`) %>%
     psa_remove_number_bins()
 
 
@@ -112,16 +112,16 @@ USGA_bins_plus_gravel <- function(){
   cumulative_percent_passing <- get("cumulative_percent_passing", envir = rlang::caller_env() )
 
   usga_bins_plus_gravel <- cumulative_percent_passing %>%
-    dplyr::filter(.data$microns >= 53) %>%
-    tidyr::pivot_wider(names_from = .data$microns, values_from = .data$percent_passing) %>%
+    dplyr::filter(microns >= 53) %>%
+    tidyr::pivot_wider(names_from = microns, values_from = percent_passing) %>%
     psa_decimal_to_pct() %>%
     dplyr::mutate(
-      gravel = .data$`6730` - .data$`2000`,
-      very_coarse_sand = .data$`2000` - .data$`1000`,
-      coarse_sand = .data$`1000` - .data$`500`,
-      medium_sand = .data$`500` - .data$`250`,
-      fine_sand = .data$`250` - .data$`150`,
-      very_fine_sand = .data$`150` - .data$`53`) %>%
+      gravel = `6730` - `2000`,
+      very_coarse_sand = `2000` - `1000`,
+      coarse_sand = `1000` - `500`,
+      medium_sand = `500` - `250`,
+      fine_sand = `250` - `150`,
+      very_fine_sand = `150` - `53`) %>%
     psa_remove_number_bins()
 
 
@@ -145,14 +145,14 @@ USCS_bins <- function(){
   # the columns whose names begin with a number
 
   uscs_bins <- cumulative_percent_passing %>%
-    dplyr::filter(.data$microns >= 53) %>%
-    tidyr::pivot_wider(names_from = .data$microns, values_from = .data$percent_passing) %>%
+    dplyr::filter(microns >= 53) %>%
+    tidyr::pivot_wider(names_from = microns, values_from = percent_passing) %>%
     psa_decimal_to_pct() %>%
     dplyr::mutate(
-      uscs_gravel = .data$`4750` - .data$`4000`,
-      uscs_coarse_sand = .data$`4000` - .data$`2000`,
-      uscs_med_sand = .data$`2000` - .data$`425`,
-      uscs_fine_sand = .data$`425` - .data$`53`) %>%
+      uscs_gravel = `4750` - `4000`,
+      uscs_coarse_sand = `4000` - `2000`,
+      uscs_med_sand = `2000` - `425`,
+      uscs_fine_sand = `425` - `53`) %>%
     psa_remove_number_bins()
 
 
@@ -178,16 +178,16 @@ expanded_sieve_bins_1 <- function(){
   cumulative_percent_passing <- get("cumulative_percent_passing", envir = rlang::caller_env() )
 
   expanded_sieve_bins <- cumulative_percent_passing %>%
-    dplyr::filter(.data$microns >= 53) %>%
-    tidyr::pivot_wider(names_from = .data$microns, values_from = .data$percent_passing) %>%
+    dplyr::filter(microns >= 53) %>%
+    tidyr::pivot_wider(names_from = microns, values_from = percent_passing) %>%
     psa_decimal_to_pct() %>%
     dplyr::mutate(
-      gravel = .data$`6350` - .data$`2000`,
-      very_coarse_sand = .data$`2000` - .data$`1000`,
-      coarse_sand = .data$`1000` - .data$`500`,
-      medium_sand = .data$`500` - .data$`250`,
-      fine_sand = .data$`250` - .data$`150`,
-      very_fine_sand = .data$`150` - .data$`53`) %>%
+      gravel = `6350` - `2000`,
+      very_coarse_sand = `2000` - `1000`,
+      coarse_sand = `1000` - `500`,
+      medium_sand = `500` - `250`,
+      fine_sand = `250` - `150`,
+      very_fine_sand = `150` - `53`) %>%
     psa_remove_number_bins()
 
 
@@ -212,16 +212,16 @@ CSSC_fines_bins <- function(){
 # begins with a number
 
   CSSC_fines_bins <- cumulative_percent_passing %>%
-    dplyr::filter(.data$microns <= 53) %>%
-    tidyr::pivot_wider(names_from = .data$microns, values_from = .data$percent_passing) %>%
+    dplyr::filter(microns <= 53) %>%
+    tidyr::pivot_wider(names_from = microns, values_from = percent_passing) %>%
     psa_decimal_to_pct() %>%
     dplyr::mutate(
-     coarse_silt = .data$`53` - .data$`20`,
-    medium_silt = .data$`20` - .data$`5`,
-    fine_silt = .data$`5` - .data$`2`,
-    # fine_silt = .data$`20` - .data$`2`, # this is DuraEdge's split; it's not official
-     coarse_clay = .data$`2` - .data$`0.2`,
-     fine_clay = .data$`0.2`) %>%
+     coarse_silt = `53` - `20`,
+    medium_silt = `20` - `5`,
+    fine_silt = `5` - `2`,
+    # fine_silt = `20` - `2`, # this is DuraEdge's split; it's not official
+     coarse_clay = `2` - `0.2`,
+     fine_clay = `0.2`) %>%
     psa_remove_number_bins()
 
   return(CSSC_fines_bins)
@@ -249,14 +249,14 @@ non_standard_fines_bins_1 <- function(){
   # begins with a number
 
   fines_bins <- cumulative_percent_passing %>%
-    dplyr::filter(.data$microns <= 53) %>%
-    tidyr::pivot_wider(names_from = .data$microns, values_from = .data$percent_passing) %>%
+    dplyr::filter(microns <= 53) %>%
+    tidyr::pivot_wider(names_from = microns, values_from = percent_passing) %>%
     psa_decimal_to_pct() %>%
     dplyr::mutate(
-      coarse_silt = .data$`53` - .data$`20`,
-      fine_silt = .data$`20` - .data$`2`,
-      coarse_clay = .data$`2` - .data$`0.2`,
-      fine_clay = .data$`0.2`) %>%
+      coarse_silt = `53` - `20`,
+      fine_silt = `20` - `2`,
+      coarse_clay = `2` - `0.2`,
+      fine_clay = `0.2`) %>%
     psa_remove_number_bins()
 
   return(fines_bins)
@@ -282,13 +282,13 @@ non_standard_fines_bins_2 <- function(){
   # begins with a number
 
   fines_bins <- cumulative_percent_passing %>%
-    dplyr::filter(.data$microns <= 53) %>%
-    tidyr::pivot_wider(names_from = .data$microns, values_from = .data$percent_passing) %>%
+    dplyr::filter(microns <= 53) %>%
+    tidyr::pivot_wider(names_from = microns, values_from = percent_passing) %>%
     psa_decimal_to_pct() %>%
     dplyr::mutate(
-      coarse_silt = .data$`53` - .data$`20`,
-      fine_silt = .data$`20` - .data$`2`,
-      clay = .data$`2`) %>%
+      coarse_silt = `53` - `20`,
+      fine_silt = `20` - `2`,
+      clay = `2`) %>%
     psa_remove_number_bins()
 
   return(fines_bins)
@@ -312,14 +312,14 @@ fines_20_to_0.2_only <- function(){
 
 
   clay_bins <- cumulative_percent_passing %>%
-    dplyr::filter(.data$microns <= 53) %>%
-    tidyr::pivot_wider(names_from = .data$microns, values_from = .data$percent_passing) %>%
+    dplyr::filter(microns <= 53) %>%
+    tidyr::pivot_wider(names_from = microns, values_from = percent_passing) %>%
     psa_decimal_to_pct() %>%
     dplyr::mutate(
-      coarse_silt = .data$`53` - .data$`20`,
-      fine_silt = .data$`20` - .data$`2`,
-      coarse_clay = .data$`2` - .data$`0.2`,
-      fine_clay = .data$`0.2`) %>%
+      coarse_silt = `53` - `20`,
+      fine_silt = `20` - `2`,
+      coarse_clay = `2` - `0.2`,
+      fine_clay = `0.2`) %>%
     psa_remove_number_bins()
 
   return(clay_bins)
@@ -371,25 +371,25 @@ simple_bins <- function(){
   protocol_ID <- get("protocol_ID", envir = rlang::caller_env() )
 
 simple_size_bins <- cumulative_percent_passing %>%
-    tidyr::pivot_wider(names_from = .data$microns,
-                       values_from = .data$percent_passing) %>%
+    tidyr::pivot_wider(names_from = microns,
+                       values_from = percent_passing) %>%
     dplyr::mutate(
       protocol_ID = .env$protocol_ID,
-      gravel = .data$`4000` - .data$`2000`,
-      sand = .data$`2000` - .data$`53`,
-      silt = .data$`53` - .data$`2`,
-      clay = .data$`2`) %>%
+      gravel = `4000` - `2000`,
+      sand = `2000` - `53`,
+      silt = `53` - `2`,
+      clay = `2`) %>%
     dplyr::select(
-      .data$date,
-      .data$experiment_name,
-      .data$sample_name,
-      .data$replication,
-      .data$batch_sample_number,
-      .data$protocol_ID,
-      .data$gravel,
-      .data$sand,
-      .data$silt,
-      .data$clay) %>%
+      date,
+      experiment_name,
+      sample_name,
+      replication,
+      batch_sample_number,
+      protocol_ID,
+      gravel,
+      sand,
+      silt,
+      clay) %>%
     dplyr::mutate(
       dplyr::across(
         .cols = c(gravel, sand, silt, clay),

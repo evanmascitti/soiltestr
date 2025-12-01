@@ -45,7 +45,7 @@
 #'
 #'@references Modified effort: \href{https://www.astm.org/Standards/D1557}{ASTM D1557-12e1}
 #'
-#'@seealso [`generate_proctor_datasheet()`], [`proctor_prep()`], [`mix_calcs()`], [`stats::optimize()`]
+#'@seealso [`proctor_datasheet()`], [`proctor_prep()`], [`sand_clay_mix_calcs()`], [`stats::optimize()`]
 #'
 #'@example inst/examples/proctor_fit_example.R
 #'
@@ -56,17 +56,17 @@ proctor_fit <- function(df,
   ecmfuns::pkg_check(c("mosaic", "splines"))
 
   physical_props <- df %>%
-    dplyr::select(.data$cylinder_number,
-                  .data$water_content,
-                  .data$moist_density,
-                  .data$dry_density,
-                  .data$total_porosity,
-                  .data$void_ratio,
-                  .data$volumetric_water_content,
-                  .data$Se,
-                  .data$Gs,
-                  .data$moist_soil_g,
-                  .data$OD_soil_g,)
+    dplyr::select(cylinder_number,
+                  water_content,
+                  moist_density,
+                  dry_density,
+                  total_porosity,
+                  void_ratio,
+                  volumetric_water_content,
+                  Se,
+                  Gs,
+                  moist_soil_g,
+                  OD_soil_g,)
 
     proctor_model <-
       stats::na.omit(stats::lm(

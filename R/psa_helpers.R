@@ -193,11 +193,11 @@ compute_pretreatment_loss <- function(){
 pretreatment_loss_pcts <- method_specific_datafiles$pretreatment_loss %>%
   dplyr::left_join(hygroscopic_water_contents,
                    by = c("date", "experiment_name", "sample_name", "replication", "batch_sample_number")) %>%
-    dplyr::mutate(OD_soil_mass_before_pretreatment = .data$air_dry_specimen_mass_before_pretreatment / (1 + .data$hygroscopic_water_content),
-           OD_soil_mass_after_pretreatment = .data$container_mass_w_OD_sample - .data$container_tare,
-           pretreatment_loss_mass = .data$OD_soil_mass_before_pretreatment - .data$OD_soil_mass_after_pretreatment,
-           pretreatment_loss_pct = .data$pretreatment_loss_mass / .data$OD_soil_mass_before_pretreatment) %>%
-    dplyr::select(.data$date:.data$batch_sample_number, .data$pretreatment_loss_pct)
+    dplyr::mutate(OD_soil_mass_before_pretreatment = air_dry_specimen_mass_before_pretreatment / (1 + hygroscopic_water_content),
+           OD_soil_mass_after_pretreatment = container_mass_w_OD_sample - container_tare,
+           pretreatment_loss_mass = OD_soil_mass_before_pretreatment - OD_soil_mass_after_pretreatment,
+           pretreatment_loss_pct = pretreatment_loss_mass / OD_soil_mass_before_pretreatment) %>%
+    dplyr::select(date:batch_sample_number, pretreatment_loss_pct)
 
   return(pretreatment_loss_pcts)
 }
@@ -257,7 +257,7 @@ beaker_tares <- beaker_tares %||% getOption('soiltestr.beaker_tares') %||% inter
 
 blanks_df <- method_specific_datafiles$pipette_blank_correction %>%
     dplyr::left_join(beaker_tares, by = c("beaker_number", "beaker_tare_set")) %>%
-    dplyr::mutate(calgon_in_beaker = .data$beaker_mass_w_OD_sample - .data$beaker_empty_mass)
+    dplyr::mutate(calgon_in_beaker = beaker_mass_w_OD_sample - beaker_empty_mass)
 
 blank_correction <- mean(blanks_df$calgon_in_beaker, na.rm = TRUE)
 
@@ -279,9 +279,9 @@ if(protocol_ID %in% internal_data$after_fines_sampling_wash_through_protocol_IDs
 
 
   mass_multipliers <- coarse_percent_passing %>%
-    dplyr::group_by(.data$sample_name, .data$batch_sample_number) %>%
-    dplyr::filter(dplyr::near(.data$microns, 53)) %>%
-    dplyr::summarise(sand_plus_gravel = 1 - .data$percent_passing) %>%
+    dplyr::group_by(sample_name, batch_sample_number) %>%
+    dplyr::filter(dplyr::near(microns, 53)) %>%
+    dplyr::summarise(sand_plus_gravel = 1 - percent_passing) %>%
     dplyr::left_join(
       OD_specimen_masses,
       by = c("sample_name",
@@ -314,10 +314,10 @@ if(protocol_ID %in% internal_data$after_fines_sampling_wash_through_protocol_IDs
       mass_multipliers,
       by = c("sample_name","batch_sample_number")) %>%
     dplyr::mutate(
-      total_g_in_beaker = .data$beaker_mass_w_OD_sample - .data$beaker_empty_mass,
-      soil_in_beaker = .data$total_g_in_beaker - blank_correction,
-      percent_passing = (mass_multiplier * .data$soil_in_beaker) / .data$OD_specimen_mass) %>%
-    dplyr::select(.data$date:.data$batch_sample_number, .data$microns, percent_passing)
+      total_g_in_beaker = beaker_mass_w_OD_sample - beaker_empty_mass,
+      soil_in_beaker = total_g_in_beaker - blank_correction,
+      percent_passing = (mass_multiplier * soil_in_beaker) / OD_specimen_mass) %>%
+    dplyr::select(date:batch_sample_number, microns, percent_passing)
 
 
 
@@ -359,17 +359,17 @@ wash_through_coarse_grains <- function(){
 
   wash_through_size_bins <- cumulative_percent_passing %>%
     dplyr::filter(!is.na(microns)) %>%
-    tidyr::pivot_wider(names_from = .data$microns,
-                       values_from = .data$percent_passing) %>%
+    tidyr::pivot_wider(names_from = microns,
+                       values_from = percent_passing) %>%
     dplyr::mutate(
-      gravel = .data$`4000` - .data$`2000`,
-      sand = .data$`2000` - .data$`53`,
-      fines = .data$`53` ) %>%
-    dplyr::select(.data$date:.data$batch_sample_number,
-                  .data$gravel:.data$fines) %>%
+      gravel = `4000` - `2000`,
+      sand = `2000` - `53`,
+      fines = `53` ) %>%
+    dplyr::select(date:batch_sample_number,
+                  gravel:fines) %>%
     dplyr::mutate(
       dplyr::across(
-        .cols = .data$gravel:.data$fines,
+        .cols = gravel:fines,
         .fns = ~.*100))
 
   return(wash_through_size_bins)
@@ -398,9 +398,9 @@ compute_sieves_percent_passing <- function(){
       dplyr::left_join(
         OD_specimen_masses,
         by = c("date", "experiment_name", "sample_name", "replication", "batch_sample_number"))%>%
-      dplyr::mutate(cumulative_mass_finer = .data$OD_specimen_mass - .data$cumulative_mass_g,
-                    percent_passing = .data$cumulative_mass_finer / .data$OD_specimen_mass) %>%
-    dplyr::select(.data$date:.data$batch_sample_number, .data$microns, percent_passing)
+      dplyr::mutate(cumulative_mass_finer = OD_specimen_mass - cumulative_mass_g,
+                    percent_passing = cumulative_mass_finer / OD_specimen_mass) %>%
+    dplyr::select(date:batch_sample_number, microns, percent_passing)
 
     return(sieves_percent_passing)
   }

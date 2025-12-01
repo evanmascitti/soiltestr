@@ -135,5 +135,5 @@ proctor_prep(x = mix_03, PLs = pl_values,
 \href{https://www.astm.org/Standards/D698.htm}{ASTMc D698-12e2}
 }
 \seealso{
-\code{\link[=proctor_fit]{proctor_fit()}}, \code{\link[=mix_calcs]{mix_calcs()}}, \code{\link[=proctor_datasheet]{proctor_datasheet()}}
+\code{\link[=proctor_fit]{proctor_fit()}}, \code{\link[=sand_clay_mix_calcs]{sand_clay_mix_calcs()}}, \code{\link[=proctor_datasheet]{proctor_datasheet()}}
 }
