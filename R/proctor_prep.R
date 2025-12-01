@@ -223,14 +223,14 @@ if(!is.null(x)){
 #'
 make_w_spread <- function(effort, PL, n_cyls = NULL){
 
- #  browser()
+ # browser()
 
   # find n_cylinders and w_int arguments from parent call and re-assign
   # them in the current environment
 
-  n_cyls <- get("n_cylinders", envir = rlang::caller_env(n = 2))
+  n_cyls <- get("n_cylinders", envir = rlang::caller_env(n = 3))
 
-  w_interval <- get("w_int", envir = rlang::caller_env(n = 2))
+  w_interval <- get("w_int", envir = rlang::caller_env(n = 3))
 
   if(!n_cyls %in% c(5:6)){
     stop("`n_cyls` argument is ", n_cyls, "but it must be either 5 or 6.",

@@ -122,29 +122,29 @@ AL_or_PL_batch_analysis <- function(type){
 
   consistency_limit_all_values <- consistency_limit_raw_data %>%
     dplyr::mutate(test_type = type) %>%
-    dplyr::select(.data$date, .data$experiment_name,
-                  .data$sample_name, .data$replication,
-                  .data$batch_sample_number, .data$test_type,
-                  .data$water_content)
+    dplyr::select(date, experiment_name,
+                  sample_name, replication,
+                  batch_sample_number, test_type,
+                  water_content)
 
 
   consistency_limit_avg_values <- consistency_limit_all_values %>%
-    dplyr::group_by(dplyr::across(-c(.data$replication, .data$water_content))) %>%
-    dplyr::summarize(water_content = mean(.data$water_content, na.rm = TRUE)) %>%
+    dplyr::group_by(dplyr::across(-c(replication, water_content))) %>%
+    dplyr::summarize(water_content = mean(water_content, na.rm = TRUE)) %>%
     dplyr::ungroup() %>%
-    dplyr::arrange(.data$batch_sample_number)
+    dplyr::arrange(batch_sample_number)
 
   consistency_limit_plotting_data <- consistency_limit_avg_values %>%
     tidyr::drop_na() %>%
-    dplyr::mutate(sample_name = forcats::fct_reorder(.data$sample_name, .data$water_content))
+    dplyr::mutate(sample_name = forcats::fct_reorder(sample_name, water_content))
 
   consistency_limit_variation_plot <-
     ggplot2::ggplot(
       data = consistency_limit_plotting_data,
       mapping = ggplot2::aes(
-        x = .data$water_content,
-        y = .data$sample_name,
-        color = .data$sample_name
+        x = water_content,
+        y = sample_name,
+        color = sample_name
       )
     ) +
     ggplot2::stat_summary(data = consistency_limit_all_values,
@@ -310,20 +310,22 @@ LL_batch_analysis <- function(dir, tin_tares = NULL){
     soiltestr::add_w()
 
 
+  #browser()
+
   LL_values <- LL_raw_data %>%
-    dplyr::group_by(.data$batch_sample_number) %>%
+    dplyr::group_by(batch_sample_number) %>%
     tidyr::nest() %>%
     dplyr::mutate(
       test_type = "LL",
       LL= purrr::map_dbl(
-        .x= .data$data,
+        .x= data,
         .f= soiltestr::compute_LL),
-      water_content = purrr::map_dbl(.data$LL, ~.[[1]]),
-      sample_name = purrr::map_chr(.data$data, ~unique(.$sample_name))) %>%
-    dplyr::select(.data$batch_sample_number, .data$test_type, .data$water_content) %>%
+      water_content = purrr::map_dbl(LL, ~.[[1]]),
+      sample_name = purrr::map_chr(data, \(x) unique(as.character(x$sample_name)))) %>%
+    dplyr::select(batch_sample_number, test_type, water_content) %>%
     dplyr::ungroup() %>%
     dplyr::left_join(specimen_index, by = 'batch_sample_number') %>%
-    dplyr::relocate(.data$batch_sample_number:.data$water_content, .after = .data$sample_name)
+    dplyr::relocate(batch_sample_number:water_content, .after = sample_name)
 
 
   # browser()
@@ -338,21 +340,21 @@ LL_batch_analysis <- function(dir, tin_tares = NULL){
 
   plots_df <- LL_raw_data %>%
     dplyr::mutate(sample_name = as.character(sample_name)) %>%
-    dplyr::arrange(.data$sample_name) %>%
-    dplyr::group_by(.data$batch_sample_number) %>%
+    dplyr::arrange(sample_name) %>%
+    dplyr::group_by(batch_sample_number) %>%
     tidyr::nest() %>%
     dplyr::mutate(
-      sample_name = purrr::map_chr(data, ~unique(purrr::pluck(., 'sample_name'))),
+      sample_name = purrr::map_chr(data, \(x) unique(purrr::pluck(x, 'sample_name'))),
       plot_title = paste0(
         "Liquid limit test (sample name: ",
-        .data$sample_name,
+        sample_name,
         ")"),
       water_content = purrr::map(data, 'water_content'),
-      complete = purrr::map_lgl(water_content, ~!all(is.na(.))))%>%
+      complete = purrr::map_lgl(water_content, \(x) !all(is.na(x))))%>%
     dplyr::mutate(
       flow_curve_plot = ifelse(
         complete,
-        purrr::map2(.x = .data$data, .y =  .data$plot_title,
+        purrr::map2(.x = data, .y =  plot_title,
                     .f = labeled_flow_curve),
         NA
       )

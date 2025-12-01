@@ -10,6 +10,7 @@
 #'
 compute_flow_index <- function(dir, tin_tares = NULL) {
 
+  #browser()
 
 
   #  copied from LL batch analysis
@@ -95,7 +96,7 @@ compute_flow_index <- function(dir, tin_tares = NULL) {
                                     fit_flow_curve_model),
       flow_index_coefficients = purrr::map(flow_curve_model, "coefficients"),
       flow_index = purrr::map_dbl(flow_index_coefficients, 2),
-      sample_name = purrr::map_chr(data, ~ unique(.$sample_name))
+      sample_name = purrr::map_chr(data, \(x) unique(as.character(x$sample_name)))
     ) %>%
     dplyr::select(batch_sample_number, flow_index) %>%
     dplyr::ungroup() %>%
@@ -121,7 +122,7 @@ compute_flow_index <- function(dir, tin_tares = NULL) {
 fit_flow_curve_model <- function(x){
 
 
-  # browser()
+  #browser()
 
   if(all(is.na(x$water_content)) | length(x$water_content) == 0L){
     return(NA)

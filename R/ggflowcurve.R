@@ -21,12 +21,12 @@ ggflowcurve <- function(df, ...){
 
 
   plot <- ggplot2::ggplot(data= df, aes(.data$blow_count, .data$water_content))+
-    ggplot2::geom_vline(xintercept = 15:35, color = 'grey95', size = 0.25)+
+    ggplot2::geom_vline(xintercept = 15:35, color = 'grey95', linewidth = 0.25)+
     ggplot2::geom_smooth(aes(...),
                          formula = y~x,
                          method = "lm",
                          se= F,
-                         size = 0.25)+
+                         linewidth = 0.25)+
     ggplot2::geom_point(aes(...), alpha = 1/3)+
     ggplot2::scale_x_continuous(
       name= 'Blow count, log scale',

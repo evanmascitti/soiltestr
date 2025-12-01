@@ -16,7 +16,13 @@
 #'
 casagrande_chart <- function(x) {
 
-  plot1 <- ggplot(data= x, aes(100*.data$LL, 100*.data$PI, color = sample_name))
+  # convert from decimal form to percent
+  plotting_df <- x %>%
+    dplyr::mutate(
+      dplyr::across(c(LL, PL, PI), \(x) 100*x)
+    )
+
+  plot1 <- ggplot(data= plotting_df, aes(LL, PI, color = sample_name))
 
   soil_class_labs <- tibble::tibble(soil_type= c('CL/OL', 'CH/OH', 'ML/OL', 'MH/OH', 'CL-ML'),
                             LL= c(40, 70, 40, 70, 16),
@@ -34,14 +40,14 @@ casagrande_chart <- function(x) {
                     ylim = c(0, 60),
                     expand = TRUE)+
     scale_x_continuous(breaks = seq(0, 100, 20)) +
-    geom_text(data = soil_class_labs, inherit.aes= FALSE, aes(.data$LL, .data$PI, label= .data$soil_type), size=3, fontface= 'bold')+
+    geom_text(data = soil_class_labs, inherit.aes= FALSE, aes(LL, PI, label= soil_type), size=3, fontface= 'bold')+
     annotate('text', x= 65, y= 0.9*(65-8)+3, label= 'U-line', color= 'darkblue', size=3, angle= 43, hjust=0.9)+
     annotate('text', x= 90, y= 0.73*(90 -20)+3, label= 'A-line', color= 'tomato', size=3, angle= 37, hjust=0.9)+
     annotate('text', x= 50, y= 50+3, label= '1:1 slope', color= 'black', size=3, angle= 45, hjust=0.9)+
     geom_polygon(data= tibble::tibble(LL=c(4, 7, 20+(7/0.73), 25.5),
                               PI=c(4, 7, 7, 4)),
                  inherit.aes= FALSE,
-                 aes(.data$LL, .data$PI),
+                 aes(LL, PI),
                  fill='grey',
                  alpha=1/3) +
     labs(x='LL', y='PI')+
