@@ -16,7 +16,7 @@
 #'
 casagrande_chart <- function(x) {
 
-  plot1 <- ggplot(data= x, aes(100*.data$LL, 100*.data$PI))
+  plot1 <- ggplot(data= x, aes(100*.data$LL, 100*.data$PI, color = sample_name))
 
   soil_class_labs <- tibble::tibble(soil_type= c('CL/OL', 'CH/OH', 'ML/OL', 'MH/OH', 'CL-ML'),
                             LL= c(40, 70, 40, 70, 16),

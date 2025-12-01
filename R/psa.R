@@ -36,7 +36,7 @@ psa <- function(dir, bouyoucos_cylinder_dims = NULL, tin_tares = NULL,
                 beaker_tares = NULL,
                 hydrometer_dims = NULL, ...){
 
- #  browser()
+ #browser()
 
   # error message if directory does not exist
 
@@ -48,9 +48,9 @@ psa <- function(dir, bouyoucos_cylinder_dims = NULL, tin_tares = NULL,
 
   # determine which protocol was used and assign to a local variable
 
+  # browser()
   protocol_ID <- find_protocol_ID()
 
-  # browser()
 
 
   # if mastersizer protocol was used, need to convert the whole directory of
@@ -83,18 +83,15 @@ psa <- function(dir, bouyoucos_cylinder_dims = NULL, tin_tares = NULL,
 # is also a list containing the appropriate data frames (tibbles)
 
   # browser()
-
-datafiles <- purrr::map(all_datafile_paths, import_psa_datafile)
+  datafiles <- purrr::map(all_datafile_paths, import_psa_datafile)
 
 
 # assign the contents of the datafiles list to the current environment
-
-list2env(datafiles, envir = rlang::current_env())
+  list2env(datafiles, envir = rlang::current_env())
 
 # for safety, remove the datafiles object since its contents are now dumped
 # into the current environment
-
-rm(datafiles, all_datafile_paths)
+  rm(datafiles, all_datafile_paths)
 
 
 # compute hygroscopic water contents --------------------------------------
@@ -108,7 +105,9 @@ rm(datafiles, all_datafile_paths)
 #
 #   tin_tares <- asi468::tin_tares[[tin_tare_set]]
 
-  tin_tares <- tin_tares %||% getOption('soiltestr.tin_tares') %||% internal_data$equipment_instructions("tin_tares")
+  tin_tares <- tin_tares %||% getOption('soiltestr.tin_tares') #%||% internal_data$equipment_instructions("tin_tares")
+  hydrometer_dims <- hydrometer_dims %||% getOption('soiltestr.hydrometer_dims') #%||% internal_data$equipment_instructions("hydrometer_dims")
+
 
 
 # browser()
@@ -215,7 +214,9 @@ coarse_percent_passing <- switch (
 
 # next compute  the fines % passing
 
-    # browser()
+
+# browser()
+
   fines_percent_passing <- switch (protocol_ID,
     "1" = compute_pipette_fines_pct_passing(...),
     "2" = compute_152H_hydrometer_fines_pct_passing(...),

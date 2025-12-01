@@ -37,7 +37,7 @@ ggpsd <- function(df, units = "microns", points = TRUE, log_lines = TRUE, bold_l
         ggplot2::geom_vline(xintercept = log_line_breaks,
                             color = 'grey95',
                             linetype = 'dotted',
-                            size = 0.3)
+                            linewidth = 0.3)
       )
     }
   }
@@ -47,7 +47,7 @@ ggpsd <- function(df, units = "microns", points = TRUE, log_lines = TRUE, bold_l
       list(
         ggplot2::geom_vline(xintercept = bold_log_line_breaks,
                             color= 'grey90',
-                            size = 0.3)
+                            linewidth = 0.3)
       )
     }
   }
@@ -88,7 +88,7 @@ ggpsd <- function(df, units = "microns", points = TRUE, log_lines = TRUE, bold_l
     psa_log_lines()+
     psa_bold_log_lines()+
     ggplot2::geom_hline(yintercept = seq(0, 1, 0.2), color = 'grey90',
-                        size = 0.25)+
+                        linewidth = 0.25)+
     ggplot2::geom_line( alpha = 1/2)+
     psa_points()+
     ggplot2::ggtitle("Cumulative particle size distribution")+
@@ -131,7 +131,7 @@ ggpsd <- function(df, units = "microns", points = TRUE, log_lines = TRUE, bold_l
       psa_log_lines()+
       psa_bold_log_lines()+
       ggplot2::geom_hline(yintercept = seq(0, 1, 0.2), color = 'grey90',
-                          size = 0.25)+
+                          linewidth = 0.25)+
       ggplot2::geom_line(show.legend = FALSE, alpha = 1/2)+
       psa_points()+
       ggplot2::ggtitle("Cumulative particle size distribution")+

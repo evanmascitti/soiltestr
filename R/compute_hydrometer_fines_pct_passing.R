@@ -193,8 +193,10 @@ hydrometer_calcs_part_1 <- function(x){
 
 
 
+  #browser()
+
   # assign the required constants which exist in higher frames
-  hydrometer_dims <- get(x = c("hydrometer_dims"), envir = rlang::caller_env(2))
+  hydrometer_dims <- get(x = c("hydrometer_dims"), envir = rlang::caller_env(3))
 
 
   # browser()
@@ -411,9 +413,9 @@ generalized_finer_D_x <- function(calculations_df = NULL, d_microns = NULL, with
   # protocol is being used and then look it up in the psa_protocols
   # list, as this contains a vector with this exact piece of information
 
-  # browser()
+  #browser()
 
-  protocol_ID <- get("protocol_ID", envir = rlang::caller_env(n = dplyr::if_else(with_pipette, 4, 3)))
+  protocol_ID <- get("protocol_ID", envir = rlang::caller_env(n = dplyr::if_else(with_pipette, 5, 4)))
   d_microns <-psa_protocols[[rlang::sym(protocol_ID)]][["fines_diameters_to_compute"]][[1]]
 
   # throws an error if there are no diameters to compute
@@ -434,8 +436,10 @@ generalized_finer_D_x <- function(calculations_df = NULL, d_microns = NULL, with
 
   # browser()
   dfs_list <- tibble::tibble(
-    calculations_df = purrr::rerun(.n = length(d_microns),
-                                   calculations_df),
+    # calculations_df = purrr::rerun(.n = length(d_microns),
+    #                                calculations_df),
+    calculations_df = purrr::map(1:length(d_microns),
+                                   ~calculations_df),
     d_microns = d_microns
   ) %>%
     dplyr::filter(d_microns > 1) %>%

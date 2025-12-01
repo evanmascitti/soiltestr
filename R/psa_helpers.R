@@ -7,6 +7,8 @@
 #'
 find_protocol_ID <- function(){
 
+  #browser()
+
 dir <- get(x = "dir", envir = rlang::caller_env())
 
   # note that in this function the protocol is being read as a character column
